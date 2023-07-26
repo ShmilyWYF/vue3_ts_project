@@ -9,12 +9,19 @@ import store from '@/store'
 
 export default {
   name: 'index',
-  setup () {
+  setup() {
     return {}
   },
   methods: {
-    ok () {
-      store.dispatch('user/login', '123').then((res) => {
+    ok() {
+      const data = {
+        a: 1,
+        b: 2,
+        c: {
+          type: "测试"
+        }
+      }
+      store.dispatch('user/login', data).then((res) => {
         console.log(res)
         const op = store.getters.name
         console.log('---->', op)

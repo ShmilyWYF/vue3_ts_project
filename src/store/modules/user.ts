@@ -1,5 +1,5 @@
-import { userApi } from '@/axios'
-
+import aotuCustomCreateApi from "@/axios";
+// const userApi =
 const userState = {
   name: '',
   avatar: ''
@@ -17,9 +17,9 @@ const mutations = {
 const actions = {
   login ({ commit }: any, option: { data: null }) {
     return new Promise((resolve: any, reject: any) => {
-      userApi.test(option).then((res: any) => {
+      aotuCustomCreateApi.userApi.test(option).then((res: any) => {
+      // customCreateApi.userApi.test(option).then((res: any) => {
         const data = res.data
-        console.log(data)
         commit('SET_USER_NAME', res.data)
         resolve(data)
       }, (error: any) => {
