@@ -31,10 +31,10 @@ const customCreateApi = (apiUrls: any) => {
         return prev
     }, {})
 }
+// if (process.env.IS_AUTO_AXIOS_BEAN) {
+//     const o = autoCreateApi()
+// } else {
+//     const o = customCreateApi(list)
+// }
 
-if (process.env.IS_AUTO_AXIOS_BEAN) {
-    autoCreateApi()
-} else {
-    customCreateApi(list)
-}
-
+export default autoCreateApi()
