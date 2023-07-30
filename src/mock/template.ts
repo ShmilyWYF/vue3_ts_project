@@ -1,4 +1,4 @@
-import Mock from 'mockjs'
+import Mock, {Random} from 'mockjs'
 
 export default Mock.mock(
   {

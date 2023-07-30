@@ -1,15 +1,19 @@
-const { defineConfig } = require('@vue/cli-service')
+const {defineConfig} = require('@vue/cli-service')
+
 module.exports = defineConfig({
-  transpileDependencies: true,
-  devServer: {
-    port: 80
-  },
-  lintOnSave:false,
-  css: {
-    loaderOptions: {
-      less: {
-        javascriptEnabled: true
-      }
-    }
-  }
+    transpileDependencies: true,
+    devServer: {
+        port: 80
+    },
+    lintOnSave: false,
+    css: {
+        loaderOptions: {
+            less: {
+                javascriptEnabled: true
+            }
+        }
+    },
+    // chainWebpack: (config) => {
+    //
+    // }
 })

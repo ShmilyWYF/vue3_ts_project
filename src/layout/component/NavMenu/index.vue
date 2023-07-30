@@ -22,7 +22,6 @@
 <script lang="ts">
   import { ref } from 'vue'
   import router from '@/router'
-
   export default {
     name: 'NavMenu',
     setup () {

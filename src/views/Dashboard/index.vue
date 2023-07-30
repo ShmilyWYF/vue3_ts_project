@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import store from '@/store'
 
 export default {
   name: 'index',
@@ -21,10 +20,10 @@ export default {
           type: "测试"
         }
       }
-      store.dispatch('user/login', data).then((res) => {
+      this.$store.dispatch('user/login', data).then((res) => {
         console.log(res)
-        const op = store.getters.name
-        console.log('---->', op)
+        const op = this.$store.getters.name
+        console.log(op)
       })
     }
   }
