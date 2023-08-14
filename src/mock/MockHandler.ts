@@ -1,5 +1,5 @@
 import MockResponse from '@/mock/MockResponse'
-import { mock } from 'mockjs'
+import {mock} from 'mockjs'
 
 class MockHandler extends MockResponse {
 

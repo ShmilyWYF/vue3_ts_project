@@ -22,5 +22,4 @@ if (process.env.NODE_ENV === 'dev') {
     mockXHR();
 }
 
-
 app.use(store).use(protector).use(router).use(api).use(element).mount('#app')

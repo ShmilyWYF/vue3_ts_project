@@ -3,35 +3,45 @@ import HttpRequest from "@/axios/HttpRequest";
 
 class RulesVariable {
 
-    private static _BASE_API:string = process.env.VUE_APP_BASE_API;
+    private static _BASE_API: any = process.env.VUE_APP_BASE_API;
 
-    private static _IS_AXIOS_BASE:boolean = process.env.VUE_APP_IS_AUTO_AXIOS_BASE
+    private static _IS_AXIOS_BASE: any = process.env.VUE_APP_IS_AUTO_AXIOS_BASE
 
-    private _isEnable: boolean;
+    private readonly _isEnable: boolean;
 
-    constructor(isEnable: boolean) {
+    public constructor(isEnable: boolean) {
         this._isEnable = isEnable;
     }
 
-
-    static get BASE_API(): string {
+    private static get BASE_API(): string {
         return this._BASE_API;
     }
 
-    static get IS_AXIOS_BASE(): boolean {
+    public static get IS_AXIOS_BASE(): boolean {
         return this._IS_AXIOS_BASE;
     }
 
-    get isEnable(): boolean {
+    protected get isEnable(): boolean {
         return this._isEnable;
     }
+
+    // 通用工具方法
+    protected apiTool(key: any): {} {
+        return Object.keys(key).reduce((pre: any, cur: string) => {
+            pre[cur] = (data: {}) => { // 该参用于给生成的对象添加操作参数
+                return new HttpRequest(RulesVariable.BASE_API).createAxiosInstance({...key[cur], data})
+            }
+            return pre
+        }, {})
+    }
+
 }
 
 interface RulesApi {
 
-    rulesApi(isEnable: boolean): any;
+    rulesApi(isEnable: boolean): {};
 
-    start(): any;
+    start(): {};
 }
 
 class RulesApiImpl extends RulesVariable implements RulesApi {
@@ -39,12 +49,12 @@ class RulesApiImpl extends RulesVariable implements RulesApi {
         super(isEnable);
     }
 
-    rulesApi(isEnable: boolean): any {
+    rulesApi(isEnable: boolean) {
         console.log(isEnable)
         return isEnable ? this.autoCreateApi() : this.customCreateApi(list)
     }
 
-    start() {
+    public start() {
         return this.rulesApi(this.isEnable)
     }
 
@@ -64,18 +74,6 @@ class RulesApiImpl extends RulesVariable implements RulesApi {
             return prev
         }, {})
     }
-
-    // 通用工具方法
-    private apiTool(key: any): {} {
-        return Object.keys(key).reduce((pre: any, cur: string) => {
-            pre[cur] = (data: {}) => { // 该参用于给生成的对象添加操作参数
-                return new HttpRequest(RulesVariable.BASE_API).createAxiosInstance({...key[cur], data})
-            }
-            return pre
-        }, {})
-    }
-
-
 }
 
-export default new RulesApiImpl(RulesApiImpl.IS_AXIOS_BASE).start()
+export default new RulesApiImpl(RulesApiImpl.IS_AXIOS_BASE ?? true).start()

@@ -1,7 +1,10 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, {AxiosInstance, AxiosResponse, InternalAxiosRequestConfig} from 'axios'
 import errorHandle from '@/axios/errorHander'
-import { ElMessage } from 'element-plus'
+import {ElMessage} from 'element-plus'
 
+/**
+ * axios实例类
+ */
 class HttpRequest {
   static defaultConfig = {}
 
@@ -12,7 +15,7 @@ class HttpRequest {
     HttpRequest.defaultConfig = {
       baseURL,
       url: '',
-      method: 'get',
+      method: '',
       headers: {
         accept: HttpRequest.accept,
         context: HttpRequest.context,

@@ -15,7 +15,11 @@
     "baseUrl": ".",
     "types": [
       "webpack-env",
-      "jest"
+      "jest",
+      "node"
+    ],
+    "typeRoots": [
+      "node_modules/@types"
     ],
     "paths": {
       "@/*": [
@@ -35,9 +39,19 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "src/typing.d.ts"
+    "src/typing.d.ts",
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "filesGlob": [
+    "./src/**/*.ts",
+    "./test/**/*.ts",
+    "./typings/index.d.ts",
+    "./custom_typings/**/*.d.ts",
+    "./node_modules/@types/**/*.d.ts"
+  ],
+  "atom": {
+    "rewriteTsconfig": false
+  }
 }
