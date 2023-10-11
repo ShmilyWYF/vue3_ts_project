@@ -1,0 +1,18 @@
+@import "../common/common";
+
+$light: (
+  // 盒子背景颜色
+        background-color: #f3f3f3,
+        background-color-anti: #212121,
+  // article 横-渐变盖
+        gradient-cover: linear-gradient(90deg,hsla(0,0%,98%,0) 0,hsla(0,0%,98%,.013) 8.1%,hsla(0,0%,98%,.049) 15.5%,hsla(0,0%,98%,.104) 22.5%,hsla(0,0%,98%,.175) 29%,hsla(0,0%,98%,.259) 35.3%,hsla(0,0%,98%,.352) 41.2%,hsla(0,0%,98%,.45) 47.1%,hsla(0,0%,98%,.55) 52.9%,hsla(0,0%,98%,.648) 58.8%,hsla(0,0%,98%,.741) 64.7%,hsla(0,0%,98%,.825) 71%,hsla(0,0%,98%,.896) 77.5%,hsla(0,0%,98%,.951) 84.5%,hsla(0,0%,98%,.987) 91.9%,$background-light),
+// article 竖-渐变盖
+        article-cover-cred: linear-gradient(180deg,hsla(0,0%,98%,0) 0,hsla(0,0%,98%,.013) 8.1%,hsla(0,0%,98%,.049) 15.5%,hsla(0,0%,98%,.104) 22.5%,hsla(0,0%,98%,.175) 29%,hsla(0,0%,98%,.259) 35.3%,hsla(0,0%,98%,.352) 41.2%,hsla(0,0%,98%,.45) 47.1%,hsla(0,0%,98%,.55) 52.9%,hsla(0,0%,98%,.648) 58.8%,hsla(0,0%,98%,.741) 64.7%,hsla(0,0%,98%,.825) 71%,hsla(0,0%,98%,.896) 77.5%,hsla(0,0%,98%,.951) 84.5%,hsla(0,0%,98%,.987) 91.9%,$background-light),
+  // article 字体颜色
+        text-color-H1: #212,
+        text-color-p: #212,
+        text-color-a-hover:#b6b6b6,
+        background-color-child: #c9c9c9,
+        border-color: #f3f3f3,
+        border-color-anti: #212121,
+)

@@ -1,0 +1,19 @@
+@import "../common/common";
+
+$dark: (
+  // 盒子背景颜色
+        background-color: #212121,
+        background-color-anti: #f3f3f3,
+  // article 横-渐变盖
+        gradient-cover: linear-gradient(90deg, rgba(33, 33, 33, 0) 0, rgba(33, 33, 33, .013) 8.1%, rgba(33, 33, 33, .049) 15.5%, rgba(33, 33, 33, .104) 22.5%, rgba(33, 33, 33, .175) 29%, rgba(33, 33, 33, .259) 35.3%, rgba(33, 33, 33, .352) 41.2%, rgba(33, 33, 33, .45) 47.1%, rgba(33, 33, 33, .55) 52.9%, rgba(33, 33, 33, .648) 58.8%, rgba(33, 33, 33, .741) 64.7%, rgba(33, 33, 33, .825) 71%, rgba(33, 33, 33, .896) 77.5%, rgba(33, 33, 33, .951) 84.5%, rgba(33, 33, 33, .987) 91.9%, $background-dark),
+  // article 竖-渐变盖
+        article-cover-cred: linear-gradient(178deg, rgba(33, 33, 33, 0) 0, rgba(33, 33, 33, 0.013) 8.1%, rgba(33, 33, 33, 0.049) 15.5%, rgba(33, 33, 33, 0.104) 22.5%, rgba(33, 33, 33, 0.175) 29%, rgba(33, 33, 33, 0.259) 35.3%, rgba(33, 33, 33, 0.352) 41.2%, rgba(33, 33, 33, 0.45) 47.1%, rgba(33, 33, 33, 0.55) 52.9%, rgba(33, 33, 33, 0.648) 58.8%, rgba(33, 33, 33, 0.741) 64.7%, rgba(33, 33, 33, 0.825) 71%, rgba(33, 33, 33, 0.896) 77.5%, rgba(33, 33, 33, 0.951) 84.5%, rgba(33, 33, 33, 0.987) 91.9%, $background-dark),
+  // article 字体颜色
+        text-color-H1: #fff,
+        text-color-p: #fff,
+        text-color-a-hover:#000000,
+        background-color-child: #1a1a1a,
+        border-color: #212121,
+        border-color-anti: #f3f3f3,
+
+)
