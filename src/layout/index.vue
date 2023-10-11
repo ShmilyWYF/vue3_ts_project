@@ -1,119 +1,114 @@
 <template>
-  <el-menu
-      :default-active="activeIndex"
-      class="el-menu-demo"
-      mode="horizontal"
-      router="router"
-      style="height: 100%"
-  >
-    <el-menu-item disabled class="log">
-      Blog
-    </el-menu-item>
-    <template v-for="(item,keys) in routers.concat(menuList)" :key="keys">
-      <template v-if="item">
-        <el-menu-item v-if="item.hasOwnProperty('meta')" :index="item.path">
-          <span>
-            {{ item.meta.title }}
-          </span>
-        </el-menu-item>
-        <template v-for="(children,key) in item.children" :key="key">
-          <template v-if="children.hasOwnProperty('meta')">
-            <el-menu-item v-if="children.meta.require" :index="children.path">
-              <span>
-                {{ children.meta.title }}
-              </span>
-            </el-menu-item>
-          </template>
-        </template>
-        <!--异步组路由部分-->
-        <el-sub-menu :index="item.id" v-if="!item.hasOwnProperty('meta')" popper-class="el-sub-popper">
-          <template #title>
-            <span>{{ item.title }}</span>
-          </template>
-          <template v-for="(children,key) in item.children" :key="key">
-            <el-menu-item :index="children.path">{{ children.title }}</el-menu-item>
-          </template>
-        </el-sub-menu>
-      </template>
-    </template>
-  </el-menu>
+  <div class="common-layout">
+    <el-row :gutter="8">
+      <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 24}" :xl="{span: 24}">
+        <el-container>
+          <el-header class="el-header">
+            <el-card body-style="height: 100%;background:#00000000;">
+              <nav-menu/>
+            </el-card>
+          </el-header>
+          <el-main class="el-main">
+            <el-card body-style="height:100%">
+                <Main/>
+            </el-card>
+          </el-main>
+          <el-footer class="el-footer">
+              <footer-tag/>
+          </el-footer>
+        </el-container>
+      </el-col>
+    </el-row>
+    <Drawer @bg="switchBackground"/>
+  </div>
 </template>
-
 <script lang="ts" setup>
-import {computed, ref} from 'vue'
-import router from '@/router'
-import store from "@/store";
+import {onBeforeMount} from "vue";
 
-const activeIndex = ref('/index')
-const routers: any = computed(() => router.options.routes)
-const menuList: any = computed(() => store.getters.menuList)
+onBeforeMount(()=>{
+  switchBackground(false)
+})
+
+import {NavMenu,Main,FooterTag,Drawer} from "@/layout/component";
+
+const switchBackground = (args:boolean) => {
+  const theme = args?'light':'dark'
+  window.document.documentElement.setAttribute( "data-theme", theme);
+}
 </script>
 
 <style scoped lang="scss">
-.el-menu {
-  margin: 0 5px;
-  padding: 0 20px;
+.common-layout, .common-layout * {
   height: 100%;
-  width: 100%;
-  border-bottom: none;
-  background: #00000000 !important;
-  --el-menu-base-level-padding: 0px;
-  --el-menu-border-color: none;
-  --el-menu-hover-bg-color: none;
-  --el-menu-item-height: none;
-  .el-menu-item {
-    margin: 0 5px;
-    --el-menu-hover-text-color: rgba(86, 53, 183, 0.75);
+  --box-card-shadow-light: rgb(38, 57, 77) 0px 20px 30px -10px;
+  --box-card-shadow-header: rgb(38, 57, 77) 0px -30px 30px -10px;
+  --box-card-shadow-tabs: rgb(38, 57, 77) 0px 20px 30px -10px;
+
+  .el-card {
+    --el-card-height: 95%;
+    --el-card-padding: 0;
+    --el-card-border-radius: 12px;
   }
 
-  .el-sub-menu {
-    --el-bg-color-overlay: none;
+  .el-row {
+    margin: 0 !important;
+
+    .el-header {
+      margin: 1%;
+      --el-header-height: 5%;
+      height: var(--el-header-height);
+      opacity: 0.5;
+      position: relative;
+      z-index: 10;
+
+      .el-card.is-always-shadow {
+        box-shadow: var(--box-card-shadow-header);
+      }
+
+      .el-card {
+        background: #00000000;
+        border-color: #00000000;
+        opacity: 0.9;
+        --el-card-border-radius: 12px;
+        height: var(--el-card-height);
+      }
+    }
+
+    .el-main {
+      height: 100%;
+      margin: 0 1%;
+      --el-header-height: 90% !important;
+      padding: 0 20px;
+      position: relative;
+      z-index: 10;
+      .el-affix {
+        height: 1%;
+        position: absolute;
+        z-index: 999;
+        display: block;
+        right: 1rem;
+      }
+
+      .el-card {
+        border: 0;
+        background: #00000000;
+        position: relative;
+        overflow: hidden;
+      }
+    }
   }
-}
 
-:global(.el-sub-popper){
-  --el-menu-bg-color: #212121 !important;
-  --el-menu-hover-bg-color: none !important;
-}
+  .el-footer {
+    margin: 1%;
+    --el-footer-height: 3%;
+    height: var(--el-footer-height);
 
-.el-menu--horizontal .el-menu .el-menu-item, .el-menu--horizontal .el-menu .el-sub-menu__title {
-  background-color: $background-dark;
-  color: $background-light;
-}
-
-:global(.el-menu--popup) {
-  min-width: 150px!important;
-}
-
-.el-menu--horizontal > .el-menu-item.is-active {
-  border-bottom: 2px solid #6d15b7;
-  color: rgba(76, 106, 222, 0.99) !important;
-}
-
-:global(.el-popper.is-light) {
-  background: #212121 !important;
-  border: 1px solid #212121 !important;
-}
-
-@media (min-width: 1024px) {
-  .log{
-    width: 5%;
-    position: relative;
-    font-size: xx-large;
-    &:hover{
-      text-transform: uppercase;
+    .el-card {
+      --el-card-padding: 0px;
     }
   }
 }
-span{
-  color: white;
-  padding: 5% 5%;
-  border-radius: 0.25rem;
-  font-size: larger;
-  font-weight: 800;
-  &:hover{
-    background: #212121;
-    opacity: 0.8;
-  }
+.el-card.is-always-shadow {
+  box-shadow: var(--box-card-shadow-light);
 }
 </style>
