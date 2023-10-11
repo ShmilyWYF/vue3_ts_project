@@ -3,9 +3,11 @@ import HttpRequest from "@/axios/HttpRequest";
 
 class RulesVariable {
 
-    private static _BASE_API: any = process.env.VUE_APP_BASE_API;
+    // private static _BASE_API: any = 'http://localhost:8080';
 
-    private static _IS_AXIOS_BASE: any = process.env.VUE_APP_IS_AUTO_AXIOS_BASE
+    private static _BASE_API: any = '/api';
+
+    private static _IS_AXIOS_BASE: any = import.meta.env.APP_IS_AUTO_AXIOS_BASE;
 
     private readonly _isEnable: boolean;
 
@@ -59,10 +61,10 @@ class RulesApiImpl extends RulesVariable implements RulesApi {
     }
 
     private autoCreateApi() {
-        const requireContext = require.context('/src/Api/', true, /\.ts/)
-        return requireContext.keys().reduce((prev: any, curr: string) => {
-            const fileObject = requireContext(curr).default
-            const name: string = curr.replace(/^\.\/(.*)\.\w+$/, '$1')
+        const requireContext:Record<string, any> = import.meta.glob("../Api/*.ts",{eager:true})
+        return Object.keys(requireContext).reduce((prev: any, curr: string) => {
+            const fileObject = requireContext[curr].default
+            const name: string = curr.replace(/^\..\/Api\/(.*)\.\w+$/, '$1')
             prev[name] = this.apiTool(fileObject)
             return prev
         }, {})

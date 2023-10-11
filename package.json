@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vue-cli-service serve --mode dev",
-    "production": "vue-cli-service serve --mode production",
-    "test": "vue-cli-service serve --mode test",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "dev": "vite  --mode development",
+    "production": "vite  --mode production",
+    "test": "vite  --mode test",
+    "build": "vite  build",
+    "lint": "vite  lint"
   },
   "dependencies": {
     "@types/echarts": "^4.9.18",
@@ -20,12 +20,16 @@
     "js-cookie": "^3.0.1",
     "mockjs": "^1.1.0",
     "normalize.css": "^8.0.1",
+    "nprogress": "^0.2.0",
     "process": "^0.11.10",
     "style-loader": "^3.3.2",
+    "vite-plugin-svg-icons": "^2.0.1",
     "vue": "^3.2.13",
     "vue-class-component": "^8.0.0-0",
+    "vue-i18n": "^9.3.0",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.0",
+    "vuex-persistedstate": "^4.1.0",
     "webpack": "^5.88.2",
     "yarn": "^1.22.19"
   },
@@ -35,8 +39,10 @@
     "@types/jest": "^27.0.1",
     "@types/mockjs": "^1.0.7",
     "@types/node": "^20.4.10",
+    "@types/nprogress": "^0.2.0",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
+    "@vitejs/plugin-vue": "^4.3.4",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
@@ -58,6 +64,8 @@
     "sass": "^1.32.7",
     "sass-loader": "^12.0.0",
     "ts-jest": "^27.0.4",
-    "typescript": "~4.5.5"
+    "typescript": "~4.5.5",
+    "vite": "^3.2.7",
+    "vite-plugin-html": "^3.2.0"
   }
 }

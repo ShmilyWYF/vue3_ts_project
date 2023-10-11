@@ -1,0 +1,105 @@
+@media (min-width: 1024px) {
+    .mz-sk-transparent {
+        color: transparent !important;
+    }
+
+    .mz-sk-text {
+        background-image: linear-gradient(90deg, rgb(16, 16, 16) 25%, #1b1b1b 37%, #101010 63%);
+        list-style: none;
+        background-size: 400% 100%;
+        animation: skeleton-loading 1.5s ease infinite;
+    }
+
+
+    .mz-sk-image {
+        background-color: #101010 !important;
+    }
+
+    .mz-sk-rect {
+        border-radius: 1rem !important;
+    }
+
+    .mz-sk-pseudo::before,
+    .mz-sk-pseudo::after {
+        background-color: #101010 !important;
+        background-image: none !important;
+        color: transparent !important;
+        border-color: transparent !important;
+    }
+
+    .mz-sk-pseudo-rect::before,
+    .mz-sk-pseudo-rect::after {
+        border-radius: 0 !important;
+    }
+
+    .mz-sk-pseudo-circle::before,
+    .mz-sk-pseudo-circle::after {
+        border-radius: 0 !important;
+    }
+
+    @keyframes skeleton-loading {
+        0% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0 50%;
+        }
+    }
+}
+
+.slot {
+    height: auto !important;
+    .feature-article-list-tree[data-v-4677ae7a]{
+        grid-template-rows: 75% 75% !important;
+    }
+
+
+}
+
+.mz-sk-transparent {
+    color: transparent !important;
+}
+
+.mz-sk-text {
+    z-index: 99;
+    background-image: linear-gradient(90deg, rgb(16, 16, 16) 25%, #1b1b1b 37%, #101010 63%);
+    list-style: none;
+    background-size: 400% 100%;
+    animation: skeleton-loading 1.5s ease infinite;
+}
+
+
+.mz-sk-image {
+    background-color: #101010 !important;
+}
+
+.mz-sk-rect {
+    border-radius: 1rem !important;
+}
+
+.mz-sk-pseudo::before,
+.mz-sk-pseudo::after {
+    background-image: none !important;
+    color: transparent !important;
+    border-color: transparent !important;
+}
+
+.mz-sk-pseudo-rect::before,
+.mz-sk-pseudo-rect::after {
+    border-radius: 0 !important;
+}
+
+.mz-sk-pseudo-circle::before,
+.mz-sk-pseudo-circle::after {
+    border-radius: 0 !important;
+}
+
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0 50%;
+    }
+}

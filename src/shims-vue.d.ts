@@ -9,3 +9,6 @@ declare module 'node_modules/axios'
 
 declare module 'mockjs'
 
+declare module 'nprogress'
+
+declare module 'inspector'
