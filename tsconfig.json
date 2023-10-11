@@ -14,9 +14,9 @@
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
-      "webpack-env",
       "jest",
-      "node"
+      "node",
+      "vite/client"
     ],
     "typeRoots": [
       "node_modules/@types"
