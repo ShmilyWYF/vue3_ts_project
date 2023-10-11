@@ -1,16 +1,18 @@
 <template>
   <div class="main">
     <Breadcrumb/>
-      <router-view class="view"/>
+    <router-view class="view"/>
     <App-Banner/>
   </div>
   <!--背景板-->
-  <div class="main-bg"/>
+  <div class="main-bg" v-show="isMainBg"/>
 </template>
 
 
 <script lang="ts" setup>
 import {Breadcrumb,AppBanner} from "@/components";
+import {computed} from "vue";
+const isMainBg = computed<boolean>(()=>false)
 </script>
 
 <style scoped lang="scss">
@@ -22,6 +24,8 @@ import {Breadcrumb,AppBanner} from "@/components";
   overflow: auto;
   z-index: 10;
   .view{
+    height: 100%;
+    width: 100%;
     position: relative;
     z-index: 15
   }

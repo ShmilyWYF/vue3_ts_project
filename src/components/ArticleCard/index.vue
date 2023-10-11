@@ -274,7 +274,7 @@ defineProps({
       font-size: 1.5rem;
       line-height: 2rem;
       margin-bottom: 1.5rem;
-      @include font_color('text-color-H1');
+      @include font_color('text-color');
 
       a {
         background-color: transparent;

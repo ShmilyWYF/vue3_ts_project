@@ -30,10 +30,12 @@ onBeforeMount(()=>{
 })
 
 import {NavMenu,Main,FooterTag,Drawer} from "@/layout/component";
+import store from "@/store";
 
 const switchBackground = (args:boolean) => {
-  const theme = args?'light':'dark'
-  window.document.documentElement.setAttribute( "data-theme", theme);
+  const theme = {'theme': args?'light':'dark' }
+  window.document.documentElement.setAttribute( "data-theme", theme.theme);
+  store.dispatch('useAppStore/themeConfig',theme);
 }
 </script>
 
@@ -42,7 +44,6 @@ const switchBackground = (args:boolean) => {
   height: 100%;
   --box-card-shadow-light: rgb(38, 57, 77) 0px 20px 30px -10px;
   --box-card-shadow-header: rgb(38, 57, 77) 0px -30px 30px -10px;
-  --box-card-shadow-tabs: rgb(38, 57, 77) 0px 20px 30px -10px;
 
   .el-card {
     --el-card-height: 95%;

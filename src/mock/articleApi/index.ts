@@ -2,7 +2,7 @@ import {articleFeatureList, articleListByName} from "@/mock/articleApi/tempalte"
 
 const articleApi = [
     {
-        url: '/get/getFeatureArticle',
+        url: '/get/FeatureArticle',
         type: 'get',
         template: articleFeatureList(),
         code: Number(200),

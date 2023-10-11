@@ -29,7 +29,7 @@ export default defineComponent({
   },
 })
 </script>
-<style>
+<style scoped lang="scss">
 svg{
   width: 1.5rem;
   height: 1.5rem;

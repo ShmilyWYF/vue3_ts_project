@@ -24,22 +24,13 @@ body{
   justify-content: center;
   height: 100vh;
   font-family: Poppins,Rubik, Avenir, Helvetica, Arial, sans-serif, serif;
-  ::v-deep.el-card__body {
+  :deep(.el-card__body) {
     height: 100%;
   }
 }
 
 body {
   background: var(--body-Background);
-}
-
-@media (min-width: 1024px) {
- #app{
-   --main-Np-gradient: linear-gradient(130deg, #24c6dc, #5433ff 41.07%, #ff0099 76.05%)!important;
-   --body-Background: linear-gradient(130deg, #ff0099, #5433ff 41.07%, #24c6dc 76.05%)!important;
-   --feature-Background: linear-gradient(130deg, #ff0099, #5433ff 46.07%, #24c6dc 87.05%)!important;
-   --feature-app-banner-Background: linear-gradient(130deg, #ff0099, #5433ff 41.07%, #24c6dc 76.05%)!important;
- }
 }
 
 #app {
@@ -49,6 +40,15 @@ body {
   --feature-app-banner-Background: linear-gradient(230deg, #ff0099, #5433ff 41.07%, #24c6dc 76.05%);
   background: var(--body-Background);
   font-size: 100%;
+}
+
+@media (min-width: 1024px) {
+  #app{
+    --main-Np-gradient: linear-gradient(130deg, #24c6dc, #5433ff 41.07%, #ff0099 76.05%);
+    --body-Background: linear-gradient(130deg, #ff0099, #5433ff 41.07%, #24c6dc 76.05%);
+    --feature-Background: linear-gradient(130deg, #ff0099, #5433ff 46.07%, #24c6dc 87.05%);
+    --feature-app-banner-Background: linear-gradient(130deg, #ff0099, #5433ff 41.07%, #24c6dc 76.05%);
+  }
 }
 
 

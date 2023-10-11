@@ -34,7 +34,7 @@ const breadList = <any>computed(()=>{
   width: 85%;
   padding: 1%;
   background: #00000000;
-  @include font_color('text-color-H1');
+  @include font_color('text-color');
   position: relative;
   z-index: 15
 }

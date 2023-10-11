@@ -1,6 +1,5 @@
 import router from '@/router/index'
 import store from "@/store";
-import api from '@/axios'
 import {toRaw} from "vue";
 import cookies from "js-cookie";
 import {close, start} from "@/utils/nporgress";
@@ -10,6 +9,8 @@ export default () => {
     router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
             console.log('当前路由地址', to)
             console.log('get路由',router.getRoutes())
+            // 获取主题配置
+            store.dispatch('useAppStore/theme','')
             const accessedRouters = toRaw(store.getters.accessedRouters);
             start()
             if (accessedRouters === undefined) {

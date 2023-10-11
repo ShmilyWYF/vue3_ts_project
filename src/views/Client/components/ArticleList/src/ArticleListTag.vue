@@ -59,27 +59,28 @@ const getCurrentChange = (val: any) => {
 
 </script>
 <style scoped lang="scss">
-@media (max-width: 1024px) {
-  .ArticleListTag {
-    height: auto !important;
-  }
-}
 .ArticleListTag {
-  height: 100%;
+  height: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   .el-tabs {
-    height: 95%;
+    height: auto;
     display: flex;
     flex-direction: column;
-    ::v-deep .el-tabs__header {
-      height: 2%;
-      margin: 0 0 2% 0;
+    position: relative;
+    row-gap: 0.75rem;
+    :deep(.el-tabs__header) {
+      width: calc(100% - 8%);
       padding: 1% 3%;
-      border-radius: 0.5rem;
+      margin: 0 auto;
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
       @include background_color('background-color');
-      box-shadow: var(--box-card-shadow-tabs);
+      @include box_shadow('box-card-shadow-tabs');
       .el-tabs__nav-wrap, .el-tabs__nav-scroll, .el-tabs__nav {
         width: 100%;
-        margin-bottom: 1.5%;
         .el-tabs__active-bar {
           bottom: 5px !important;
         }
@@ -108,51 +109,59 @@ const getCurrentChange = (val: any) => {
       }
     }
 
-    ::v-deep .el-tabs__content {
-      //overflow: visible;
-      height: 95%;
-
-      @media (min-width: 1024px) {
-         .el-tab-pane{
-           height: 98% !important;
-           grid-template-rows: repeat(4, minmax(0,10fr))!important;
-           grid-template-columns: repeat(3, 31.5%);
-           grid-gap: 1.25% 2%;
-           .Article{
-             height: 100%;
-           }
-        }
-      }
+    :deep(.el-tabs__content) {
+      height: auto;
       .el-tab-pane {
         display: grid;
+        padding: 0.75rem;
         position: relative;
+        // 自适应
         grid-template-rows: repeat(1, minmax(0,1fr));
-        height: auto;
+        grid-gap: 2rem;
         .Article {
-          height: 95%;
+          height: 25rem;
           .el-card{
             box-shadow: #11111AB3 0 4px 16px, #11111AB3 0 8px 24px, #11111A4D 0 16px 56px;
           }
         }
       }
+
+      @media (min-width: 980px) {
+        .el-tab-pane{
+          grid-template-columns: repeat(2,minmax(0,1fr));
+          grid-template-rows: auto;
+        }
+      }
+      @media (min-width: 1200px) {
+        .el-tab-pane{
+          grid-template-columns: repeat(3,minmax(0,1fr));
+          grid-template-rows: auto;
+        }
+      }
+
     }
   }
-  .el-pagination {
+
+  :deep(.el-pagination) {
     font-size: larger;
     position: relative;
     justify-content: center;
+    padding: 1rem;
+    z-index: 15;
+    button {
+      background: #00000000;
+      @include font_color('text-color-p');
+
+      &:disabled {
+        display: none;
+      }
+    }
+    .el-pager li{
+      font-weight: 800;
+      background: #00000000;
+    }
   }
 }
-:global(.el-pagination button){
-  background: #00000000;
-  @include font_color('text-color-p')
-}
-:global(.el-pagination button:disabled){
-    display: none;
-}
-:global(.el-pager li){
-  font-weight: 800;
-  background: #00000000;
-}
+
 
 </style>

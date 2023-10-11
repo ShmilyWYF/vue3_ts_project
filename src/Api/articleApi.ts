@@ -9,6 +9,6 @@ export default {
     },
     getFeatureArticle:{
         method: 'get',
-        url: 'get/getFeatureArticle'
+        url: 'get/FeatureArticle'
     }
 }

@@ -1,72 +1,44 @@
 <template>
-  <div id="drawer" @mouseup="svgMouseup">
+  <div id="drawer" ref="drawer">
     <el-drawer v-model="drawerPanel" :with-header="false" direction="ttb" class="el-drawer-box" @close="closeDrawer">
       <template #default>
-        <span>
-          <el-dropdown :hide-on-click="true" :show-timeout="sleep" @command="switchLang">
-            <span class="el-dropdown-link">{{ $t('message.lang') }}</span>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item command="cn">{{ $t('message.cn') }}</el-dropdown-item>
-                <el-dropdown-item command="en">{{ $t('message.en') }}</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </span>
-        <el-switch v-model="action" @change="switchEvnt" :active-action-icon="svg('sun')" :inactive-action-icon="svg('moon')"/>
+        <drop-down>
+          <template #default>
+            <el-switch v-model="action" @change="switchEvnt" :active-action-icon="svg('sun')" :inactive-action-icon="svg('moon')"/>
+            <el-button type="info" :icon="svg('background')" circle @click="switchBackground"/>
+            <div>search</div>
+            <div>Login</div>
+          </template>
+        </drop-down>
       </template>
     </el-drawer>
-    <div class="drawerstring-Graphics" ref="slider" @mousemove="svgMousemove">
-      <div class="drawerstring"/>
-      <div class="drawerbutton">
-        <svg-icon href="#" name="circle" @mousedown="svgMousedown"/>
-      </div>
-    </div>
+    <DrawerstringGraphics  ref="sliders" :DOMRange="drawer" @drawerPanelEvnt="drawerPanelEvnt"/>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {onMounted, ref} from "vue";
-import {useI18n} from "vue-i18n";
+import { ref } from "vue";
 import {svg} from "@/icons";
-import SvgIcon from "@/components/SvgIcon/index.vue";
-
-const {locale} = useI18n();
-const sleep = ref(500)
+import {DropDown,DrawerstringGraphics} from "@/components";
 const emit = defineEmits(['bg']);
-const action = ref(localStorage.getItem('isbg'));
 // 控制抽屉是否打开
 const drawerPanel = ref<boolean>(false)
+// 开关默认状态
+const action = ref(localStorage.getItem('isbg'));
+const drawer = ref<any>()
+const sliders = ref<any>();
 
-onMounted(() => {
-  slider.value.style.transform = `translateY(${-50}%)`
-});
-
-const switchLang = (command: string) => {
-  locale.value = command
-  localStorage.setItem('lang', command)
-};
-
-const switchEvnt = (args: boolean) => {
-  emit('bg', args);
-};
-
-// 储存开始地址
-const startPoint = ref<number>(0)
-// 储存结束地址
-const endPoint = ref<number>(0)
-// 鼠标按压/弹起
-const isDom = ref<boolean>(false)
-//  ref绑定drawerstring-Graphics
-const slider = ref<any>();
-// 获取页面高
-const clientHeight = ref(document.documentElement.clientHeight)
-
-const svgMousedown = (evnt: MouseEvent) => {
-  isDom.value = true
-  const {clientY} = evnt;
-  startPoint.value = clientY / clientHeight.value;
+/**
+ * @author WangYaFeng
+ * @date 2023/10/16 1:58
+ * @description 切换背景
+ * @return null
+ * @param event
+ */
+const switchBackground = (event:Element) => {
+  console.log(event)
 }
+
 
 /**
  * @author WangYaFeng
@@ -74,42 +46,29 @@ const svgMousedown = (evnt: MouseEvent) => {
  * @description 抽屉关闭时回调
  * @return null
  */
-const closeDrawer= ()=>{
+const closeDrawer = () => {
+  const {endPoint,slider}:any = sliders.value
   // 获取css表
   const styleSheet = document.styleSheets[5];
   // css表注入动画
-  styleSheet.insertRule(`@keyframes shake {from{ transform: translateY(${endPoint.value}%) } to { transform: translateY(-50%); }`,0);
+  styleSheet.insertRule(`@keyframes shake {from{ transform: translateY(${endPoint}%) } to { transform: translateY(-50%); }`, 0);
   // 挂载动画
-  slider.value.style.animation = `shake 200ms linear`;
-  setTimeout(()=>{
-    slider.value.style.transform = "translateY(-50%)"
-  },190)
+  slider.style.animation = `shake 200ms linear`;
+  setTimeout(() => {
+    slider.style.transform = "translateY(-50%)"
+  }, 190)
   // 卸载动画
-  slider.value.addEventListener('animationend',()=>{
-    slider.value.style.animation = '';
+  slider.addEventListener('animationend', () => {
+    slider.style.animation = '';
   })
 }
 
-/**
- * @author WangYaFeng
- * @date 2023/10/11 1:49
- * @description
- * @return null
- * @param evnt
- */
-const svgMousemove = (evnt: MouseEvent) => {
-  if (!isDom.value) return
-  const {clientY} = evnt;
-  endPoint.value = Number((((clientY / clientHeight.value) - startPoint.value) * 100 - 50).toFixed(2))
-  if(endPoint.value < -50) return;
-  slider.value.style.transform = `translateY(${endPoint.value}%)`
-  endPoint.value > -45 ? drawerPanel.value = true:drawerPanel.value = false
+const switchEvnt = (args: boolean) => {
+  emit('bg', args);
+};
+const drawerPanelEvnt = (even:boolean)=>{
+  drawerPanel.value=even
 }
-
-const svgMouseup = (even: MouseEvent) => {
-  isDom.value = false
-}
-
 
 </script>
 
@@ -119,67 +78,54 @@ const svgMouseup = (even: MouseEvent) => {
     display: none !important;
   }
 }
-
 #drawer {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  .drawerstring-Graphics {
-    width: 2.5%;
-    height: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: absolute;
-    right: 0;
-    z-index: 15;
-    .drawerstring {
-      position: relative;
-      width: 4.25%;
-      height: 70%;
-      background: rgb(51, 51, 51);
-    }
-
-    .drawerbutton {
-      height: 30%;
-
-      svg {
+  :deep(.el-overlay) {
+    width: 95% !important;
+    margin: 0 auto;
+    background: #00000000 !important;
+    z-index: 10 !important;
+    .el-drawer-box{
+      width: 20% !important;
+      height: 10% !important;
+      opacity: 0.9;
+      border: 0 solid;
+      position: absolute !important;
+      left: auto !important;
+      border-bottom-left-radius: 1rem;
+      border-bottom-right-radius: 1rem;
+      .el-drawer__body {
+        display: flex;
         position: relative;
-        top: 0;
-
-        &:hover {
-
+        justify-content: flex-start;
+        z-index: 10 !important;
+        align-items: center;
+        gap: 1rem;
+        background-color: $background-color-drawer;
+        .el-switch{
+          .el-switch__core{
+            --el-color-white: none;
+            .el-switch__action {
+              width: 1rem;
+              height: 1rem;
+              @include background_color('border-color');
+              .el-icon {
+                height: auto;
+                width: auto;
+                svg{
+                  height: 1rem !important;
+                  width: 1rem !important;
+                }
+              }
+            }
+          }
         }
-      }
     }
   }
-}
-
-:global(.el-overlay) {
-  width: 95% !important;
-  margin: 0 auto;
-  background: #00000000 !important;
-  z-index: 10 !important;
-}
-
-:global(.el-drawer-box) {
-  width: 20% !important;
-  height: 10% !important;
-  opacity: 0.9;
-  border: 0 solid;
-  position: absolute !important;
-  left: auto !important;
-  @include background_color('background-color');
-  border-bottom-left-radius: 1rem;
-  border-bottom-right-radius: 1rem;
-  span {
-    font-size: 90%;
-    line-height: 2.2rem;
   }
-}
-:global(.el-drawer__body){
-  z-index: 10 !important;
 }
 </style>
