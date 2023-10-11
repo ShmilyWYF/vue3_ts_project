@@ -1,72 +1,62 @@
 import MockResponse from '@/mock/MockResponse'
 import {mock} from 'mockjs'
+import {MockApiInterface} from "@/interface";
+import {RegUrl} from "@/utils/RegExpUtils";
 
 class MockHandler extends MockResponse {
 
-  public constructor (url: string, type: string, template: {}[], code: number, status: boolean, condition: boolean) {
-    super(url, type, template, code, status, condition)
-  }
-
-  public static mockOption (options: any) {
-    // 获得解析模板
-    const mockTemplate = this.createMockTemplate(options)
-    // 返回实例
-    const mock = this.createInstance(mockTemplate)
-    // 将实例批量初始化
-    mock.forEach((res: any) => {
-      res.init(res)
-    })
-  }
-
-  /**
-   * 初始化模板
-   * @param option
-   * @private
-   */
-  private init (option: any) {
-    // 返回对象实例模板
-    const mockState = option.mockState(option)
-    // 执行对象
-    option.starter(mockState)
-  }
-
-  /**
-   * 解析数据模板
-   * @param option
-   */
-  private static createMockTemplate (option: any): [] {
-    let arr: any = []
-    for (let optionKey in option) {
-      Object.keys(option[optionKey]).reduce((prev: any, curr: any) => {
-        arr.push(prev[curr])
-        prev[curr] = curr
-        return prev
-      }, option[optionKey])
+    public constructor(url: string, type: string, template: any, code: number, status: boolean, condition: boolean) {
+        super(url, type, template, code, status, condition)
     }
-    return arr
-  }
 
-
-
-  private static createInstance (options: any) {
-    let arr: any = []
-    options.forEach((res: any) => {
-      arr.push(new MockHandler(res.url, res.type, res.template, res.code, res.status, res.condition))
-    })
-    return arr
-  }
-
-  private mockState (options: any) {
-    return {
-      url: RegExp(options.url),
-      type: options.type,
-      response: options.response(),
+    public static mockOption(options: Object) {
+        // 获得解析模板
+        const mockTemplate: MockApiInterface[] = this.createMockTemplate(options)
+        // 根据模板数据获取对象实例
+        const getMockObj: MockHandler[] = this.createInstance(mockTemplate)
+        // 将实例批量初始化
+        getMockObj.forEach((mockHandler: MockHandler) => {
+            // 初始化MOCK
+            mockHandler.init(mock)
+        })
     }
-  }
 
-  private starter (options: any) {
-    mock(options.url, options.type, options.response)
-  }
+    /**
+     * 解析数据模板
+     * @param option
+     */
+    private static createMockTemplate(option: Object): MockApiInterface[] {
+        let arr: MockApiInterface[] = []
+        Object.keys(option).reduce((prev: any, curr: string) => {
+            prev[curr].default.forEach((res: MockApiInterface) => {
+                arr.push(res)
+            })
+            return prev
+        }, option)
+        return arr
+    }
+
+    /**
+     * 构造对象实例
+     * @param options
+     * @private
+     */
+    private static createInstance(options: MockApiInterface[]): MockHandler[] {
+        return options.map((res: MockApiInterface): MockHandler => {
+            return (new MockHandler(res.url, res.type, res.template, res.code, res.status, res.condition))
+        })
+    }
+
+    /**
+     * 初始化MOCK
+     * @param mock mock函数
+     * @private
+     */
+    private init(mock: any): void {
+        mock(RegUrl(this.getUrl), this.getType, (option: { body: string | undefined }) => {
+            return this.response(option?.body)
+        });
+    }
 
 }
 

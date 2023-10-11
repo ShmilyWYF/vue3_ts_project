@@ -1,4 +1,4 @@
-import template from '@/mock/template'
+import template from '@/mock/userApi/tempalte/userTemplate'
 
 const userApi = [
   {

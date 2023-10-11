@@ -1,11 +1,7 @@
-import userApi from '@/mock/userApi'
-import orderApi from '@/mock/orderApi'
 import MockHandler from '@/mock/MockHandler'
 
-const mocks = [
-  userApi,
-  orderApi
-]
-export const mockXHR = () => {
-  MockHandler.mockOption(mocks)
+const glob:Record<string, Object> = import.meta.glob('../mock/*Api/*.ts',{eager:true});
+
+export default function () {
+  MockHandler.mockOption(glob)
 }
