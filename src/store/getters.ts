@@ -1,5 +1,14 @@
 const getters = {
-  name: (state:any) => state.user.name
+    menuList: (state: any):[] => state.routerStore.menuList,
+    accessedRouters: (state: any) => state.routerStore.accessedRouters,
+    menuTree: (state: any) => state.routerStore.menuTree,
+    // 文章
+    featureArticleData: (state: any) => state.articleStore.featureArticleData,
+    articleList: (state: any) => state.articleStore.articleList,
+    activeName: (state: any) => state.articleStore.activeName,
+    // 主页=====>
+    useState: (state: any) => state.useAppStore.useState,
+    article: (state: any) => state.useArticleStore.article,
 }
 
 export default getters
