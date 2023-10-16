@@ -26,10 +26,6 @@ if (import.meta.env.APP_NODE_ENV === 'development') {
 
 // init数据
 console.log('初始化数据')
-console.log(store)
-
-// store.commit('useAppStore/SET_USE_APP_STATE', useAPPState)
-// store.commit('useArticleStore/SET_ARTICLE_STATE', useArticleState)
 
 // import {GlobalComponents} from "@/icons";
 // GlobalComponents(app)

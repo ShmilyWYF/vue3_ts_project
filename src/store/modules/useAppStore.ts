@@ -35,86 +35,47 @@ const {useAppApi} = api
 //     aurora_bot_enable: true
 // }
 const useAPPState = {
-    useState: {
-        themeConfig: {
-            theme: '',
-            profile_shape: '',
-            feature: true,
-            gradient: {
-                color_1: '',
-                color_2: '',
-                color_3: ''
-            },
-            header_gradient_css: '',
-            background_gradient_style: {
-                background: '',
-                '-webkit-background-clip': '',
-                '-webkit-text-fill-color': '',
-                '-webkit-box-decoration-break': '',
-                'box-decoration-break': ''
-            }
-        },
-        appLoading: false,
-        websiteConfig: '' as any,
-        viewCount: 0,
-        articleCount: 0,
-        talkCount: 0,
-        categoryCount: 0,
-        tagCount: 0,
-        NPTimeout: 0,
-        loadingTimeout: 0,
-        aurora_bot_enable: false
-    }
+    useState: {},
 }
 
 const mutations = {
     SET_USE_APP_STATE: (useAppStore: any, option: any) => {
         useAppStore.useState = option
     },
-    SET_USE_STATE_TREE: (useAppStore: any, option: { key: any[], data: any }) => {
-        console.log(option)
-        if(option.key.length>1){
-            for (let i = 0; i < option.key.length; i++) {
-                if (useAppStore.useState.themeConfig.hasOwnProperty(option.key[i])) {
-                    useAppStore.useState.themeConfig[i] = Object.values(option.data.key[i])
+    SET_USE_STATE_TREE: (useAppStore: any, data: any ) => {
+        const keyArr = Object.keys(data);
+        if (keyArr.length > 1) {
+            for (let i:number = 0; i < keyArr.length; i++) {
+                if (useAppStore.useState.themeConfig.hasOwnProperty(keyArr[i])) {
+                    useAppStore.useState.themeConfig[keyArr[i]] = data[keyArr[i]]
                 }
             }
             return
         }
-        console.log(useAppStore,option.key[0])
-        if (useAppStore.useState.themeConfig.hasOwnProperty(option.key[0])) {
-            useAppStore.useState.themeConfig[option.key[0]] = option.data
+        if (useAppStore.useState.themeConfig.hasOwnProperty(keyArr[0])) {
+            useAppStore.useState.themeConfig[data[0]] = data[keyArr[0]]
         }
     },
 }
 
-const actions = {
-    theme({commit}: any){
-        return new Promise((resolve, reject)=>{
-            useAppApi.getUseAppConfig().then((res:any)=>{
+const actions: any = {
+    theme({commit}: any) {
+        return new Promise((resolve, reject) => {
+            useAppApi.getUseAppConfig().then((res: any) => {
                 let {data} = res.data
                 if (data.hasOwnProperty('data')) {
                     data = data.data
                 }
                 commit('SET_USE_APP_STATE', data)
                 resolve(data)
-            }),(error:any):void=>{
-                console.log(error)
+            },(error: any): void => {
                 reject(error)
-            }
+            })
         })
     },
     themeConfig({commit}: any, data: any) {
-        commit('SET_USE_STATE_TREE', {'key':Object.keys(data), 'data': data})
+        commit('SET_USE_STATE_TREE', data)
     },
-    startLoading() {
-        if (useAPPState.useState.appLoading) return
-        if (useAPPState.useState.NPTimeout !== -1) clearTimeout(useAPPState.useState.NPTimeout)
-        if (useAPPState.useState.loadingTimeout !== -1) clearTimeout(useAPPState.useState.loadingTimeout)
-        start();
-        useAPPState.useState.appLoading = true
-        // store.commit('SET_USE_STATE_TREE', {'key': 'appLoading', 'data': true})
-    }
 }
 
 export default {

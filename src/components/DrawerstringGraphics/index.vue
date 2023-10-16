@@ -1,5 +1,5 @@
 <template>
-  <div class="drawerstring-Graphics" ref="slider" @mousemove="svgMousemove">
+  <div class="drawerstring-Graphics" ref="slider" @mousemove="svgMousemove" @mousedown="boxMousedown">
     <div class="drawerstring"/>
     <div class="drawerbutton">
       <svg-icon href="#" name="circle" @mousedown="svgMousedown"/>
@@ -38,6 +38,12 @@ defineExpose({
   slider,
   isMousePress
 })
+
+// 滑轮组区域鼠标单击触发drawer关闭回调事件
+const boxMousedown = (e:any) => {
+  emit('drawerPanelEvnt',false);
+}
+
 const svgMousedown = (evnt: MouseEvent) => {
   isMousePress.value = true;
   const {clientY} = evnt;
@@ -45,13 +51,6 @@ const svgMousedown = (evnt: MouseEvent) => {
   // 给主容器添加鼠标松开事件
   DOMRange.value.addEventListener('mouseup',svgMouseup)
 }
-/**
- * @author WangYaFeng
- * @date 2023/10/11 1:49
- * @description
- * @return null
- * @param evnt
- */
 const svgMousemove = (evnt: MouseEvent) => {
   if (!isMousePress.value) return
   const {clientY} = evnt;
@@ -60,9 +59,22 @@ const svgMousemove = (evnt: MouseEvent) => {
   slider.value.style.transform = `translateY(${endPoint.value}%)`
   emit('drawerPanelEvnt',endPoint.value > -47);
 }
-const svgMouseup = ()=>{
+const svgMouseup = (event:any)=>{
   isMousePress.value = false
 }
+
+/**
+ * @author WangYaFeng
+ * @date 2023/10/17 0:48
+ * @description 挂载body鼠标弹起事件，监听鼠标移出浏览器
+ * @param null
+ * @return null
+ */
+document.addEventListener('mouseup', (e)=>{
+  if(e.clientY > window.innerWidth || e.clientY<0 || e.clientX<0 ||e.clientX>window.innerHeight){
+    isMousePress.value = false
+  }
+})
 
 </script>
 <style scoped lang="scss">
@@ -85,6 +97,8 @@ const svgMouseup = ()=>{
 
   .drawerbutton {
     height: 30%;
+    position: relative;
+    z-index: 2001;
     svg {
       position: relative;
       top: 0;

@@ -24,9 +24,9 @@ const mutations = {
 }
 
 const actions: any = {
-    getFeatureArticle({commit, getters}: any) {
+    getFeatureArticle({commit, state}: any) {
         return new Promise((resolve, reject) => {
-            if (store.getters.featureArticleData) {
+            if (state.featureArticleData) {
                 console.log('调用featureArticle缓存')
                 resolve(store.getters.featureArticleData)
             } else {

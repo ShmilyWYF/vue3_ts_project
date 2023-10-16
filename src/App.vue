@@ -24,6 +24,8 @@ body{
   justify-content: center;
   height: 100vh;
   font-family: Poppins,Rubik, Avenir, Helvetica, Arial, sans-serif, serif;
+  -webkit-user-select:none;
+  user-select:none;
   :deep(.el-card__body) {
     height: 100%;
   }

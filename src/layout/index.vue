@@ -10,7 +10,7 @@
           </el-header>
           <el-main class="el-main">
             <el-card body-style="height:100%">
-                <Main/>
+                <Main :is-show-bg="isSwitch"/>
             </el-card>
           </el-main>
           <el-footer class="el-footer">
@@ -19,24 +19,26 @@
         </el-container>
       </el-col>
     </el-row>
-    <Drawer @bg="switchBackground"/>
+    <Drawer @switch-theme="switchTheme" @is-Switch-Bg="isSwitchBgEvent" :is-switch-bg-button="isSwitch"/>
   </div>
 </template>
 <script lang="ts" setup>
-import {onBeforeMount} from "vue";
-
-onBeforeMount(()=>{
-  switchBackground(false)
-})
-
+import {ref} from "vue";
 import {NavMenu,Main,FooterTag,Drawer} from "@/layout/component";
 import store from "@/store";
 
-const switchBackground = (args:boolean) => {
+const switchTheme = (args:boolean) => {
   const theme = {'theme': args?'light':'dark' }
   window.document.documentElement.setAttribute( "data-theme", theme.theme);
   store.dispatch('useAppStore/themeConfig',theme);
 }
+
+// 组件boolean同步
+const isSwitch = ref(JSON.parse(String(localStorage.getItem('IsSwitchBg')))||false)
+const isSwitchBgEvent = (event:boolean) =>{
+  isSwitch.value = event
+}
+
 </script>
 
 <style scoped lang="scss">

@@ -5,14 +5,22 @@
     <App-Banner/>
   </div>
   <!--背景板-->
-  <div class="main-bg" v-show="isMainBg"/>
+  <transition name="fade">
+    <div class="main-bg" v-show="isShowBg"/>
+  </transition>
 </template>
-
 
 <script lang="ts" setup>
 import {Breadcrumb,AppBanner} from "@/components";
-import {computed} from "vue";
-const isMainBg = computed<boolean>(()=>false)
+
+defineProps({
+  isShowBg:{
+    type: Boolean,
+    required: true,
+    default: false,
+  }
+})
+
 </script>
 
 <style scoped lang="scss">
@@ -31,6 +39,7 @@ const isMainBg = computed<boolean>(()=>false)
   }
 }
 
+
 .main-bg{
   width: 99.7%;
   height: 100%;
@@ -40,6 +49,37 @@ const isMainBg = computed<boolean>(()=>false)
   border-top-left-radius: 12px;
   border-top-right-radius: 5px;
   @include background_color('background-color')
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-active {
+  animation: fade-in 0.5s;
+}
+.fade-leave-active {
+  animation: fade-in 0.5s reverse;
+}
+
+@keyframes fade-in {
+  0% {
+    transform: scale(0);
+  }
+  25% {
+    transform: scale(0.25);
+  }
+  50% {
+    transform: scale(0.5);
+  }
+  75% {
+    transform: scale(0.75);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 </style>

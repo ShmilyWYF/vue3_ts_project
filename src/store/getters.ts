@@ -6,9 +6,10 @@ const getters = {
     featureArticleData: (state: any) => state.articleStore.featureArticleData,
     articleList: (state: any) => state.articleStore.articleList,
     activeName: (state: any) => state.articleStore.activeName,
+    article: (state: any) => state.useArticleStore.article,
     // 主页=====>
     useAPPState: (state: any) => state.useAppStore.useAPPState,
-    article: (state: any) => state.useArticleStore.article,
+    isMainBg:(state: any) => state.useAppStore.isMainBg,
 }
 
 export default getters

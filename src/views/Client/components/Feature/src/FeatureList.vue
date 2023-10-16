@@ -110,6 +110,8 @@ const props = defineProps({
           }
           p {
             margin: 0 ;
+            overflow: hidden;
+            text-overflow: ellipsis;
             @include font_color('text-color-p')
           }
         }

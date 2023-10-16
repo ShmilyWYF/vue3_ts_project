@@ -9,15 +9,18 @@ export default () => {
     router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
             console.log('当前路由地址', to)
             console.log('get路由',router.getRoutes())
-            // 获取主题配置
-            store.dispatch('useAppStore/theme','')
             const accessedRouters = toRaw(store.getters.accessedRouters);
             start()
+            // 仅第一次进入网站时执行
             if (accessedRouters === undefined) {
                 await store.dispatch('routerStore/getMenuRoles', '').then((res: []) => {
                     res.forEach(res => {
                         router.addRoute(res)
                     })
+                })
+                // 获取主题配置
+                store.dispatch('useAppStore/theme','').then(()=>{
+                    console.info('获取主题配置 -> ok')
                 })
                 next({...to, replace: true})
             } else if (accessedRouters.length !== 0) {
