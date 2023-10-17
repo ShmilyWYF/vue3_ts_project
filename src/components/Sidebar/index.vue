@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar">
+  <div class="sidebar" :style="{'height': h}">
     <el-card>
       <template #header>
         <p>
@@ -9,11 +9,12 @@
         </p>
       </template>
       <template #default>
-        <ul class="sidebar-ul">
-          <li>
-            <slot name="default"/>
+        <ul class="sidebar-ul" :style="{display: ulDisplay }">
+          <li v-for="(item,key) in data" :key="key" :style="ulLiClss">
+            <slot name="content" :item="item"/>
           </li>
         </ul>
+        <slot name="defulet"/>
       </template>
     </el-card>
   </div>
@@ -21,7 +22,7 @@
 <script setup lang="ts">
 import SvgIcon from "@/components/SvgIcon/index.vue";
 
-defineProps({
+const props = defineProps({
   title: {
     type: String,
     default: '未定义',
@@ -30,16 +31,34 @@ defineProps({
     type: String,
     required: true,
   },
+  data: {
+    type: [Array],
+    required: false,
+    default: [''],
+  },
+  h:{
+    type: String,
+    required: false,
+    default: '22.5rem',
+  },
+  ulDisplay:{
+    type: String,
+    required: false,
+    default: 'block',
+  },
+  ulLiClss:{
+    required: false,
+    default: '',
+  }
 })
 
 </script>
 <style lang="scss" scoped>
 .sidebar {
-  height: 100%;
   min-height: 10rem;
   width: 95%;
   margin: 0 auto;
-
+  padding-bottom: .5rem;
   .el-card {
     height: calc(100% - 2.5rem);
     width: calc(100% - 2.5rem);
@@ -48,9 +67,10 @@ defineProps({
     position: relative;
     padding: 1.25rem;
     display: grid;
-    grid-template-rows: minmax(15%, 0fr);
+    grid-gap: 1rem;
+    grid-template-rows: minmax(3.5rem, 0fr);
     @include background_color('background-color');
-    box-shadow: $box-shadow;
+    @include box_shadow('box-card-shadow-sidebar-card');
 
     :deep(.el-card__header) {
       height: 100%;
@@ -63,7 +83,8 @@ defineProps({
         align-items: center;
         justify-content: flex-start;
         margin-bottom: 0;
-
+        gap: 2.5%;
+        @include font_color('text-color');
         span {
           margin-bottom: 0;
           font-weight: 600;
@@ -92,68 +113,29 @@ defineProps({
         list-style: none;
         margin: 0;
         padding: 0;
-
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
         li {
-          transition-property: box-shadow;
-          transition-timing-function: cubic-bezier(.4, 0, .2, 1);
-          transition-duration: .15s;
           box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgba(0, 0, 0, .05);
           padding: .75rem .5rem;
           display: flex;
           flex-direction: row;
           justify-items: center;
           align-items: center;
+          flex-wrap: wrap;
           column-gap: 5%;
+          row-gap: 1rem;
           margin-bottom: .375rem;
           border-radius: .5rem;
-          background: #1a1a1a;
-
-          .imageFrame {
-            width: 2.25rem;
-            height: 2.25rem;;
-            overflow: hidden;
-            border-radius: 99rem;
-            flex-shrink: 0;
-
-            img {
-              transition-property: transform;
-              transition-timing-function: cubic-bezier(.4, 0, .2, 1);
-              transition-duration: .8s;
-              transform: rotate(-1turn);
-              max-width: 100%;
-              height: auto;
-              display: block;
-              vertical-align: middle;
-            }
+          @include background_color('background-primary');
+          transition-property: box-shadow;
+          transition-timing-function: cubic-bezier(.4,0,.2,1);
+          transition-duration: .15s;
+          &:hover{
+            @include box_shadow('box-card-shadow-sidebar');
           }
 
-          .comments {
-            width: 70%;
-            font-size: .75rem;
-            line-height: 1rem;
-            flex: 1 1 0;
-
-            span {
-              color: #24c6dc;
-              padding-right: .5rem;
-            }
-
-            p {
-              margin: 0;
-              color: rgba(107, 114, 128, 1);
-            }
-
-            .commentContent {
-              overflow: hidden;
-              text-overflow: ellipsis;
-              display: -webkit-box;
-              -webkit-line-clamp: 2;
-              -webkit-box-orient: vertical;
-              color: #fff;
-              font-size: .75rem;
-              line-height: 1rem;
-            }
-          }
         }
       }
     }

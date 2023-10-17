@@ -10,7 +10,6 @@ const name = 'Loading'
 /** nprogress styles */
 ::v-deep#loading-bar-wrapper #nprogress {
   pointer-events: none;
-
   .bar {
     background: var(--main-Np-gradient);
     position: absolute;

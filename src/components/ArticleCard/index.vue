@@ -218,7 +218,7 @@ defineProps({
     grid-row: span 2/span 2;
 
     p {
-      @include font_color('text-color-p');
+      @include font_color('text-color');
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
@@ -307,7 +307,7 @@ defineProps({
           color: #6d6d6d;
 
           .text-ob-normal {
-            @include font_color('text-color-p')
+            @include font_color('text-color')
           }
 
           .pr-1\.5 {

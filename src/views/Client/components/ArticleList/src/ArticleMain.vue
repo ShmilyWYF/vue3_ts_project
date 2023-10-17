@@ -32,8 +32,8 @@
 .home-articleList {
   height: 100%;
   width: 100%;
-  //margin: 1% auto;
   position: relative;
+  padding-bottom: 1rem;
   @include background_color('background-color');
   opacity: 0.9;
   border: #00000000;

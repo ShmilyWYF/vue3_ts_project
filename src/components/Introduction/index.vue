@@ -1,24 +1,24 @@
 <template>
-  <el-card class="introduction">
+  <el-card class="introduction" v-if="data.value !== {}">
     <div>
       <ul class="introduction-top">
         <li>
-          <img :src="obj.img" alt="头像"/>
+          <img :src="data.img" alt="头像"/>
         </li>
         <li>
-          <h2>{{ obj.nickname }}</h2>
+          <h2>{{ data.nickname }}</h2>
           <hr/>
         </li>
         <li>
-          <p>{{ obj.description }}</p>
+          <p>{{ data.description }}</p>
         </li>
       </ul>
       <ul class="introduction-footer">
         <li>
-          <a :href="obj.url"><svg-icon name="github"/></a>
+          <a :href="data.url"><svg-icon name="github"/></a>
         </li>
         <ul>
-          <li v-for="(item,key) in obj.childer" :key="key">
+          <li v-for="(item,key) in data.childer" :key="key">
             <span>{{ item.count }}</span>
             <p>{{ item.title }}</p>
           </li>
@@ -29,37 +29,17 @@
 </template>
 <script lang="ts" setup>
 import SvgIcon from "@/components/SvgIcon/index.vue";
-const obj = {
-  img:'src/assets/default-cover.jpg',
-  nickname:'三个字',
-  description:'一个疯狂的字符串',
-  url:'https://github.com',
-  childer:[
-    {
-      count:'15',
-      title:'文章'
-    },
-    {
-      count:'2',
-      title:'说说'
-    },
-    {
-      count:'14',
-      title:'分类'
-    },
-    {
-      count:'11',
-      title:'标签'
-    }
-  ]
-}
-
+defineProps({
+  data:{
+    required:true,
+  }
+})
 </script>
 <style lang="scss" scoped>
 
 .introduction{
   height: 100%;
-  width: calc(100% - 3%)!important;
+  width: calc(95% - 3%)!important;
   padding: 1.5% 1.5% 2% 1.5% !important;
   display: flex;
   align-items: flex-end;
@@ -67,6 +47,7 @@ const obj = {
   border: 0 #00000000;
   border-radius: .75rem;
   position: relative;
+  margin: 0 auto;
   :deep(.el-card__body){
     height: 90% !important;
     width: 100%;

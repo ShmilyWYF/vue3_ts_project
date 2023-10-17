@@ -1,5 +1,5 @@
 # project-vue3
-
+    "vue": "^3.2.13",
 ## Project setup
 ```
 yarn install

@@ -52,7 +52,6 @@ class RulesApiImpl extends RulesVariable implements RulesApi {
     }
 
     rulesApi(isEnable: boolean) {
-        console.log(isEnable)
         return isEnable ? this.autoCreateApi() : this.customCreateApi(list)
     }
 

@@ -40,3 +40,24 @@
     box-shadow: themed($color) !important;
   }
 }
+
+
+
+// 自适应处理
+@mixin app($deg) {
+  --main-Np-gradient: linear-gradient(#{$deg}, #24c6dc, #5433ff 41.07%, #ff0099 76.05%);
+  --body-Background: linear-gradient(#{$deg}, #ff0099, #5433ff 41.07%, #24c6dc 76.05%);
+  --feature-Background: linear-gradient(#{$deg}, #ff0099, #5433ff 46.07%, #24c6dc 87.05%);
+  --feature-app-banner-Background: linear-gradient(#{$deg}, #ff0099, #5433ff 41.07%, #24c6dc 76.05%);
+}
+
+@mixin appgl($deg) {
+  @media screen and (min-width: 1024px) {
+    @include app($deg)
+  }
+}
+
+@mixin setApp($degGL,$degML) {
+  @include appgl($degGL);
+  @include app($degML);
+}

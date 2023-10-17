@@ -140,7 +140,6 @@ const switchBackgroundButton = () => {
         .el-switch {
           .el-switch__core {
             --el-color-white: none;
-
             .el-switch__action {
               width: 1rem;
               height: 1rem;

@@ -1,10 +1,10 @@
-import {articleFeatureList, articleListByName} from "@/mock/articleApi/tempalte";
+import {featureArticle, articleListByName, ArticleAsideList} from "@/mock/articleApi/tempalte";
 
 const articleApi = [
     {
-        url: '/get/FeatureArticle',
+        url: '/get/featureArticle',
         type: 'get',
-        template: articleFeatureList(),
+        template: featureArticle(),
         code: Number(200),
         status: true,
         condition: true
@@ -16,7 +16,15 @@ const articleApi = [
         code: Number(200),
         status: true,
         condition: true
-    }
+    },
+    {
+        url: '/get/allArticleAsideList',
+        type: 'get',
+        template: ArticleAsideList(),
+        code: Number(200),
+        status: true,
+        condition: true
+    },
 ]
 
 

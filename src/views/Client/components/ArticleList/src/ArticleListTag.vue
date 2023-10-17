@@ -38,11 +38,16 @@ onMounted(() => {
   getArticleListByName()
 })
 
-
+/**
+ * @author WangYaFeng
+ * @date 2023/10/17 18:44
+ * @description 根据所选列表导航label列出相应文章列表
+ * @return null
+ * @param tab
+ */
 const getArticleListByName = async (tab?: any) => {
   const label = tab ? toRaw(tab?.props)?.name : (activeName.value ? activeName.value : 'ALL')
-  console.log(label)
-  store.dispatch('articleStore/getArticleListByName', label).then((res: []) => {
+  await store.dispatch('articleStore/getArticleListByName', label).then((res: []) => {
         total.value = res
         data.value = total.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
       }
@@ -121,7 +126,8 @@ const getCurrentChange = (val: any) => {
         .Article {
           height: 25rem;
           .el-card{
-            box-shadow: #11111AB3 0 4px 16px, #11111AB3 0 8px 24px, #11111A4D 0 16px 56px;
+            //@include box_shadow('box-card-shadow-sidebar')
+            @include box_shadow('box-card-shadow-tabs')
           }
         }
       }
@@ -150,7 +156,7 @@ const getCurrentChange = (val: any) => {
     z-index: 15;
     button {
       background: #00000000;
-      @include font_color('text-color-p');
+      @include font_color('text-color');
 
       &:disabled {
         display: none;

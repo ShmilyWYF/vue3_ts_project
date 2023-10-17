@@ -18,6 +18,15 @@ const constantRoute: Array<RouteRecordRaw> = [
                     //当设置 noRedirect 的时候该路由在面包屑导航中不可被点击
             },
             {
+                path: `/articles/:id`,
+                name: 'articles',
+                component: () => import('@/components/Articles/index.vue'),
+                meta:{
+                    require: true,
+                    title: '文章列表'
+                },
+            },
+            {
                 path: '/Navigation',
                 name: 'Navigation',
                 component: () => import('@/views/Dashboard/index.vue'),

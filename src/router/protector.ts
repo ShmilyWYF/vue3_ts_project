@@ -7,8 +7,6 @@ import {NavigationGuardNext, RouteLocationNormalized} from "vue-router";
 
 export default () => {
     router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-            console.log('当前路由地址', to)
-            console.log('get路由',router.getRoutes())
             const accessedRouters = toRaw(store.getters.accessedRouters);
             start()
             // 仅第一次进入网站时执行

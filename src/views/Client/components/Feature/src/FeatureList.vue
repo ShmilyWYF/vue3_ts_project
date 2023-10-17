@@ -45,7 +45,7 @@ const props = defineProps({
           padding: 3rem;
           font-size: 1.875rem !important;
           line-height: 2.25rem !important;
-          @include font_color('text-color-p')
+          @include font_color('text-color')
         }
       }
     }
@@ -65,7 +65,7 @@ const props = defineProps({
     z-index: 20;
     border-radius: 1rem;
     --el-card-border-color: none;
-    background: var(--body-Background);
+    background: $body-Background;
     &:hover {
       transform: scale(1.015);
     }
@@ -112,7 +112,7 @@ const props = defineProps({
             margin: 0 ;
             overflow: hidden;
             text-overflow: ellipsis;
-            @include font_color('text-color-p')
+            @include font_color('text-color')
           }
         }
       }

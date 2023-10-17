@@ -1,12 +1,19 @@
 import api from "@/axios";
 import store from "@/store";
+import {mockData} from "@/utils/util";
 
-const articleApi = api.articleApi
+const {articleApi} = api
 
 const articleState = {
     featureArticleData: {},
     articleList: {},
     activeName: '',
+    acticleAsideList:{
+        commentsList: [],
+        WebsiteInformation: [],
+        introduction: [],
+        tags: [],
+    },
 }
 
 const obj = {};
@@ -21,14 +28,17 @@ const mutations = {
     SET_ACTIVE_NAME(articleStore: any, options:string): void {
         articleStore.activeName = options
     },
+    SET_ARTICLE_Aside_LIST(articleStore: any, options:string): void {
+        articleStore.acticleAsideList = options
+    },
 }
 
 const actions: any = {
     getFeatureArticle({commit, state}: any) {
         return new Promise((resolve, reject) => {
             if (state.featureArticleData) {
-                console.log('调用featureArticle缓存')
-                resolve(store.getters.featureArticleData)
+                console.log('featureArticleData调用缓存')
+                resolve(state.featureArticleData)
             } else {
             articleApi.getFeatureArticle().then((res: any) => {
                 let {data} = res.data
@@ -43,28 +53,14 @@ const actions: any = {
             }
         })
     },
-
-    getArticleListByName({commit}: any, listName: string) {
+    getArticleListByName({commit,state}: any, listName: string) {
         return new Promise((resolve, reject) => {
-            if (store.getters.articleList?.hasOwnProperty(listName)) {
+            if (state.articleList?.hasOwnProperty(listName)) {
                 commit('SET_ACTIVE_NAME',listName)
                 resolve(store.getters.articleList[listName])
             } else {
-                console.log('不存在')
                 articleApi.getArticleListByName(listName).then((res: any) => {
-                    console.log(res)
-                    // data解构赋值 data = res.data.data
-                    let {data} = res.data
-                    // 判断data下是否还有data  兼容mock模拟数据
-                    if (data.hasOwnProperty('data')) {
-                        data = data.data
-                    }
-                    // const option = Object.keys(listName).reduce((prev: any) => {
-                    //     prev[listName] = {
-                    //         [listName]: data
-                    //     }
-                    //     return prev
-                    // }, {})
+                    const data = mockData(res)
                     const option = {[listName]: data}
                     commit('SET_ACTIVE_NAME',listName)
                     commit('SET_ARTICLE_LIST', option)
@@ -74,8 +70,25 @@ const actions: any = {
                 })
             }
         })
+    },
+    getAllArticleAsideList({commit,state}:any){
+        return new Promise((resolve, reject) => {
+            if (state.acticleAsideList) {
+                console.log('acticleAsideList调用缓存')
+                resolve(state.acticleAsideList)
+            } else {
+            articleApi.getAllArticleAsideList().then((res:any)=>{
+                const data = mockData(res)
+                commit('SET_ARTICLE_Aside_LIST',data)
+                resolve(data)
+             }),(error:any)=>{
+                reject(error)
+            }
+            }
+        })
     }
 }
+
 export default {
     namespaced: true,
     articleState,

@@ -7,6 +7,7 @@ const getters = {
     articleList: (state: any) => state.articleStore.articleList,
     activeName: (state: any) => state.articleStore.activeName,
     article: (state: any) => state.useArticleStore.article,
+    acticleAsideList:(state: any) => state.useArticleStore.acticleAsideList,
     // 主页=====>
     useAPPState: (state: any) => state.useAppStore.useAPPState,
     isMainBg:(state: any) => state.useAppStore.isMainBg,
