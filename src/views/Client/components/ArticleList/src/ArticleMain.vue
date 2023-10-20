@@ -2,18 +2,18 @@
   <el-row :gutter="0" style="width: 100%;" justify="center">
     <el-col :xs="{span: 24}" :md="{span: 22}" :lg="{span: 20}">
       <el-card class="home-articleList" body-style="padding: 0;height:100%">
-        <el-header>
+        <el-header :style="headerBody">
           <slot name="header"/>
         </el-header>
         <el-container>
           <el-row :gutter="32" style="width: 100%;">
             <el-col :xs="{span: 24}" :sm="{span: 20}" :md="{span: 16}" :lg="{span: 18}">
-              <el-main>
+              <el-main :style="mainBody">
                 <slot name="default"/>
               </el-main>
             </el-col>
             <el-col class="hidden-sm-and-down" :md="{span: 8}" :lg="{span: 6}">
-              <el-aside>
+              <el-aside :style="asideBody">
                 <slot name="aside"/>
               </el-aside>
             </el-col>
@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-
+defineProps(['headerBody','mainBody','asideBody']);
 </script>
 
 <style scoped lang="scss">

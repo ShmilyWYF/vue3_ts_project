@@ -5,6 +5,8 @@ export default {
         en: 'english',
         tag: 'RECOMMENDED',
         ALL: 'ALL',
-        Docker: 'Docker'
+        Docker: 'Docker',
+        JAVA: 'Java',
+        'C++': 'C++'
     },
 }

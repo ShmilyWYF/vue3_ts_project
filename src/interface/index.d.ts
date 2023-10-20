@@ -17,5 +17,10 @@ export interface ArticleInterface {
     avatar: '',
     author: '',
     datatime: number,
-    top: boolean,
+    marking: 0,
+}
+
+export interface ArticleListTagInterface {
+    categoryName: string,
+    articleCount: number
 }

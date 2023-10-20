@@ -5,6 +5,8 @@ export default {
         en: '英文',
         tag: '推荐文章',
         ALL: '全部',
-        Docker: 'Docker'
+        Docker: 'Docker',
+        JAVA: 'Java',
+        'C++': 'C++'
     },
 }

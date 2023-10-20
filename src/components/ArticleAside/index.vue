@@ -75,6 +75,9 @@ store.dispatch('articleStore/getAllArticleAsideList').then((res:any)=>{
     display: flex;
     flex-direction: column;
     row-gap: 1rem;
+    .sidebar{
+      width: 95% !important;
+    }
     // 最新评论
     .imageFrame {
       overflow: hidden;

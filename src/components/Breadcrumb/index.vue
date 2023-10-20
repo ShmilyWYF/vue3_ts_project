@@ -17,9 +17,7 @@ const isbread = ref<boolean>(false)
 
 const breadList = <any>computed(()=>{
   let matcheds = useRoute().matched;
-  matcheds.forEach((res)=>{
-    isbread.value = res.name!=='home'
-  })
+  isbread.value = matcheds[1].name != 'home'
   return matcheds
 })
 </script>

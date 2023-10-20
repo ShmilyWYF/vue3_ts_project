@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar" :style="{'height': h}">
+  <div class="sidebar" :style="{'height': h,'width': w}">
     <el-card>
       <template #header>
         <p>
@@ -8,7 +8,7 @@
           <hr/>
         </p>
       </template>
-      <template #default>
+      <template #default v-show="showContext">
         <ul class="sidebar-ul" :style="{display: ulDisplay }">
           <li v-for="(item,key) in data" :key="key" :style="ulLiClss">
             <slot name="content" :item="item"/>
@@ -39,7 +39,12 @@ const props = defineProps({
   h:{
     type: String,
     required: false,
-    default: '22.5rem',
+    default: '10.5rem',
+  },
+  w:{
+    type: String,
+    required: false,
+    default: '100%',
   },
   ulDisplay:{
     type: String,
@@ -49,14 +54,19 @@ const props = defineProps({
   ulLiClss:{
     required: false,
     default: '',
+  },
+  showContext:{
+    type: Boolean,
+    required: false,
+    default: true,
   }
 })
 
 </script>
 <style lang="scss" scoped>
 .sidebar {
-  min-height: 10rem;
-  width: 95%;
+  min-height: 10.5rem;
+  min-width: 10.5rem;
   margin: 0 auto;
   padding-bottom: .5rem;
   .el-card {
@@ -83,7 +93,7 @@ const props = defineProps({
         align-items: center;
         justify-content: flex-start;
         margin-bottom: 0;
-        gap: 2.5%;
+        gap: 0.5rem;
         @include font_color('text-color');
         span {
           margin-bottom: 0;
@@ -92,8 +102,8 @@ const props = defineProps({
         }
 
         hr {
-          height: 5%;
-          width: 25%;
+          height: 0.2rem;
+          width: 3.5rem;
           border: 0 solid;
           border-radius: 1rem;
           background: $body-Background;

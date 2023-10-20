@@ -40,7 +40,7 @@ export const featureArticle = () => {
     }
 }
 
-export const articleListByName = (parameters?: string) => {
+export const articleListByName = (parameters?: string):any => {
     if (parameters === 'ALL') {
         return Mock.mock({
             'data|20': [
@@ -78,6 +78,21 @@ export const articleListByName = (parameters?: string) => {
     }
 }
 
+export const articleListTag:any[] = [
+    {
+        articleCount: 1,
+        categoryName:"Docker"
+    },
+    {
+        articleCount: 5,
+        categoryName:"JAVA"
+    },
+    {
+        articleCount: 9,
+        categoryName:"C++"
+    }
+]
+
 export const ArticleAsideList = () => {
     return {
         introduction: {
@@ -87,7 +102,7 @@ export const ArticleAsideList = () => {
             url:'https://github.com',
             childer:[
                 {
-                    count:'15',
+                    count: articleListByName('ALL').data.length,
                     title:'文章'
                 },
                 {
@@ -121,6 +136,8 @@ export const ArticleAsideList = () => {
     }
 }
 
+
+
 const {commentsList} = Mock.mock({
     'commentsList|16': [
         {
@@ -141,4 +158,3 @@ const {tags} = Mock.mock({
         },
     ]
 })
-

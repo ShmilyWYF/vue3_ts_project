@@ -1,7 +1,5 @@
 <template>
   <div>
-    <el-backtop target=".main" :visibility-height="800" style="z-index: 30;" :element-loading-svg="svg('xuegao')"/>
-
     <el-row :gutter="0" class="row-feature-box" justify="center">
       <el-col :xs="{span: 24}" :md="{span: 22}" :lg="{span: 20}">
         <Feature :FeatureData="featureData" :loading="loading" v-slot:FeatureList="slotProp" v-slot:AppBanner="appBanner">
@@ -10,9 +8,9 @@
       </el-col>
     </el-row>
 
-    <ArticleMain>
+    <ArticleMain class="ArticleMain">
       <template #header>
-        123
+        <sidebar icon="moon" title="文章列表" :show-context="false" h="auto"/>
       </template>
       <template #default>
         <Article-List-Tag/>
@@ -21,6 +19,9 @@
         <ArticleAside/>
       </template>
     </ArticleMain>
+
+
+    <el-backtop target=".main" :visibility-height="800" style="z-index: 30;" :element-loading-svg="svg('xuegao')"/>
 
   </div>
 </template>
@@ -33,7 +34,7 @@ import {Feature, FeatureList} from '@/views/Client/components/Feature'
 import {ArticleListTag, ArticleMain} from "@/views/Client/components/ArticleList";
 import store from "@/store";
 import {svg} from "@/icons";
-import {ArticleAside} from "@/components";
+import {ArticleAside, Sidebar} from "@/components";
 
 const loading = ref<boolean>(true)
 const featureData = ref()
@@ -57,6 +58,20 @@ const getArticle = () => {
 .row-feature-box{
   height: 180%
 }
+.ArticleMain{
+    :deep(.el-header){
+      height: 4rem;
+      .el-card{
+        padding: 0;
+        background: none !important;
+        box-shadow: none !important;
+        .el-card__body{
+          display: none;
+        }
+      }
+    }
+}
+
 @media (min-width: 1024px) {
   .el-backtop {
     right: 2% !important;
