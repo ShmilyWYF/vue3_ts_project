@@ -12,22 +12,28 @@
         </drop-down>
       </template>
     </el-drawer>
-    <DrawerstringGraphics ref="sliders" :DOMRange="drawer" @drawerPanelEvnt="drawerPanelEvnt"/>
+    <el-affix target=".main">
+      <DrawerstringGraphics ref="sliders" :DOMRange="drawer" @drawerPanelEvnt="drawerPanelEvnt"/>
+    </el-affix>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {computed, ref, toRefs} from "vue";
+import {ref, toRefs} from "vue";
 import {svg} from "@/icons";
 import {DropDown, DrawerstringGraphics} from "@/components";
-import store from "@/store";
 const props = defineProps({
   isSwitchBgButton:{
     type: Boolean,
     required: true,
     default: false,
+  },
+  container:{
+    type: <any>null,
+    required: true,
   }
 })
+const {isSwitchBgButton,container} = toRefs(props)
 
 const emit = defineEmits(['SwitchTheme','IsSwitchBg']);
 // 控制抽屉是否打开
@@ -35,9 +41,22 @@ const drawerPanel = ref<boolean>(false)
 // 开关默认状态
 const action = ref(JSON.parse(String(localStorage.getItem('isbg')))||false)
 emit('SwitchTheme', action.value)
-
 const drawer = ref<any>()
 const sliders = ref<any>();
+
+/**
+ * @author WangYaFeng
+ * @date 2023/10/17 0:33
+ * @description 拉绳打开抽屉事件
+ * @return null
+ * @param even
+ */
+const drawerPanelEvnt = (even: boolean) => {
+  drawerPanel.value = even
+  // 解决与导航栏叠层层级问题
+  drawer.value.style.zIndex = 20;
+  container.value.$el.style.zIndex = '15'
+}
 
 /**
  * @author WangYaFeng
@@ -53,6 +72,7 @@ const closeDrawer = () => {
   styleSheet.insertRule(`@keyframes shake {from{ transform: translateY(${endPoint}%) } to { transform: translateY(-50%); }`, 0);
   // 挂载动画
   slider.style.animation = `shake 200ms linear`;
+  // 添加延时
   setTimeout(() => {
     slider.style.transform = "translateY(-50%)"
   }, 190)
@@ -60,26 +80,27 @@ const closeDrawer = () => {
   slider.addEventListener('animationend', () => {
     slider.style.animation = '';
   })
+  // 解决与导航栏叠层层级问题
+  drawer.value.style.zIndex = 0;
+  container.value.$el.style.zIndex = '10'
 }
 
+/**
+ * @author WangYaFeng
+ * @date 2023/10/28 2:17
+ * @description switch开关事件，用于控制主题
+ * @return null
+ * @param args 布尔类型，
+ */
 const switchEvnt = (args: boolean) => {
   localStorage.setItem('isbg',String(args))
   emit('SwitchTheme', args);
 };
 
-/**
- * @author WangYaFeng
- * @date 2023/10/17 0:33
- * @description 抽屉开关事件
- * @return null
- * @param even
- */
-const drawerPanelEvnt = (even: boolean) => {
-  drawerPanel.value = even
-}
+
 
 const isLocal = ref<boolean>(false)
-const {isSwitchBgButton} = toRefs(props)
+
 /**
  * @author WangYaFeng
  * @date 2023/10/16 1:58
@@ -106,12 +127,12 @@ const switchBackgroundButton = () => {
 }
 
 #drawer {
-  position: absolute;
+  position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-
+  z-index: 10;
   :deep(.el-overlay) {
     width: 95% !important;
     margin: 0 auto;

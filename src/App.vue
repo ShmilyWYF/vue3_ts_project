@@ -14,8 +14,8 @@ html, body, #app {
   margin: 0;
   min-width: 390px;
   max-width: 1980px;
-  max-height: 980px;
-  min-height: 844px;
+  max-height: 1200px;
+  min-height: 768px;
   font-size:1rem;
 }
 
@@ -35,7 +35,7 @@ body {
 
 #app {
   @include setApp(130deg,240deg);
-  background: var(--body-Background);
+  //background: var(--body-Background);
   font-size: 100%;
 }
 

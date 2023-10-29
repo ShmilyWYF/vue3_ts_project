@@ -2,20 +2,15 @@
   <el-menu
       :default-active="activeIndex"
       class="el-menu-demo"
-      mode="horizontal"
+      :mode="mode"
       router="router"
       style="height: 100%"
   >
       <el-menu-item disabled class="log">
         Blog
       </el-menu-item>
-    <template v-for="(item,keys) in routers.concat(menuList)" :key="keys">
-      <template v-if="item">
-        <el-menu-item v-if="item.hasOwnProperty('meta')" :index="item.path">
-          <span>
-            {{ item.meta.title }}
-          </span>
-        </el-menu-item>
+    <template v-for="(item,keys) in routers.concat(accessedRouters)" :key="keys">
+      <template v-if="item.path === '/'">
         <template v-for="(children,key) in item.children" :key="key">
           <template v-if="children.hasOwnProperty('meta')">
             <el-menu-item v-if="children.meta.require" :index="children.path">
@@ -25,14 +20,16 @@
             </el-menu-item>
           </template>
         </template>
-        <!--异步组路由部分-->
-        <el-sub-menu :index="item.id" v-if="!item.hasOwnProperty('meta')" popper-class="el-sub-popper">
-          <template #title>
-            <span>{{ item.title }}</span>
-          </template>
-          <template v-for="(children,key) in item.children" :key="key">
-            <el-menu-item :index="children.path">{{ children.title }}</el-menu-item>
-          </template>
+      </template>
+      <!--异步组路由部分-->
+      <template v-if="item.path !== '/'">
+        <el-sub-menu :index="item.path" popper-class="el-sub-popper" >
+            <template #title>
+              <span>{{item.meta.title}}</span>
+            </template>
+            <template v-for="(children,key) in item.children" :key="key">
+              <el-menu-item :index="children.path">{{ item.meta.title }}</el-menu-item>
+            </template>
         </el-sub-menu>
       </template>
     </template>
@@ -45,8 +42,11 @@ import router from '@/router'
 import store from "@/store";
 
 const activeIndex = ref('/index')
+// 公共路由部分
 const routers: any = computed(() => router.options.routes)
-const menuList: any = computed(() => store.getters.menuList)
+// 私有路由部分
+const accessedRouters: any = computed(() => store.getters.accessedRouters)
+const mode = ref<string>('horizontal')
 </script>
 
 <style scoped lang="scss">
@@ -55,6 +55,7 @@ const menuList: any = computed(() => store.getters.menuList)
   padding: 0 20px;
   height: 100%;
   width: 100%;
+  align-items: center;
   border-bottom: none;
   background: #00000000 !important;
   --el-menu-base-level-padding: 0px;
@@ -66,8 +67,11 @@ const menuList: any = computed(() => store.getters.menuList)
     --el-menu-hover-text-color: rgba(86, 53, 183, 0.75);
   }
 
-  .el-sub-menu {
+  :deep(.el-sub-menu) {
     --el-bg-color-overlay: none;
+    .el-sub-menu__title{
+      height: 50%;
+    }
   }
 }
 

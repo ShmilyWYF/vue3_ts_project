@@ -1,5 +1,5 @@
 // 转换数字为中文
-export function timeZh(timestamp: number) {
+export function timeZh(timestamp: number|string) {
     let date = new Date(timestamp);
     let Y = date.getFullYear();
     let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
@@ -9,10 +9,8 @@ export function timeZh(timestamp: number) {
 
 function toChineseNum(num: string | number) {
     if (!['number', 'string'].includes(typeof num)) return console.error('类型错误：应为number类型或者string类型');
-
     let newnum: string = String(num).concat()
     if (newnum.length > 10) return console.error('位数过大，无法计算');
-
     let tmpnewchar: string = '';
     for (let i = 0; i < newnum.length; i++) {
         switch (newnum[i]) {
@@ -85,19 +83,3 @@ function formatDate(){
     //返回数据格式
     return Year + '-' + Months + '-' + Day + '-' + Hours + ':' + Minutes + ':' + Seconds;
 }
-
-
-// 计时器
-// const runTime = () => {
-//     let timeold = new Date().getTime() - new Date(store.websiteConfig.websiteCreateTime).getTime()
-//     let msPerDay = 24 * 60 * 60 * 1000
-//     let daysold = Math.floor(timeold / msPerDay)
-//     let str = ''
-//     let day = new Date()
-//     str += daysold + '天'
-//     str += day.getHours() + '时'
-//     str += day.getMinutes() + '分'
-//     str += day.getSeconds() + '秒'
-//     websiteCreateTime.value = str
-//     viewCount.value = appStore.viewCount
-// }

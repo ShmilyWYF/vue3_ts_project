@@ -1,4 +1,9 @@
-import {featureArticle, articleListByName, ArticleAsideList, articleListTag} from "@/mock/articleApi/tempalte";
+import {
+    featureArticle,
+    articleListByName,
+    ArticleAsideList,
+    articleListTag, ArticleContextById,
+} from "@/mock/articleApi/tempalte";
 
 const articleApi = [
     {
@@ -33,7 +38,14 @@ const articleApi = [
         status: true,
         condition: true
     },
-
+    {
+        url: '/get/articleContextById',
+        type: 'get',
+        template: ArticleContextById,
+        code: Number(200),
+        status: true,
+        condition: true
+    }
 ]
 
 

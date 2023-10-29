@@ -15,16 +15,15 @@ const articleState = {
         introduction: [],
         tags: [],
     },
+    articleContext: [],
 }
 
-const obj = {};
 const mutations = {
     SET_FEATURE_ARTICLE_DATA(articleStore: any, option: ArticleInterface[]): void {
         articleStore.featureArticleData = option
     },
-    SET_ARTICLE_LIST(articleStore: any, options: {}): void {
-        Object.assign(obj, options)
-        articleStore.articleList = obj
+    SET_ARTICLE_LIST(articleStore: any, options: []): void {
+        articleStore.articleList = options
     },
     SET_ARTICLE_TAG_ACTIVE(articleStore: any, options:string): void {
         articleStore.articleTagActive = options
@@ -35,6 +34,9 @@ const mutations = {
     SET_ARTICLE_ASIDE_LIST(articleStore: any, options: []): void {
         articleStore.acticleAsideList = options
     },
+    SET_ARTICLE_CONTEXT(articleStore: any, options: []): void {
+        articleStore.articleContext = options
+    }
 }
 
 const actions: any = {
@@ -66,8 +68,8 @@ const actions: any = {
                     // 缓存活动标签
                     commit('SET_ARTICLE_TAG_ACTIVE',listName)
                     // 解析对象
-                    const option = {[listName]: data}
-                    commit('SET_ARTICLE_LIST', option)
+                    const mergeObject = {...{[listName]: data},...state.articleList}
+                    commit('SET_ARTICLE_LIST', mergeObject)
                     resolve(data)
                 }, (error: any) => {
                     reject(error)
@@ -104,6 +106,23 @@ const actions: any = {
              },(error:any)=>{
                 reject(error)
             })
+            }
+        })
+    },
+    // 根据id获得文章上下文
+    getArticleContextById({commit,state}:any,id:number){
+        return new Promise((resolve, reject) => {
+            if(state.articleContext?.hasOwnProperty(id)){
+                    resolve(state.articleContext[id])
+            }else {
+                articleApi.getArticleContextById(id).then((res:any)=>{
+                    const data = mockData(res)
+                    const mergeObject = {... {[data.id]: data,}, ...state.articleContext}
+                    commit('SET_ARTICLE_CONTEXT',mergeObject)
+                    resolve(data)
+                },(error:any)=>{
+                    reject(error)
+                })
             }
         })
     }

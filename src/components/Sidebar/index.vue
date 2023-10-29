@@ -9,7 +9,7 @@
         </p>
       </template>
       <template #default v-show="showContext">
-        <ul class="sidebar-ul" :style="{display: ulDisplay }">
+        <ul :class="{'sidebar-ul':defaultClass}" :style="{display: ulDisplay }">
           <li v-for="(item,key) in data" :key="key" :style="ulLiClss">
             <slot name="content" :item="item"/>
           </li>
@@ -59,6 +59,11 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: true,
+  },
+  defaultClass:{
+    type: Boolean,
+    required: false,
+    default: true,
   }
 })
 
@@ -78,7 +83,7 @@ const props = defineProps({
     padding: 1.25rem;
     display: grid;
     grid-gap: 1rem;
-    grid-template-rows: minmax(3.5rem, 0fr);
+    grid-template-rows: minmax(2.5rem, 0fr);
     @include background_color('background-color');
     @include box_shadow('box-card-shadow-sidebar-card');
 
@@ -92,11 +97,9 @@ const props = defineProps({
         display: flex;
         align-items: center;
         justify-content: flex-start;
-        margin-bottom: 0;
         gap: 0.5rem;
         @include font_color('text-color');
         span {
-          margin-bottom: 0;
           font-weight: 600;
           font-size: larger;
         }
@@ -120,9 +123,6 @@ const props = defineProps({
       background: #00000000;
       position: relative;
       .sidebar-ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
         flex-direction: row;
         flex-wrap: wrap;
         gap: 0.5rem;
@@ -147,6 +147,9 @@ const props = defineProps({
           }
 
         }
+      }
+      .sidebar-ul-ant{
+
       }
     }
   }

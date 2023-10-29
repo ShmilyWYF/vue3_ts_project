@@ -12,8 +12,11 @@
   }
 }
 .app-banner {
+  border-top-right-radius: 1rem;
+  border-top-left-radius: 1rem;
   display: block;
-  height: 55%;
+  height: 15%;
+  max-height: 35rem;
   width: 100%;
   position: absolute;
   top: 0;

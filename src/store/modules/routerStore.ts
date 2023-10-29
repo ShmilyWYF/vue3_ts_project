@@ -1,45 +1,36 @@
-import {asyncRouterMap} from "@/router";
+import router, {asyncRouterMap} from "@/router";
 import api from "@/axios";
 import cookies from "js-cookie";
 import store from "@/store";
+import {shallowRef} from "vue";
+import {mockData} from "@/utils/util";
 
 const menuApi = api.menuApi
 
 const routerState = {
     menuList: [],
     menuTree: [],
-    accessedRouters: {},
+    accessedRouters: [],
 }
 
 const mutations = {
     SET_MENU_LIST(routerStore: any, option: []) {
         routerStore.menuList = option
     },
-    SET_ACCESSED_ROUTERS(routerStore: any, option: any) {
+    SET_ACCESSED_ROUTERS(routerStore: any, option: []) {
         routerStore.accessedRouters = option
     },
     SET_MENU_TREE(routerStore: any, option: any) {
         routerStore.menuTree = option
     },
 }
-
 const actions: any = {
     // 根据得到的路由表获取异步路由
-    getMenuRoles({commit}: any, roles: any = ''): any {
+    getMenuRoles({commit,state}: any, roles: any = ''): any {
         let data = roles    //因为没有角色所有是get方法
         return new Promise((resolve, reject) => {
-            if (store.getters.accessedRouters) {
-                console.log("调用缓存路由")
-                resolve(store.getters.accessedRouters)
-            } else {
                 menuApi.getMenuRoles(data).then((res: any) => {
-                        // data解构赋值 data = res.data.data
-                        let {data} = res.data
-                        // 判断data下是否还有data  兼容mock
-                        if (data.hasOwnProperty('data')) {
-                            data = data.data
-                        }
-                        commit('SET_MENU_LIST', data)
+                        let data = mockData(res)
 
                         /*二级整合一级
                          * while函数：{} 用于广度搜索 先进先出，判断对象是否有子节点，有则将子节点加入data对象后删除并储存入dataList；
@@ -93,6 +84,7 @@ const actions: any = {
                                     const shift = children.shift();
                                     // 判断子路由是否存在异步路由表中
                                     if (childrenArray.includes(shift.path)) {
+                                        console.log(shift)
                                         // 将通过的子路由加入子路由数组
                                         tempChildrenList.push(shift)
                                     }
@@ -103,15 +95,13 @@ const actions: any = {
                             }
                         })
                         // vuex结果传输 深拷贝
-                        let obj: any = [];
-                        Object.assign(obj, addRoutes)
-                        commit('SET_ACCESSED_ROUTERS', obj)
+                        commit('SET_ACCESSED_ROUTERS', addRoutes)
                         resolve(addRoutes)
                     }, (error: void) => {reject(error)})
-            }
         })
     },
 }
+
 
 export default {
     namespaced: true,

@@ -12,3 +12,5 @@ declare module 'mockjs'
 declare module 'nprogress'
 
 declare module 'inspector'
+
+declare module 'mavon-Editor'

@@ -36,6 +36,40 @@ export default Mock.mock(
                 }
             ]
         },
+        {
+            id: '2',
+            pid: '2',
+            title: '教务管理',
+            path: '/educates',
+            value: '@string',
+            icon: [''],
+            'children': [
+                {
+                    id: '21',
+                    pid: '21',
+                    title: '学员中心-桃李云帮',
+                    path: '/students',
+                    value: '@string',
+                    icon: [''],
+                },
+                {
+                    id: '22',
+                    pid: '12',
+                    title: '班级管理-桃李云帮',
+                    path: '/studentEnrolls',
+                    value: '@string',
+                    icon: [''],
+                },
+                {
+                    id: '23',
+                    pid: '13',
+                    title: '课表管理-桃李云帮',
+                    path: '/classs',
+                    value: '@string',
+                    icon: [''],
+                }
+            ]
+        },
     ]
 )
 

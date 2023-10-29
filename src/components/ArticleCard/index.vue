@@ -1,40 +1,40 @@
 <template>
-  <div class="Article">
+  <div class="Article" :style="{'--use-height': h}">
     <el-card style="height: 100%" body-style="padding: 0;height: 100%;">
       <div :class="{'feature-article-horizontal':type ==='0','feature-article-Vertical':type === '1'}">
         <div class="feature-thumbnail">
           <img class="ob-hz-thumbnail"
-               :src="data.bgimg" alt="背景图片">
+               :src="data.articleCover" alt="背景图片">
           <span class="thumbnail-screen" style="background: linear-gradient(130deg, rgb(36, 198, 220), rgb(84, 51, 255) 41.07%, rgb(255, 0, 153) 76.05%);"/>
         </div>
         <div class="feature-content">
           <span>
-            <b>{{ data.type }}</b>
+            <b>{{ data.categoryName }}</b>
             <ul>
-              <li>
-                <em>{{ data.index }}</em>
+              <li v-for="(item,key) in data.tags" :key="key">
+                <em># {{ item.tagName }}</em>
               </li>
             </ul>
           </span>
           <h1 class="article-title">
             <a>
-              <router-link :to="data.to">
-                <span>{{ data.title }}</span>
+              <router-link :to="/articles/+data.id">
+                <span>{{ data.articleTitle }}</span>
               </router-link>
             </a>
           </h1>
           <p>
-            {{ data.desc }}
+            {{ data.articleContent }}
           </p>
           <div class="article-footer">
-            <div class="flex flex-row items-center">
-              <img class="cursor-pointer" :src="data.avatar" alt="头像">
+            <div class="items-center">
+              <img :src="data.author.avatar" alt="头像">
               <span class="text-ob">
-                <strong class="text-ob-normal pr-1.5 cursor-pointer">
-                    {{ data.author }}
+                <strong class="text-ob-normal">
+                    {{ data.author.nickname }}
                 </strong>
-                <strong class="text-ob-normal pr-1.5 cursor-pointer" style="margin: 0 0 0 5px;">
-                  发布于 {{ timeZh(data.datatime) }}
+                <strong class="text-ob-normal" style="margin: 0 0 0 5px;">
+                  发布于 {{ timeZh(data.createTime) }}
               </strong>
             </span>
             </div>
@@ -60,14 +60,17 @@ defineProps({
     types: Number||String,
     required: true,
   },
+  h:{
+    default: '100%',
+    types: Number||String,
+  }
 })
 
 </script>
 <style scoped lang="scss">
 .Article {
   width: 100%;
-  height: 100%;
-  margin: var(--margin);
+  min-height: 20rem;
   border-radius: 1rem;
   border: 0 solid #FFFFFF00;
   position: relative;
@@ -76,43 +79,6 @@ defineProps({
   --el-border-color-light: #ffffff00 !important;
   --el-fill-color-blank: #ffffff00 !important;
 
-  @media (min-width: 1024px) {
-    .feature-article-horizontal {
-      grid-template-columns: repeat(2, 50%) !important;
-      grid-template-rows: 100% !important;
-
-      .feature-thumbnail {
-        img {
-          height: 100% !important;
-          width: 120% !important;
-        }
-        &:after {
-          left: 70% !important;
-          top: 0 !important;
-          width: 55% !important;
-          @include background_color('gradient-cover');
-        }
-      }
-      .thumbnail-screen {
-        height: 100%!important;
-      }
-      .feature-content {
-        padding: 3rem !important;
-        grid-row: auto !important;
-        p {
-          font-size: 1.125rem !important;
-          //line-height: 140% !important;
-          line-height: 1.75rem !important;
-        }
-        h1 {
-          font-size: 2.25rem !important;
-          line-height: 2.5rem !important;
-          margin-top: 1rem !important;
-          margin-bottom: 2rem !important;
-        }
-      }
-    }
-  }
   .feature-article-horizontal {
     height: 100%;
     z-index: 10;
@@ -121,6 +87,42 @@ defineProps({
     top: 0;
     @include background_color('background-color');
     grid-template-rows: repeat(1, 30% 70%);
+  }
+  @media (min-width: 1024px) {
+    .feature-article-horizontal {
+      grid-template-columns: repeat(2, 50%);
+      grid-template-rows: 100% ;
+
+      .feature-thumbnail {
+        img {
+          height: 100%;
+          width: 120%;
+        }
+        &:after {
+          left: 70%;
+          top: 0;
+          width: 55%;
+          @include background_color('gradient-cover');
+        }
+      }
+      .thumbnail-screen {
+        height: 100%;
+      }
+      .feature-content {
+        padding: 3rem;
+        grid-row: auto;
+        p {
+          font-size: 1.125rem;
+          line-height: 1.75rem;
+        }
+        h1 {
+          font-size: 2.25rem;
+          line-height: 2.5rem;
+          margin-top: 1rem;
+          margin-bottom: 2rem;
+        }
+      }
+    }
   }
 
   .feature-article-Vertical {
@@ -225,50 +227,39 @@ defineProps({
       -webkit-line-clamp: 4;
       -webkit-box-orient: vertical;
     }
-    blockquote, dd, dl, figure, h1, h2, h3, h4, h5, h6, hr, p, pre {
-      margin: 0;
-    }
-
-    @media (min-width: 1024px) {
-      b {
-        font-size: 1rem !important;
-        line-height: 1.5rem !important;
-      }
-    }
-
     b {
       font-size: .75rem;
       line-height: 1rem;
       color: #24c6dc;
       text-transform: uppercase;
     }
-
+    @media (min-width: 1024px) {
+      b {
+        font-size: 1rem;
+        line-height: 1.5rem;
+      }
+    }
     b, strong {
       font-weight: bolder;
     }
-
-    @media (min-width: 1024px) {
-      ul {
-        font-size: 1rem !important;
-        line-height: 1.5rem !important;
-      }
-    }
-
     ul {
       display: inline-flex;
       font-size: .75rem;
       line-height: 1rem;
       padding-left: 1rem;
-
       li {
         margin-right: .75rem;
+        em{
+          @include font_color('text-color-primary')
+        }
       }
     }
-
-    ol, ul {
-      list-style: none;
+    @media (min-width: 1024px) {
+      ul {
+        font-size: 1rem;
+        line-height: 1.5rem;
+      }
     }
-
     h1 {
       font-weight: 800;
       font-size: 1.5rem;
@@ -288,7 +279,6 @@ defineProps({
         }
       }
     }
-
     .article-footer {
       margin-top: 13px;
       display: flex;
@@ -301,67 +291,32 @@ defineProps({
       width: 100%;
 
       .items-center {
+        display: flex;
+        flex-direction: row;
         align-items: center;
-
+        img {
+          border-radius: 9999px;
+          margin-right: .5rem;
+          height: 28px;
+          width: 28px;
+          max-width: 100%;
+          cursor: pointer;
+        }
         .text-ob {
           color: #6d6d6d;
-
           .text-ob-normal {
-            @include font_color('text-color')
-          }
-
-          .pr-1\.5 {
             padding-right: .375rem;
-          }
-
-          .cursor-pointer {
-            cursor: pointer;
-          }
-
-          b, strong {
-            font-weight: bolder;
+            @include font_color('text-color');
           }
         }
-      }
-
-      .flex-row {
-        flex-direction: row;
-      }
-
-      .flex {
-        display: flex;
-      }
-
-      img {
-        border-radius: 9999px;
-        margin-right: .5rem;
-        height: 28px !important;
-        width: 28px;
-      }
-
-      .cursor-pointer {
-        cursor: pointer;
-      }
-
-      img, video {
-        max-width: 100%;
-        height: auto;
-      }
-
-      audio, canvas, embed, iframe, img, object, svg, video {
-        display: block;
-        vertical-align: middle;
-      }
-
-      img {
-        border-style: solid !important;
-      }
-
-      img {
-        border-style: none;
       }
     }
   }
 
+}
+@media screen and (min-width: 1024px){
+  .Article {
+    height: var(--use-height);
+  }
 }
 </style>

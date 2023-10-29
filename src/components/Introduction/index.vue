@@ -2,7 +2,7 @@
   <el-card class="introduction" v-if="data.value !== {}">
     <div>
       <ul class="introduction-top">
-        <li>
+        <li style="padding-top: 1rem">
           <img :src="data.img" alt="头像"/>
         </li>
         <li>
@@ -72,7 +72,6 @@ defineProps({
           @include font_color('text-color');
           h2{
             margin-top: 5%;
-            margin-bottom: 0;
             font-weight: 600;
             font-size: xx-large;
           }
@@ -87,7 +86,6 @@ defineProps({
       }
       .introduction-top{
         height: 65%;
-        margin-bottom: 0;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -127,7 +125,6 @@ defineProps({
             list-style-type: none;
             grid-column: span 1/span 1;
             p{
-              margin: 0;
               font-size: 1rem;
               line-height: 1.5rem;
             }

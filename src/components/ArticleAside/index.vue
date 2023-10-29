@@ -23,13 +23,15 @@
         </el-tag>
       </template>
       <template #defulet>
-        <p>查看更多</p>
+        <p class="el-tag-p">查看更多</p>
       </template>
     </Sidebar>
     <Sidebar title="公告" icon="moon" ul-display="flex" h="auto">
       <template #content>
         <!--        {{announcement}}-->
-        博客项目已完成，代码已开源，开源地址在上方的github地址,仿auroraUI设计,封装大量复用UI组件，axios-mock-store工厂模式
+       <p style="line-height: normal;">
+         博客项目已完成，代码已开源，开源地址在上方的github地址,仿auroraUI设计,封装大量复用UI组件，axios-mock-store工厂模式
+       </p>
       </template>
     </Sidebar>
     <Sidebar title="网站信息" icon="moon" h="auto" :data="WebsiteInformationData" :ul-li-clss="{'justify-content':'space-between'}">
@@ -54,13 +56,31 @@ const commentsListData =  ref<any>([])
 const WebsiteInformationData =  ref<any>([])
 const tagsData = ref<any>([])
 const introductionData = ref<any>([])
+// 储存时间
+let websiteTime = ref<any>()
 
 store.dispatch('articleStore/getAllArticleAsideList').then((res:any)=>{
   commentsListData.value = res.commentsList.slice(0,7)
   WebsiteInformationData.value = res.WebsiteInformation
+  // 深拷贝
+  websiteTime.value = JSON.stringify(WebsiteInformationData?.value[0].value*1000)
   tagsData.value = res.tags.slice(0,10)
   introductionData.value = res.introduction
 })
+
+
+setInterval(()=>{
+  let timeold = new Date().getTime() - <any>new Date(JSON.parse(websiteTime.value))
+  let msPerDay = 24 * 60 * 60 * 1000
+  let daysold = Math.floor(timeold / msPerDay)
+  let str = ''
+  let day = new Date()
+  str += daysold + '天'
+  str += day.getHours() + '时'
+  str += day.getMinutes() + '分'
+  str += day.getSeconds() + '秒'
+  WebsiteInformationData!.value[0].value = str
+},1000)
 
 </script>
 
@@ -110,7 +130,6 @@ store.dispatch('articleStore/getAllArticleAsideList').then((res:any)=>{
       }
 
       p {
-        margin: 0;
         color: rgba(107, 114, 128, 1);
       }
 
@@ -148,6 +167,9 @@ store.dispatch('articleStore/getAllArticleAsideList').then((res:any)=>{
         background-color: #000000;
         @include font_color('text-sub-accent');
       }
+    }
+    .el-tag-p{
+      margin: 1rem 0 0 0;
     }
   }
 }

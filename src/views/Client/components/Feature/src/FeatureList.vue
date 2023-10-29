@@ -32,32 +32,11 @@ const props = defineProps({
 </script>
 
 <style lang="scss" scoped>
-@media (min-width: 1024px) {
-  .FeatureList {
-    width: calc(100% - 2%);
-    grid-template-columns: repeat(1, 18% 40% 40%);
-    grid-gap: 0 2% !important;
-    grid-template-rows: repeat(3, 100%) !important;
-    .feature-article-list-box {
-      height: 100% !important;
-      .shadow-md {
-        h2 {
-          padding: 3rem;
-          font-size: 1.875rem !important;
-          line-height: 2.25rem !important;
-          @include font_color('text-color')
-        }
-      }
-    }
-  }
-}
-
 .FeatureList {
-  height: 100%;
   display: grid;
   grid-template-rows: repeat(1, 20% 39% 39%);
   grid-gap: 1% 0;
-
+  min-height: auto;
   .feature-article-list-box {
     overflow: hidden;
     height: 100%;
@@ -85,10 +64,9 @@ const props = defineProps({
 
       h2 {
         padding: 1.5rem;
-        font-size: 1.5rem;
         line-height: 2rem;
         & > p{
-          text-align: center;
+          font-weight: lighter;
           overflow: hidden;
           text-overflow:ellipsis;
         }
@@ -98,9 +76,8 @@ const props = defineProps({
           color: white;
           display: flex;
           align-items: center;
-          justify-content: flex-end;
+          justify-content: flex-start;
           float: right;
-          padding-right: 10px;
           margin: 0 auto;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -109,7 +86,7 @@ const props = defineProps({
             height: 2rem;
           }
           p {
-            margin: 0 ;
+            font-size: 1.5rem;
             overflow: hidden;
             text-overflow: ellipsis;
             @include font_color('text-color')
@@ -119,5 +96,24 @@ const props = defineProps({
     }
   }
 }
-
+@media (min-width: 1024px) {
+  .FeatureList {
+    width: calc(100% - 2%);
+    height: 24rem;
+    grid-template-columns: repeat(1, 18% 40% 40%);
+    grid-gap: 0 2%;
+    grid-template-rows: repeat(1, minmax(0,1fr));
+    .feature-article-list-box {
+      height: 100%;
+      .shadow-md {
+        h2 {
+          padding: 2rem;
+          font-size: 1.875rem;
+          line-height: 2.25rem;
+          @include font_color('text-color')
+        }
+      }
+    }
+  }
+}
 </style>

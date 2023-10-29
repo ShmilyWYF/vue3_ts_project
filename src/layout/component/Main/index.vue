@@ -1,53 +1,91 @@
 <template>
-  <div class="main">
+  <div class="main" ref="mainRef">
     <Breadcrumb/>
-    <router-view class="view"/>
+
+    <el-row :gutter="0" justify="center">
+      <el-col :xs="{span: 24}" :md="{span: 22}" :lg="{span: 20}">
+        <router-view class="view"/>
+      </el-col>
+    </el-row>
+
+    <el-backtop :right="200" :bottom="100"/>
+    <Drawer @switch-theme="switchTheme" @is-Switch-Bg="isSwitchBgEvent" :is-switch-bg-button="isSwitch" :container="containerMain"/>
     <App-Banner/>
   </div>
   <!--背景板-->
   <transition name="fade">
-    <div class="main-bg" v-show="isShowBg"/>
+    <div class="main-bg" v-show="isSwitch"/>
   </transition>
 </template>
 
 <script lang="ts" setup>
-import {Breadcrumb,AppBanner} from "@/components";
+import {Breadcrumb, AppBanner} from "@/components";
+import {svg} from "@/icons";
+import {Drawer} from "@/layout/component";
+import store from "@/store";
+import {ref} from "vue";
+defineProps(['containerMain'])
 
-defineProps({
-  isShowBg:{
-    type: Boolean,
-    required: true,
-    default: false,
-  }
-})
+// 切换主题事件
+const switchTheme = (args: boolean) => {
+  const theme = {'theme': args ? 'light' : 'dark'}
+  document.documentElement.setAttribute("data-theme", theme.theme);
+  store.dispatch('useAppStore/themeConfig', theme);
+}
+
+// 组件boolean同步
+const isSwitch = ref<any>(JSON.parse(String(localStorage.getItem('IsSwitchBg'))) || false)
+const isSwitchBgEvent = (event: boolean) => {
+  isSwitch.value = event
+}
 
 </script>
 
 <style scoped lang="scss">
 .main{
-  height: 100%;
   width: 100%;
   margin: 0 auto;
   position: relative;
-  overflow: auto;
+  overflow: inherit;
   z-index: 10;
-  .view{
-    height: 100%;
-    width: 100%;
-    position: relative;
-    z-index: 15
+}
+
+.el-row{
+  align-items: center;
+  .el-col{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    .view{
+      height: auto;
+      width: 100%;
+      position: relative;
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .el-backtop {
+    right: 2% !important;
+    bottom: 1% !important;
+    z-index: 30;
+    position: fixed;
   }
 }
 
 
 .main-bg{
-  width: 99.7%;
+  width: 100%;
   height: 100%;
   position: absolute;
   top: 1px;
   z-index: 1;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 5px;
+  border-radius: 1rem;
   @include background_color('background-color')
 }
 
@@ -63,7 +101,6 @@ defineProps({
 .fade-leave-active {
   animation: fade-in 0.5s reverse;
 }
-
 @keyframes fade-in {
   0% {
     transform: scale(0);

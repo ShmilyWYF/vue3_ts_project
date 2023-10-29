@@ -1,6 +1,6 @@
 <template>
   <div class="ArticleListTag" id="ArticleListTag">
-    <el-tabs @tab-click="getArticleListByName" v-model="articleTagActive" id="anchorPoint">
+    <el-tabs @tab-click="getArticleListByName" v-model="articleTagActive" ref="tabRef">
 
       <el-tab-pane label="ALL" name="ALL">
         <template #label>
@@ -45,7 +45,7 @@ import {Article} from "@/components";
 import store from "@/store";
 import {svg} from "@/icons";
 import {ArticleInterface, ArticleListTagInterface} from "@/interface";
-
+const tabRef = ref<HTMLElement|any>()
 const articleTagList = ref<ArticleListTagInterface[]>(store.getters.articleTagList)
 const articleTagActive = computed(()=>store.getters.articleTagActive)
 
@@ -99,8 +99,7 @@ const getArticleListTag = () => {
  */
 const getCurrentChange = (Pages: number) => {
   currentPage.value = Pages;
-  const scrollDom = document.getElementById('anchorPoint');
-  scrollDom?.scrollIntoView();
+  tabRef.value.$el.scrollIntoView();
   data.value = total.value.slice((Pages - 1) * pageSize.value, Pages * pageSize.value)
 }
 

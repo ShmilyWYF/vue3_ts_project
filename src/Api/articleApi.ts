@@ -18,6 +18,10 @@ export default {
     getAllArticleAsideList:{
         method: 'get',
         url: 'get/allArticleAsideList'
+    },
+    // 根据id获取文章上下文
+    getArticleContextById:{
+        method: 'get',
+        url: '/get/articleContextById',
     }
-
 }

@@ -8,16 +8,36 @@ export interface MockApiInterface {
 }
 
 export interface ArticleInterface {
-    type: '',
-    index: '',
-    title: '',
-    bgimg: '',
-    desc: '',
-    to: '',
-    avatar: '',
-    author: '',
-    datatime: number,
-    marking: 0,
+    "id": number,
+    "articleCover": string,
+    "articleTitle": string,
+    "articleContent": string,
+    "isTop": number,
+    "isFeatured": number,
+    "author": {
+        "id": number,
+        "email": string,
+        "nickname": string,
+        "avatar": string,
+        "intro": string,
+        "website": string,
+        "isSubscribe": number,
+        "isDisable": number,
+        "createTime": number,
+        "updateTime": number
+    },
+    "categoryName": string,
+    "tags": [
+        {
+            "id": number,
+            "tagName": string,
+            "createTime": number,
+            "updateTime": number
+        },
+    ],
+    "status": number,
+    "createTime": number,
+    "updateTime": number,
 }
 
 export interface ArticleListTagInterface {

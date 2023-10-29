@@ -17,7 +17,8 @@ const isbread = ref<boolean>(false)
 
 const breadList = <any>computed(()=>{
   let matcheds = useRoute().matched;
-  isbread.value = matcheds[1].name != 'home'
+  const exclude = ['home','articles']
+  isbread.value = !exclude.includes(String(matcheds[1].name))
   return matcheds
 })
 </script>

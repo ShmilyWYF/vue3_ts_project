@@ -7,7 +7,7 @@
         node-key="id"
         :default-expanded-keys="[1]"
         :default-checked-keys="[13]"
-        :props="defaultProps"/>
+        :props="mappingProps"/>
 
     <div class="buttons">
       <el-button @click="getCheckedNodes">设置导航</el-button>
@@ -19,12 +19,10 @@
 
 <script lang="ts" setup>
 import {asyncRouterMap} from "@/router";
-import {reactive, ref, toRaw} from 'vue'
+import { ref, toRaw} from 'vue'
 import store from "@/store";
 
-// 声明data
 const data = ref<[]>([])
-// 定义属性，用来绑定ref
 const treeRef = ref()
 
 // 限定接口
@@ -39,11 +37,12 @@ interface Tree {
   }]
 }
 
-// 暴露属性
-const defaultProps = {
+// 映射props属性
+const mappingProps = {
   children: 'children',
   label: 'title',
 };
+
 // 获取异步树节点方法
 const asyncTree = (tree: any[]):[] => {
   const treeData: any = []
@@ -98,7 +97,7 @@ const getCheckedNodes = () => {
     return tempTerr
   })
   store.commit('routerStore/SET_MENU_TREE',data)
-  store.commit('routerStore/SET_MENU_LIST',data)
+  // store.commit('routerStore/SET_MENU_LIST',data)  改为JDBC
   console.log(data, 'get节点对象组')
 }
 
