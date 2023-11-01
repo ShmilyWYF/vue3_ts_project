@@ -10,13 +10,15 @@
 
 <script setup lang="ts">
 import {computed, defineComponent, ref} from "vue";
-import { ArrowRight } from '@element-plus/icons-vue'
-const arrowIcon = <ReturnType<typeof defineComponent>>ArrowRight
+import {ArrowRight} from '@element-plus/icons-vue'
 import {useRoute} from "vue-router";
+
+const arrowIcon = <ReturnType<typeof defineComponent>>ArrowRight
 const isbread = ref<boolean>(false)
 
 const breadList = <any>computed(()=>{
   let matcheds = useRoute().matched;
+  // 排除页面
   const exclude = ['home','articles']
   isbread.value = !exclude.includes(String(matcheds[1].name))
   return matcheds

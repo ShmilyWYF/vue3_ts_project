@@ -50,8 +50,7 @@
 </template>
 <script lang="ts" setup>
 import {timeZh} from "@/utils/timeZH";
-import ArticleMain from "@/views/Client/components/ArticleList/src/ArticleMain.vue";
-import {ArticleToc, Mark, SvgIcon} from "@/components";
+import {ArticleMain, ArticleToc, Mark, SvgIcon} from "@/components";
 import tocbot from 'tocbot'
 import {ref, toRefs} from "vue";
 import store from "@/store";

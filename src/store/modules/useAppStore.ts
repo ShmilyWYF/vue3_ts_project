@@ -1,6 +1,5 @@
 import api from '@/axios'
-import cookies from 'js-cookie'
-import {start} from "@/utils/nporgress";
+import {AxiosResponse} from "axios";
 
 const {useAppApi} = api
 
@@ -61,11 +60,8 @@ const mutations = {
 const actions: any = {
     theme({commit}: any) {
         return new Promise((resolve, reject) => {
-            useAppApi.getUseAppConfig().then((res: any) => {
-                let {data} = res.data
-                if (data.hasOwnProperty('data')) {
-                    data = data.data
-                }
+            useAppApi.getUseAppConfig().then((res: AxiosResponse) => {
+                let data = res.data
                 commit('SET_USE_APP_STATE', data)
                 resolve(data)
             },(error: any): void => {

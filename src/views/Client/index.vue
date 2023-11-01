@@ -19,13 +19,12 @@
 
 <script lang="ts" setup>
 import {onMounted, ref, toRaw} from "vue";
+import {Feature, FeatureList} from '@/views/Client/components/Feature'
+import {ArticleAside, ArticleListTag} from "@/views/Client/components/ArticleList";
+import store from "@/store";
+import {ArticleMain, Sidebar} from "@/components";
 
 const name = 'Client'
-import {Feature, FeatureList} from '@/views/Client/components/Feature'
-import {ArticleListTag, ArticleMain} from "@/views/Client/components/ArticleList";
-import store from "@/store";
-import {svg} from "@/icons";
-import {ArticleAside, Sidebar} from "@/components";
 
 const loading = ref<boolean>(true)
 const featureData = ref()

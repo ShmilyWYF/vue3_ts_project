@@ -12,6 +12,9 @@ const getters = {
     // 主页=====>
     useAPPState: (state: any) => state.useAppStore.useAPPState,
     // isMainBg:(state: any) => state.useAppStore.isMainBg,
+    // 用户信息===>
+    userinfo: (state: any) => state.userStore.userinfo,
+    token: (state: any) => state.userStore.token,
 }
 
 export default getters

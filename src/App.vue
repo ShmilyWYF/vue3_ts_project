@@ -13,8 +13,6 @@ html, body, #app {
   padding: 0;
   margin: 0;
   min-width: 390px;
-  max-width: 1980px;
-  max-height: 1200px;
   min-height: 768px;
   font-size:1rem;
 }

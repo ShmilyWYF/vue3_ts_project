@@ -19,10 +19,9 @@
 
 <script lang="ts" setup>
 import {Article} from "@/components";
+import SvgIcon from "@/components/SvgIcon/index.vue";
 
 const name = 'FeatureList'
-import SvgIcon from "@/components/SvgIcon/index.vue";
-import {timeZh} from "@/utils/timeZH";
 
 const props = defineProps({
   list: {

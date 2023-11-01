@@ -1,3 +1,3 @@
 export {default as ArticleListTag} from "./src/ArticleListTag.vue";
-export {default as ArticleMain} from "./src/ArticleMain.vue";
+export {default as ArticleAside} from "./src/ArticleAside.vue";
 

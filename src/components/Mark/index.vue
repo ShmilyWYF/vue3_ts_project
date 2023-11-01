@@ -15,11 +15,12 @@
     />
 </template>
 <script setup lang="ts">
-import { mavonEditor } from 'mavon-Editor'
+import {mavonEditor} from 'mavon-Editor'
 import 'mavon-editor/dist/css/index.css'
 // import markdownItMermaid from '@liradb2000/markdown-it-mermaid'
 // mavonEditor.getMarkdownIt(markdownItMermaid)
-import {nextTick, ref, toRefs, computed} from "vue";
+import {nextTick, ref, toRefs} from "vue";
+
 const props:any = defineProps({
   editMode:{
     type: Boolean,

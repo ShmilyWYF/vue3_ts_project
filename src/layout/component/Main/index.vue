@@ -8,9 +8,9 @@
       </el-col>
     </el-row>
 
-    <el-backtop :right="200" :bottom="100"/>
+    <el-backtop v-if="!isVertical" :right="200" :bottom="100"/>
     <Drawer @switch-theme="switchTheme" @is-Switch-Bg="isSwitchBgEvent" :is-switch-bg-button="isSwitch" :container="containerMain"/>
-    <App-Banner/>
+    <App-Banner :style="isVertical?{height: '55%'}:''"/>
   </div>
   <!--背景板-->
   <transition name="fade">
@@ -19,12 +19,12 @@
 </template>
 
 <script lang="ts" setup>
-import {Breadcrumb, AppBanner} from "@/components";
-import {svg} from "@/icons";
+import {AppBanner, Breadcrumb} from "@/components";
 import {Drawer} from "@/layout/component";
 import store from "@/store";
 import {ref} from "vue";
-defineProps(['containerMain'])
+
+defineProps(['containerMain','isVertical'])
 
 // 切换主题事件
 const switchTheme = (args: boolean) => {

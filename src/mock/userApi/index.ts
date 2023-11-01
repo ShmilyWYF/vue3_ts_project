@@ -1,38 +1,34 @@
-import template from '@/mock/userApi/tempalte/userTemplate'
+import {userinfo, userOut, userToken} from "@/mock/userApi/tempalte/userTemplate";
 
-const userApi = [
+
+const userApi:any = [
   {
     url: '/user/login',
-    type: 'get',
-    template,
+    type: 'post',
+    template: userToken,
+    code: Number(200),
+    status: true,
+    condition: true
+  },
+  {
+    url: '/user/getInfo',
+    type: 'post',
+    template: userinfo,
     code: Number(200),
     status: true,
     condition: true
   },
   {
     url: '/user/logout',
-    type: 'get',
-    template,
-    code: Number(200),
-    status: false,
-    condition: false
-  },
-  {
-    url: '/user/getInfo',
-    type: 'get',
-    template,
+    type: 'post',
+    template: userOut,
     code: Number(200),
     status: true,
     condition: true
   },
-  {
-    url: '/test',
-    type: 'get',
-    template,
-    code: Number(200),
-    status: true,
-    condition: true
-  }
 ]
+
+
+
 
 export default userApi

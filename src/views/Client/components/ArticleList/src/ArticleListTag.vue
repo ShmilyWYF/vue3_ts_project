@@ -13,7 +13,7 @@
         </template>
       </el-tab-pane>
 
-      <el-tab-pane :label="$t('message.'+item.categoryName)" :name="item.categoryName" v-for="(item,key) in articleTagList" :key="key">
+      <el-tab-pane v-if="isArticleTagList" :label="$t('message.'+item.categoryName)" :name="item.categoryName" v-for="(item,key) in articleTagList" :key="key">
         <template #label>
           <el-tag type="info" effect="dark">
             <span class="tag-a">{{item.categoryName}}</span>
@@ -40,13 +40,17 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, onMounted, ref } from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import {Article} from "@/components";
 import store from "@/store";
 import {svg} from "@/icons";
 import {ArticleInterface, ArticleListTagInterface} from "@/interface";
+
 const tabRef = ref<HTMLElement|any>()
-const articleTagList = ref<ArticleListTagInterface[]>(store.getters.articleTagList)
+const articleTagList = ref<ArticleListTagInterface[]>()
+// 控制渲染时机
+const isArticleTagList = ref<boolean>(false)
+
 const articleTagActive = computed(()=>store.getters.articleTagActive)
 
 const currentPage = ref<number>(1)
@@ -54,7 +58,6 @@ const pageSize = ref<number>(12)
 // 初始化数据
 const data = ref<ArticleInterface[]>()
 const total = ref<ArticleInterface[]>([])
-
 /**
  * @author WangYaFeng
  * @date 2023/10/17 18:44
@@ -86,6 +89,7 @@ onMounted(()=>{
 const getArticleListTag = () => {
    store.dispatch('articleStore/getArticleTagList').then((res: ArticleListTagInterface[]) => {
       articleTagList.value = res
+      isArticleTagList.value = true
       }
   )
 }

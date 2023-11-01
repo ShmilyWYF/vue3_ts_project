@@ -4,10 +4,26 @@
       <template #default>
         <drop-down>
           <template #default>
-            <el-switch v-model="action" @change="switchEvnt" :active-action-icon="svg('sun')" :inactive-action-icon="svg('moon')"/>
-            <el-button type="info" :icon="svg('background')" circle @click="switchBackgroundButton" :loading="isLocal"/>
+            <el-switch v-model="action" @change="switchEvnt" :active-action-icon="svg('sun')"
+                       :inactive-action-icon="svg('moon')"/>
+            <el-button type="info" :icon="svg('background')" circle @click="switchBackgroundButton"
+                       :loading="isLoading"/>
             <div>search</div>
-            <div>Login</div>
+            <el-button v-if="!isLoginState" text @click="dialogFormVisible = true">
+              登陆
+            </el-button>
+            <span v-else>
+               <el-dropdown>
+                 <el-avatar :size="35" src="https://static.linhaojun.top/aurora/avatar/52a81cd2772167b645569342e81ce312.jpg"/>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item @click="UserDialogFormVisible = true">个人中心</el-dropdown-item>
+                      <el-dropdown-item @click="userExit">退出</el-dropdown-item>
+                      <el-dropdown-item v-if="userinfo?.type === 0" @click="switchPageEvnt">{{switchPage?'blog':'后台管理'}}</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+            </span>
           </template>
         </drop-down>
       </template>
@@ -15,31 +31,44 @@
     <el-affix target=".main">
       <DrawerstringGraphics ref="sliders" :DOMRange="drawer" @drawerPanelEvnt="drawerPanelEvnt"/>
     </el-affix>
+    <el-dialog v-model="dialogFormVisible" title="登陆">
+      <Login @dialogCall="dialogcall"/>
+    </el-dialog>
+    <el-dialog v-model="UserDialogFormVisible" title="个人中心">
+      <el-card>123</el-card>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
 import {ref, toRefs} from "vue";
 import {svg} from "@/icons";
-import {DropDown, DrawerstringGraphics} from "@/components";
+import {DrawerstringGraphics, DropDown, Login} from "@/components";
+import router from "@/router";
+import store from "@/store";
+import {getCookie} from "@/utils/cookie";
+import api from "@/axios";
+import {AxiosResponse} from "axios";
+
 const props = defineProps({
-  isSwitchBgButton:{
+  isSwitchBgButton: {
     type: Boolean,
     required: true,
     default: false,
   },
-  container:{
+  container: {
     type: <any>null,
     required: true,
   }
 })
-const {isSwitchBgButton,container} = toRefs(props)
+const {isSwitchBgButton, container} = toRefs(props)
 
-const emit = defineEmits(['SwitchTheme','IsSwitchBg']);
+const emit = defineEmits(['SwitchTheme', 'IsSwitchBg']);
+
 // 控制抽屉是否打开
 const drawerPanel = ref<boolean>(false)
 // 开关默认状态
-const action = ref(JSON.parse(String(localStorage.getItem('isbg')))||false)
+const action = ref(JSON.parse(String(localStorage.getItem('isbg'))) || false)
 emit('SwitchTheme', action.value)
 const drawer = ref<any>()
 const sliders = ref<any>();
@@ -93,13 +122,9 @@ const closeDrawer = () => {
  * @param args 布尔类型，
  */
 const switchEvnt = (args: boolean) => {
-  localStorage.setItem('isbg',String(args))
+  localStorage.setItem('isbg', String(args))
   emit('SwitchTheme', args);
 };
-
-
-
-const isLocal = ref<boolean>(false)
 
 /**
  * @author WangYaFeng
@@ -108,15 +133,61 @@ const isLocal = ref<boolean>(false)
  * @return null
  */
 const switchBackgroundButton = () => {
-  isLocal.value = true
-  setTimeout(()=>{
-    emit('IsSwitchBg',!isSwitchBgButton.value);
-    isLocal.value = false
-  },1000)
+  isLoading.value = true
+  setTimeout(() => {
+    emit('IsSwitchBg', !isSwitchBgButton.value);
+    isLoading.value = false
+  }, 1000)
   // 本地缓存
-  localStorage.setItem('IsSwitchBg',String(!isSwitchBgButton.value))
+  localStorage.setItem('IsSwitchBg', String(!isSwitchBgButton.value))
 }
 
+// 切换背景按钮加载状态
+const isLoading = ref<boolean>(false)
+
+// 登陆对话弹窗
+const dialogFormVisible = ref<boolean>(false)
+// 用户个人中心对话弹窗
+const UserDialogFormVisible = ref<boolean>(false)
+// 控制状态栏组件
+const isLoginState = ref<any>(JSON.parse(String(localStorage.getItem('isLoginState'))))
+// 储存用户信息 为0就是管理员
+const userinfo = ref<any>(store.getters.userinfo)
+// blog/后台切换
+const switchPage = ref(JSON.parse(String(localStorage.getItem('IsSwitchPage'))))
+/**
+ * @author WangYaFeng
+ * @date 2023/10/31 3:05
+ * @description login组件登陆回调事件，切换展示组件,对if组件状态进行本地缓存
+ * @param token string类型，login组件登陆返回
+ * @return null
+ */
+const dialogcall = (token: string) => {
+  dialogFormVisible.value = !dialogFormVisible.value
+  isLoginState.value = !isLoginState.value
+  localStorage.setItem('isLoginState', JSON.stringify(isLoginState.value))
+  api.userApi.getInfo(token).then((res:AxiosResponse)=>{
+    userinfo.value = res.data;
+  })
+}
+
+// 退出当前账户
+const userExit = () =>{
+  store.dispatch('userStore/logout', getCookie()).then(()=>{
+    isLoginState.value = false
+    switchPage.value = false
+    localStorage.setItem('isLoginState',String(isLoginState.value))
+    localStorage.setItem('IsSwitchPage', String(switchPage.value))
+    router.push({path: '/'})
+  })
+}
+
+const switchPageEvnt = () =>{
+  switchPage.value = !switchPage.value;
+  switchPage.value?router.push({path: '/Dashboard'}):router.push({path: '/'})
+  // 缓存
+  localStorage.setItem('IsSwitchPage', String(switchPage.value))
+}
 </script>
 
 <style scoped lang="scss">
@@ -133,6 +204,7 @@ const switchBackgroundButton = () => {
   bottom: 0;
   left: 0;
   z-index: 10;
+
   :deep(.el-overlay) {
     width: 95% !important;
     margin: 0 auto;
@@ -161,6 +233,7 @@ const switchBackgroundButton = () => {
         .el-switch {
           .el-switch__core {
             --el-color-white: none;
+
             .el-switch__action {
               width: 1rem;
               height: 1rem;
@@ -180,6 +253,7 @@ const switchBackgroundButton = () => {
         }
       }
     }
+
     @media (max-width: 1200px) {
       .el-drawer-box {
         width: 35% !important;

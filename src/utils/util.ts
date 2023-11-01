@@ -1,12 +1,3 @@
-export const mockData = (res:any)=>{
-    // data解构赋值 data = res.data.data
-    let {data} = res.data
-    // 判断data下是否还有data  兼容mock模拟数据
-    if (data.hasOwnProperty('data')) {
-        data = data.data
-    }
-    return data
-}
 // 深拷贝
 export const deepCopy=(obj:any)=> {
     // hash表，记录所有的对象的引用关系

@@ -1,121 +1,122 @@
 <template>
   <el-menu
       :default-active="activeIndex"
-      class="el-menu-demo"
+      :class="[mode==='horizontal'?'menu-horizontal':'menu-vertical']"
       :mode="mode"
       router="router"
       style="height: 100%"
   >
-      <el-menu-item disabled class="log">
-        Blog
-      </el-menu-item>
-    <template v-for="(item,keys) in routers.concat(accessedRouters)" :key="keys">
-      <template v-if="item.path === '/'">
-        <template v-for="(children,key) in item.children" :key="key">
-          <template v-if="children.hasOwnProperty('meta')">
-            <el-menu-item v-if="children.meta.require" :index="children.path">
+    <el-menu-item disabled class="log">
+      Blog
+    </el-menu-item>
+    <template v-for="(item,keys) in routers" :key="keys">
+      <template v-for="(children,key) in item.children" :key="key">
+        <el-menu-item v-if="children.meta.require" :index="children.path">
               <span>
                 {{ children.meta.title }}
               </span>
-            </el-menu-item>
+        </el-menu-item>
+        <el-sub-menu v-else-if="children?.children" :index="key+'1'" popper-class="el-sub-popper">
+          <template #title>
+            <span>{{ children.meta.title }}</span>
           </template>
-        </template>
-      </template>
-      <!--异步组路由部分-->
-      <template v-if="item.path !== '/'">
-        <el-sub-menu :index="item.path" popper-class="el-sub-popper" >
-            <template #title>
-              <span>{{item.meta.title}}</span>
-            </template>
-            <template v-for="(children,key) in item.children" :key="key">
-              <el-menu-item :index="children.path">{{ item.meta.title }}</el-menu-item>
-            </template>
+          <template v-for="(childrenItem,key) in children?.children" :key="key">
+            <el-menu-item :index="childrenItem.path">{{ childrenItem.meta.title }}</el-menu-item>
+          </template>
         </el-sub-menu>
       </template>
+
     </template>
   </el-menu>
 </template>
 
 <script lang="ts" setup>
-import {computed, ref} from 'vue'
-import router from '@/router'
+import {computed, ref, toRefs} from 'vue'
 import store from "@/store";
+import {useRoute} from "vue-router";
+// defineEmits(['mode'])
+const props = defineProps({
+  mode: {
+    type: String,
+    default: 'horizontal',
+  }
+})
+const {mode} = toRefs(props)
+console.log("当前模式", mode?.value)
 
-const activeIndex = ref('/index')
+const activeIndex = ref('/home')
 // 公共路由部分
-const routers: any = computed(() => router.options.routes)
+const routers: any = computed(() => {
+  console.log(useRoute().matched[0])
+  return [useRoute().matched[0]]
+})
 // 私有路由部分
 const accessedRouters: any = computed(() => store.getters.accessedRouters)
-const mode = ref<string>('horizontal')
+
 </script>
 
 <style scoped lang="scss">
 .el-menu {
-  margin: 0 5px;
-  padding: 0 20px;
-  height: 100%;
-  width: 100%;
-  align-items: center;
-  border-bottom: none;
   background: #00000000 !important;
   --el-menu-base-level-padding: 0px;
   --el-menu-border-color: none;
   --el-menu-hover-bg-color: none;
   --el-menu-item-height: none;
-.el-menu-item {
+  margin: 0 5px;
+  border-bottom: none;
+
+  .el-menu-item {
     margin: 0 5px;
     --el-menu-hover-text-color: rgba(86, 53, 183, 0.75);
   }
 
   :deep(.el-sub-menu) {
     --el-bg-color-overlay: none;
-    .el-sub-menu__title{
-      height: 50%;
+    // sub标题
+    .el-sub-menu__title {
+      height: auto;
     }
   }
 }
 
-:global(.el-sub-popper){
-  --el-menu-bg-color: #212121 !important;
-  --el-menu-hover-bg-color: none !important;
+.menu-horizontal {
+
 }
 
-.el-menu--horizontal .el-menu .el-menu-item, .el-menu--horizontal .el-menu .el-sub-menu__title {
-  background-color: $background-dark;
-  color: $background-light;
+.menu-vertical {
 }
 
-:global(.el-menu--popup) {
-  min-width: 150px!important;
-}
 
-.el-menu--horizontal > .el-menu-item.is-active {
-  border-bottom: 2px solid #6d15b7;
+//.el-menu--horizontal .el-menu .el-menu-item{
+//  @include background_color('background-color');
+//  @include font_color('text-color-primary')
+//}
+
+.el-menu--horizontal > .el-menu-item .is-active {
+  border-bottom: 2px solid #6d15b7 !important;
   color: rgba(76, 106, 222, 0.99) !important;
 }
 
-:global(.el-popper.is-light) {
-  background: #212121 !important;
-  border: 1px solid #212121 !important;
-}
-
 @media (min-width: 1024px) {
-  .log{
+  .log {
     width: 5%;
     position: relative;
     font-size: xx-large;
-    &:hover{
+
+    &:hover {
       text-transform: uppercase;
     }
   }
 }
-span{
+
+span {
   color: white;
   padding: 5% 5%;
   border-radius: 0.25rem;
   font-size: larger;
   font-weight: 800;
-  &:hover{
+
+  &:hover {
     background: #212121;
     opacity: 0.8;
   }

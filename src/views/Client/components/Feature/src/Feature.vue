@@ -12,10 +12,10 @@
 
 <script lang="ts" setup>
 import {computed, toRaw} from "vue";
-
-const name = 'Feature'
 import {Article} from "@/components";
 import {ArticleInterface} from "@/interface";
+
+const name = 'Feature'
 
 interface FeatureDatainterface {
   LIST: ArticleInterface[]

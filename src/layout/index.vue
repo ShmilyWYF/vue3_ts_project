@@ -1,14 +1,14 @@
 <template>
-  <div class="common-layout">
-    <el-container>
+  <div class="common-layout" :class="isVertical?'verticalClass':'horizontalClass'">
+    <el-container :direction="isVertical?'horizontal':'vertical'">
       <el-header class="el-header">
         <el-card body-style="height: 100%;background:#00000000;">
-          <nav-menu/>
+          <nav-menu :mode="!isVertical?'horizontal':'vertical'"/>
         </el-card>
       </el-header>
       <el-main class="el-main" ref="mainRef">
         <el-card body-style="height:100%">
-          <Main :container-main="mainRef"/>
+          <Main :container-main="mainRef" :is-vertical="isVertical"/>
         </el-card>
       </el-main>
       <el-footer class="el-footer">
@@ -18,9 +18,11 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {NavMenu, Main, FooterTag} from "@/layout/component";
+import {FooterTag, Main, NavMenu} from "@/layout/component";
 import {ref} from "vue";
+
 const mainRef = ref()
+const props = defineProps(['isVertical'])
 </script>
 
 <style scoped lang="scss">
@@ -31,66 +33,122 @@ const mainRef = ref()
 .common-layout, .common-layout * {
   --box-card-shadow-light: rgb(38, 57, 77) 0px 20px 30px -10px;
   --box-card-shadow-header: rgb(38, 57, 77) 0px -30px 30px -10px;
-  $PADDING-LEFT-AND-RIGHT: 2.5%;
 
   .el-container {
     align-items: center;
+  }
+}
 
+
+.verticalClass {
+  height: 100%;
+  //$padding-2-1r: 1rem 1rem;
+  .el-container{
+    height: inherit;
+    gap: 2rem;
     .el-header {
-      height: calc(10vh - 1%);
-      width: 100%;
-      padding: 1rem $PADDING-LEFT-AND-RIGHT;
+      height: 100%;
+      display: flex;
+      padding: 1rem 0 1rem 3rem;
       opacity: 0.5;
       position: relative;
       z-index: 15;
-
       .el-card.is-always-shadow {
         box-shadow: var(--box-card-shadow-header);
       }
-
       .el-card {
         padding: 10px;
         background: #00000000;
         border-color: #00000000;
         opacity: 0.9;
         --el-card-border-radius: 12px;
-        height: 100%;
+        height: calc(100% - 40px);
+
+        :deep(.el-menu--inline){
+          background-color: transparent !important;
+        }
       }
     }
-
     .el-main {
-      width: 100%;
-      padding: 0 $PADDING-LEFT-AND-RIGHT;
-      min-height: calc(100vh - 20vh);
+      height: 100%;
       position: relative;
       z-index: 10;
       overflow: initial;
-
-      .el-affix {
-        height: 1%;
-        position: absolute;
-        z-index: 999;
-        display: block;
-        right: 1rem;
-      }
-
-      .el-card {
-        //height: 100vh;
+      padding: 1rem 3rem 1rem 0;
+      flex: 1;
+      :deep(.el-card) {
+        height: 100%;
         border: 0;
         background: #00000000;
         position: relative;
         overflow: inherit;
+        .main{
+          height: 100%;
+        }
       }
     }
-
     .el-footer {
-      height: 10vh;
-      padding: 0 $PADDING-LEFT-AND-RIGHT;
-      width: 100%;
+      display: none;
+    }
+  }
+}
 
-      .el-card {
-        --el-card-padding: 0px;
-      }
+.horizontalClass {
+  $PADDING-LEFT-AND-RIGHT: 2.5%;
+  .el-header {
+    height: calc(10vh - 1%);
+    width: 100%;
+    padding: 1rem $PADDING-LEFT-AND-RIGHT;
+    opacity: 0.5;
+    position: relative;
+    z-index: 15;
+
+    .el-card.is-always-shadow {
+      box-shadow: var(--box-card-shadow-header);
+    }
+
+    .el-card {
+      padding: 10px;
+      background: #00000000;
+      border-color: #00000000;
+      opacity: 0.9;
+      --el-card-border-radius: 12px;
+      height: calc(100% - 40px);
+    }
+  }
+
+  .el-main {
+    width: 100%;
+    padding: 0 $PADDING-LEFT-AND-RIGHT;
+    min-height: calc(100vh - 20vh);
+    position: relative;
+    z-index: 10;
+    overflow: initial;
+
+    .el-affix {
+      height: 1%;
+      position: absolute;
+      z-index: 999;
+      display: block;
+      right: 1rem;
+    }
+
+    .el-card {
+      //height: 100vh;
+      border: 0;
+      background: #00000000;
+      position: relative;
+      overflow: inherit;
+    }
+  }
+
+  .el-footer {
+    height: 10vh;
+    padding: 0 $PADDING-LEFT-AND-RIGHT;
+    width: 100%;
+
+    .el-card {
+      --el-card-padding: 0px;
     }
   }
 }

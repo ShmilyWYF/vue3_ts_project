@@ -29,6 +29,7 @@
 </template>
 <script lang="ts" setup>
 import SvgIcon from "@/components/SvgIcon/index.vue";
+
 defineProps({
   data:{
     required:true,

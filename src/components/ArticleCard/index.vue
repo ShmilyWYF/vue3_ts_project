@@ -46,9 +46,9 @@
 </template>
 <script setup lang="ts">
 import {ArticleInterface} from "@/interface";
+import {timeZh} from "@/utils/timeZH";
 
 const name: string = 'HorizontalArticle';
-import {timeZh} from "@/utils/timeZH";
 
 defineProps({
   data: {

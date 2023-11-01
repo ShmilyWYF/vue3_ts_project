@@ -1,4 +1,4 @@
-import { ElMessage } from 'element-plus'
+import {ElMessage} from 'element-plus'
 
 /**
  * axios统一错误处理主要针对HTTP状态码错误

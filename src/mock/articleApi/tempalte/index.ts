@@ -105,7 +105,7 @@ export const featureArticle = () => {
 
 export const articleListByName = (parameters?: string):any => {
     if (parameters === 'ALL') {
-        return Mock.mock({
+        const {data} = Mock.mock({
             'data|20': [
                 {
                     "id": 132,
@@ -147,8 +147,10 @@ export const articleListByName = (parameters?: string):any => {
                 },
             ]
         })
+        console.log(data)
+        return data
     } else {
-        return Mock.mock({
+        const {data} = Mock.mock({
             'data|2': [
                 {
                     "id": 136,
@@ -190,6 +192,7 @@ export const articleListByName = (parameters?: string):any => {
                 },
             ]
         })
+        return data
     }
 }
 
@@ -209,6 +212,25 @@ export const articleListTag:any[] = [
 ]
 
 export const ArticleAsideList = () => {
+    const {tags} = Mock.mock({
+        'tags|16': [
+            {
+                type: 'info',
+                label: '@name',
+                url: 'article-list/@id'
+            },
+        ]
+    })
+    const {commentsList} = Mock.mock({
+        'commentsList|16': [
+            {
+                avatar: 'https://static.linhaojun.top/aurora/avatar/52a81cd2772167b645569342e81ce312.jpg',
+                nickname: '@cname',
+                date: '@date',
+                Content: '@string("upper","10","35")',
+            }
+        ]
+    })
     return {
         introduction: {
             img:'src/assets/default-cover.jpg',
@@ -217,7 +239,7 @@ export const ArticleAsideList = () => {
             url:'https://github.com',
             childer:[
                 {
-                    count: articleListByName('ALL').data.length,
+                    count: 1,
                     title:'文章'
                 },
                 {
@@ -360,24 +382,5 @@ export const ArticleContextById = (id:string) => {
     }
 }
 
-const {commentsList} = Mock.mock({
-    'commentsList|16': [
-        {
-            avatar: 'https://static.linhaojun.top/aurora/avatar/52a81cd2772167b645569342e81ce312.jpg',
-            nickname: '@cname',
-            date: '@date',
-            Content: '@string("upper","10","35")',
-        }
-    ]
-})
 
-const {tags} = Mock.mock({
-    'tags|16': [
-        {
-            type: 'info',
-            label: '@name',
-            url: 'article-list/@id'
-        },
-    ]
-})
 

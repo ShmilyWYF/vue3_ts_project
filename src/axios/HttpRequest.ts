@@ -1,6 +1,5 @@
 import axios, {AxiosInstance, AxiosResponse, InternalAxiosRequestConfig} from 'axios'
 import errorHandle from '@/axios/errorHander'
-import {ElMessage} from 'element-plus'
 
 /**
  * axios实例类
@@ -59,20 +58,19 @@ class HttpRequest {
       return config
     }, (error) => {
       return Promise.reject(error)
-    }
-    )
+    })
 
     axiosInstance.interceptors.response.use((res: AxiosResponse) => {
       const data = res.data
       console.log('响应信息为：', data)
       if (errorHandle(data)) {
-        const {config}:any = res
-        const NoMessageRouter = ['menu/get','get/articleFeatureList','get/articleListByName']
-        if(!NoMessageRouter.includes(config.url)){
-          ElMessage.success('成功了~')
-        }
+        // const {config}:any = res
+        // const NoMessageRouter = ['menu/get','get/articleFeatureList','get/articleListByName']
+        // if(!NoMessageRouter.includes(config.url)){
+        //   ElMessage.success('成功了~')
+        // }
       }
-      return res
+      return data
     }, error => {
       return Promise.reject(error)
     })

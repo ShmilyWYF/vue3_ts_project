@@ -1,6 +1,6 @@
 import api from "@/axios";
-import {mockData} from "@/utils/util";
-import {ArticleInterface, ArticleListTagInterface} from "@/interface";
+import {ArticleInterface} from "@/interface";
+import {AxiosResponse} from "axios";
 
 const {articleApi} = api
 
@@ -46,8 +46,8 @@ const actions: any = {
             if (state.featureArticleData) {
                 resolve(state.featureArticleData)
             } else {
-            articleApi.getFeatureArticle().then((res: any) => {
-                const data = mockData(res)
+            articleApi.getFeatureArticle().then((res: AxiosResponse) => {
+                const data = res.data
                 commit('SET_FEATURE_ARTICLE_DATA', data)
                 resolve(data)
             }, (error: any): void => {
@@ -63,8 +63,8 @@ const actions: any = {
                 commit('SET_ARTICLE_TAG_ACTIVE',listName)
                 resolve(state.articleList[listName])
             } else {
-                articleApi.getArticleListByName(listName).then((res: ArticleInterface[]) => {
-                    const data = mockData(res)
+                articleApi.getArticleListByName(listName).then((res:AxiosResponse) => {
+                    const data = res.data
                     // 缓存活动标签
                     commit('SET_ARTICLE_TAG_ACTIVE',listName)
                     // 解析对象
@@ -83,8 +83,8 @@ const actions: any = {
             if(state.articleTagList){
                 resolve(state.articleTagList)
             }else {
-            articleApi.getArticleTagList().then((res:ArticleListTagInterface[])=>{
-                const data = mockData(res)
+            articleApi.getArticleTagList().then((res:AxiosResponse)=>{
+                const data = res.data
                 commit('SET_ARTICLE_TAG_LIST',data)
                 resolve(data)
             },(error:any)=>{
@@ -99,8 +99,8 @@ const actions: any = {
             if (state.acticleAsideList) {
                 resolve(state.acticleAsideList)
             } else {
-            articleApi.getAllArticleAsideList().then((res:any)=>{
-                const data = mockData(res)
+            articleApi.getAllArticleAsideList().then((res:AxiosResponse)=>{
+                const data = res.data
                 commit('SET_ARTICLE_ASIDE_LIST',data)
                 resolve(data)
              },(error:any)=>{
@@ -115,8 +115,8 @@ const actions: any = {
             if(state.articleContext?.hasOwnProperty(id)){
                     resolve(state.articleContext[id])
             }else {
-                articleApi.getArticleContextById(id).then((res:any)=>{
-                    const data = mockData(res)
+                articleApi.getArticleContextById(id).then((res:AxiosResponse)=>{
+                    const data = res.data
                     const mergeObject = {... {[data.id]: data,}, ...state.articleContext}
                     commit('SET_ARTICLE_CONTEXT',mergeObject)
                     resolve(data)

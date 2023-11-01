@@ -1,9 +1,6 @@
-import router, {asyncRouterMap} from "@/router";
+import {asyncRouterMap} from "@/router";
 import api from "@/axios";
-import cookies from "js-cookie";
-import store from "@/store";
-import {shallowRef} from "vue";
-import {mockData} from "@/utils/util";
+import {AxiosResponse} from "axios";
 
 const menuApi = api.menuApi
 
@@ -29,9 +26,12 @@ const actions: any = {
     getMenuRoles({commit,state}: any, roles: any = ''): any {
         let data = roles    //因为没有角色所有是get方法
         return new Promise((resolve, reject) => {
-                menuApi.getMenuRoles(data).then((res: any) => {
-                        let data = mockData(res)
-
+                menuApi.getMenuRoles(data).then((res: AxiosResponse) => {
+                    let data = res.data
+                    console.log("拿到的路由：",data)
+                        if(data.length<0){
+                            reject('权限表为空!')
+                        }
                         /*二级整合一级
                          * while函数：{} 用于广度搜索 先进先出，判断对象是否有子节点，有则将子节点加入data对象后删除并储存入dataList；
                          * data: [[]] 赋值 用作取值

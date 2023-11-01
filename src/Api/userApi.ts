@@ -1,6 +1,6 @@
 export default {
   login: {
-    method: 'get',
+    method: 'post',
     url: 'user/login'
   },
   logout: {
@@ -8,11 +8,7 @@ export default {
     url: 'user/logout'
   },
   getInfo: {
-    method: 'get',
+    method: 'post',
     url: 'user/getInfo'
   },
-  test: {
-    method: 'get',
-    url: '/test'
-  }
 }

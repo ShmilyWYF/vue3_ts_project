@@ -19,7 +19,7 @@
 
 <script lang="ts" setup>
 import {asyncRouterMap} from "@/router";
-import { ref, toRaw} from 'vue'
+import {ref, toRaw} from 'vue'
 import store from "@/store";
 
 const data = ref<[]>([])
