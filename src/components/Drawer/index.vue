@@ -19,7 +19,7 @@
                     <el-dropdown-menu>
                       <el-dropdown-item @click="UserDialogFormVisible = true">个人中心</el-dropdown-item>
                       <el-dropdown-item @click="userExit">退出</el-dropdown-item>
-                      <el-dropdown-item v-if="userinfo?.type === 0" @click="switchPageEvnt">{{switchPage?'blog':'后台管理'}}</el-dropdown-item>
+                      <el-dropdown-item v-if="userinfo?.type === 1" @click="switchPageEvnt">{{switchPage?'blog':'后台管理'}}</el-dropdown-item>
                     </el-dropdown-menu>
                   </template>
                 </el-dropdown>
@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, toRefs} from "vue";
+import {onMounted, ref, toRefs} from "vue";
 import {svg} from "@/icons";
 import {DrawerstringGraphics, DropDown, Login} from "@/components";
 import router from "@/router";
@@ -49,10 +49,11 @@ import store from "@/store";
 import {getCookie} from "@/utils/cookie";
 import api from "@/axios";
 import {AxiosResponse} from "axios";
+import {useRoute, useRouter} from "vue-router";
 
 const props = defineProps({
   isSwitchBgButton: {
-    type: Boolean,
+    type: <any>Boolean,
     required: true,
     default: false,
   },
@@ -150,7 +151,7 @@ const dialogFormVisible = ref<boolean>(false)
 // 用户个人中心对话弹窗
 const UserDialogFormVisible = ref<boolean>(false)
 // 控制状态栏组件
-const isLoginState = ref<any>(JSON.parse(String(localStorage.getItem('isLoginState'))))
+const isLoginState = ref<any>(getCookie()?true:JSON.parse(String(localStorage.getItem('isLoginState'))))
 // 储存用户信息 为0就是管理员
 const userinfo = ref<any>(store.getters.userinfo)
 // blog/后台切换
@@ -167,7 +168,8 @@ const dialogcall = (token: string) => {
   isLoginState.value = !isLoginState.value
   localStorage.setItem('isLoginState', JSON.stringify(isLoginState.value))
   api.userApi.getInfo(token).then((res:AxiosResponse)=>{
-    userinfo.value = res.data;
+    const {data} = res.data;
+    userinfo.value = data
   })
 }
 
@@ -176,6 +178,7 @@ const userExit = () =>{
   store.dispatch('userStore/logout', getCookie()).then(()=>{
     isLoginState.value = false
     switchPage.value = false
+    isLoginState.value = false
     localStorage.setItem('isLoginState',String(isLoginState.value))
     localStorage.setItem('IsSwitchPage', String(switchPage.value))
     router.push({path: '/'})

@@ -29,13 +29,13 @@ export default class MockResponse {
      * 返回模板
      * @param parameters
      */
-    public response(parameters?: string) {
+    public response(parameters?: string|[]) {
         return this.condition ? {
             code: this.code,
             status: this.status,
             message: '请求数据成功',
-            total: this.template.length,
-            data: parameters ? this.template(parameters) : this.template,
+            total: this.template?.length||Object.keys(this.template).length,
+            data: parameters? this.template(parameters) : this.template,
             isExistenceParameter: !!parameters
         } : {
             code: this.code,

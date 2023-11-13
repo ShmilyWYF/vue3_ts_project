@@ -42,9 +42,10 @@ class MockHandler extends MockResponse {
      * @private
      */
     private static createInstance(options: MockApiInterface[]): MockHandler[] {
-        return options.map((res: MockApiInterface): MockHandler => {
+        let arr = options.map((res: MockApiInterface): MockHandler => {
             return (new MockHandler(res.url, res.type, res.template, res.code, res.status, res.condition))
         })
+        return arr
     }
 
     /**

@@ -47,22 +47,23 @@
 <script setup lang="ts">
 import {ArticleInterface} from "@/interface";
 import {timeZh} from "@/utils/timeZH";
+import {PropType} from "vue";
 
 const name: string = 'HorizontalArticle';
 
 defineProps({
   data: {
-    types: {} as  ArticleInterface,
+    type: Object as PropType<ArticleInterface>||{},
     required: true
   },
   type: {
-    default: 0,
-    types: Number||String,
+    default: '0',
+    type: String,
     required: true,
   },
   h:{
     default: '100%',
-    types: Number||String,
+    type: String,
   }
 })
 

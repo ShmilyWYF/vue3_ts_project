@@ -61,7 +61,7 @@ const actions: any = {
     theme({commit}: any) {
         return new Promise((resolve, reject) => {
             useAppApi.getUseAppConfig().then((res: AxiosResponse) => {
-                let data = res.data
+                let {data} = res.data
                 commit('SET_USE_APP_STATE', data)
                 resolve(data)
             },(error: any): void => {

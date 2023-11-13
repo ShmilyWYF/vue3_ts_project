@@ -5,9 +5,9 @@ class RulesVariable {
 
     // private static _BASE_API: any = 'http://localhost:8080';
 
-    private static _BASE_API: any = '/api';
+    private static _BASE_API: string = '/api';
 
-    private static _IS_AXIOS_BASE: any = import.meta.env.APP_IS_AUTO_AXIOS_BASE;
+    private static _IS_AXIOS_BASE: boolean = import.meta.env.APP_IS_AUTO_AXIOS_BASE;
 
     private readonly _isEnable: boolean;
 
@@ -77,4 +77,5 @@ class RulesApiImpl extends RulesVariable implements RulesApi {
     }
 }
 
-export default new RulesApiImpl(RulesApiImpl.IS_AXIOS_BASE ?? true).start()
+const api = new RulesApiImpl(RulesApiImpl.IS_AXIOS_BASE ?? true).start()
+export default api

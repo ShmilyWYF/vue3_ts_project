@@ -1,13 +1,7 @@
 <template>
   <div class="main" ref="mainRef">
     <Breadcrumb/>
-
-    <el-row :gutter="0" justify="center">
-      <el-col :xs="{span: 24}" :md="{span: 22}" :lg="{span: 20}">
-        <router-view class="view"/>
-      </el-col>
-    </el-row>
-
+    <router-view class="view" v-if="isRouterAlive"/>
     <el-backtop v-if="!isVertical" :right="200" :bottom="100"/>
     <Drawer @switch-theme="switchTheme" @is-Switch-Bg="isSwitchBgEvent" :is-switch-bg-button="isSwitch" :container="containerMain"/>
     <App-Banner :style="isVertical?{height: '55%'}:''"/>
@@ -22,9 +16,22 @@
 import {AppBanner, Breadcrumb} from "@/components";
 import {Drawer} from "@/layout/component";
 import store from "@/store";
-import {ref} from "vue";
+import {nextTick, provide, readonly, ref, toRefs} from "vue";
 
-defineProps(['containerMain','isVertical'])
+const props = defineProps(['containerMain', 'isVertical'])
+const {containerMain} = toRefs(props)
+const isRouterAlive = ref<boolean>(true)
+
+// 视图重载
+const reload = () => {
+  isRouterAlive.value = false;
+  nextTick(() => {
+    isRouterAlive.value = true;
+  })
+}
+
+// 设置只读，子组件不能做修改
+provide('reload', readonly(reload))
 
 // 切换主题事件
 const switchTheme = (args: boolean) => {
@@ -34,7 +41,7 @@ const switchTheme = (args: boolean) => {
 }
 
 // 组件boolean同步
-const isSwitch = ref<any>(JSON.parse(String(localStorage.getItem('IsSwitchBg'))) || false)
+const isSwitch = ref<boolean|null>(JSON.parse(String(localStorage.getItem('IsSwitchBg'))) || false)
 const isSwitchBgEvent = (event: boolean) => {
   isSwitch.value = event
 }
@@ -42,32 +49,29 @@ const isSwitchBgEvent = (event: boolean) => {
 </script>
 
 <style scoped lang="scss">
-.main{
+.main {
   width: 100%;
   margin: 0 auto;
   position: relative;
   overflow: inherit;
   z-index: 10;
-}
+  display: flex;
+  flex-direction: column;
 
-.el-row{
-  align-items: center;
-  .el-col{
+  .el-breadcrumb {
+    flex: 1;
+  }
+
+  .view {
+    height: inherit;
+    //width: 100%;
+    position: relative;
+    z-index: 15;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-    .view{
-      height: auto;
-      width: 100%;
-      position: relative;
-      z-index: 15;
-      display: flex;
-      flex-direction: column;
-    }
   }
 }
+
 
 @media (min-width: 1024px) {
   .el-backtop {
@@ -79,7 +83,7 @@ const isSwitchBgEvent = (event: boolean) => {
 }
 
 
-.main-bg{
+.main-bg {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -92,15 +96,19 @@ const isSwitchBgEvent = (event: boolean) => {
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.5s;
 }
+
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }
+
 .fade-enter-active {
   animation: fade-in 0.5s;
 }
+
 .fade-leave-active {
   animation: fade-in 0.5s reverse;
 }
+
 @keyframes fade-in {
   0% {
     transform: scale(0);

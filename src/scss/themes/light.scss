@@ -5,6 +5,10 @@ $light: (
   // 盒子背景颜色
         background-color: #f3f3f3,
         background-color-anti: #212121,
+  // 备选 #c9c9c9
+        background-primary: #ffffff,
+        background-secondary: #e7e7e7,
+        background-deputy: #c9c9c9,
   // article 横-渐变盖
         gradient-cover: linear-gradient(90deg,hsla(0,0%,98%,0) 0,hsla(0,0%,98%,.013) 8.1%,hsla(0,0%,98%,.049) 15.5%,hsla(0,0%,98%,.104) 22.5%,hsla(0,0%,98%,.175) 29%,hsla(0,0%,98%,.259) 35.3%,hsla(0,0%,98%,.352) 41.2%,hsla(0,0%,98%,.45) 47.1%,hsla(0,0%,98%,.55) 52.9%,hsla(0,0%,98%,.648) 58.8%,hsla(0,0%,98%,.741) 64.7%,hsla(0,0%,98%,.825) 71%,hsla(0,0%,98%,.896) 77.5%,hsla(0,0%,98%,.951) 84.5%,hsla(0,0%,98%,.987) 91.9%,$background-light),
 // article 竖-渐变盖
@@ -17,8 +21,6 @@ $light: (
         text-sub-accent: #ff0099,
         border-color: #f3f3f3,
         border-color-anti: #212121,
-        // 备选 #c9c9c9
-        background-primary: #ffffff,
         box-card-shadow-tabs: $box-light-secondary 0px 20px 30px -10px,
         box-card-shadow-sidebar: $accent-shadow,
         box-card-shadow-sidebar-card: 0px 0px 12px rgba(0, 0, 0, 0.12)

@@ -3,32 +3,23 @@
     <div v-if="loading">
     </div>
     <div v-else class="home-article">
-      <Article :data='top||{}' type="0" h="28rem"/>
-      <slot name="FeatureList" :list="list||[{},{}]"/>
+      <Article :data='FeatureData.TOP' type="0" h="28rem"/>
+      <slot name="FeatureList" :list="FeatureData.LIST"/>
       <slot name="appBanner"/>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {computed, toRaw} from "vue";
 import {Article} from "@/components";
-import {ArticleInterface} from "@/interface";
+import {FeatureDatainterface} from "@/interface";
 
 const name = 'Feature'
 
-interface FeatureDatainterface {
-  LIST: ArticleInterface[]
-  TOP: ArticleInterface
-}
-
 const props = defineProps<{
-  FeatureData: FeatureDatainterface | undefined,
+  FeatureData: FeatureDatainterface,
   loading: boolean,
 }>()
-
-const top = computed(() => toRaw(props.FeatureData?.TOP))
-const list = computed(() => toRaw(props.FeatureData?.LIST))
 
 </script>
 

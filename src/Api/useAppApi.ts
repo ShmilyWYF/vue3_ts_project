@@ -1,6 +1,6 @@
 export default {
     getUseAppConfig: {
         method: 'get',
-        url: 'get/UseAppConfig'
+        url: 'useApp/UseAppConfig'
     },
 }

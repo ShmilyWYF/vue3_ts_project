@@ -3,7 +3,7 @@ import template from '@/mock/useAppApi/tempalte/Template'
 
 const menuApi = [
     {
-        url: 'get/UseAppConfig',
+        url: 'useApp/UseAppConfig',
         type: 'get',
         template,
         code: Number(200),

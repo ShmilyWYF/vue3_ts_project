@@ -6,7 +6,7 @@
           <nav-menu :mode="!isVertical?'horizontal':'vertical'"/>
         </el-card>
       </el-header>
-      <el-main class="el-main" ref="mainRef">
+      <el-main class="el-main" ref="mainRef" id="layoutMain">
         <el-card body-style="height:100%">
           <Main :container-main="mainRef" :is-vertical="isVertical"/>
         </el-card>
@@ -42,7 +42,6 @@ const props = defineProps(['isVertical'])
 
 .verticalClass {
   height: 100%;
-  //$padding-2-1r: 1rem 1rem;
   .el-container{
     height: inherit;
     gap: 2rem;
@@ -73,7 +72,7 @@ const props = defineProps(['isVertical'])
       height: 100%;
       position: relative;
       z-index: 10;
-      overflow: initial;
+      overflow: auto;
       padding: 1rem 3rem 1rem 0;
       flex: 1;
       :deep(.el-card) {

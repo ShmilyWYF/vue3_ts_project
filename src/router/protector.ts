@@ -8,8 +8,8 @@ export default (router: Router) => {
     router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
             start()
             //设置白名单
-            let whiteList = ['/', '/home']
-            let articles = /\/articles\/\d[0-9]+/
+            let whiteList = ['/', '/home','/articles','/articles']
+            let articles = /\/articles\/[0-9]+/
             // 白名单路由校验
             if (articles.test(to.path) || whiteList.includes(to.path)) {
                 next()
@@ -23,7 +23,7 @@ export default (router: Router) => {
                             userinfo = res
                         })
                         // 是否有用户信息 有用户信息，证明用户不是第一次登录
-                        if(userinfo.type !== 0){
+                        if(userinfo.type !== 1){
                             ElMessage.warning('无访问权限')
                             close()
                             next("/")

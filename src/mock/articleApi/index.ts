@@ -1,30 +1,33 @@
 import {
+    AddArticle,
     ArticleAsideList,
-    ArticleContextById,
-    articleListByName,
+    ArticleById,
+    ArticleContentById,
+    UpdateArticleContextById,
+    ArticleListByCategory,
+    allArticle,
+    updateArticleAttributeById,
+    FeatureArticle,
+    deleteArticleTagById,
+    getArticleListByStatus,
+    uploadImg,
+    articleCategoryList,
     articleListTag,
-    featureArticle,
+    deleteArticle,
+    withdrawalArticle, addArticleTags,
 } from "@/mock/articleApi/tempalte";
 
 const articleApi = [
     {
-        url: '/get/featureArticle',
+        url: '/article/featureArticle',
         type: 'get',
-        template: featureArticle(),
+        template: FeatureArticle(),
         code: Number(200),
         status: true,
         condition: true
     },
     {
-        url: '/get/articleListByName',
-        type: 'get',
-        template: articleListByName,
-        code: Number(200),
-        status: true,
-        condition: true
-    },
-    {
-        url: '/get/articleTagList',
+        url: '/article/articleTagList',
         type: 'get',
         template: articleListTag,
         code: Number(200),
@@ -32,7 +35,23 @@ const articleApi = [
         condition: true
     },
     {
-        url: '/get/allArticleAsideList',
+        url: '/article/articleCategoryList',
+        type: 'get',
+        template: articleCategoryList,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/article/articleListByCategory',
+        type: 'get',
+        template: ArticleListByCategory,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/article/allArticleAsideList',
         type: 'get',
         template: ArticleAsideList(),
         code: Number(200),
@@ -40,13 +59,109 @@ const articleApi = [
         condition: true
     },
     {
-        url: '/get/articleContextById',
+        url: '/article/articleById',
         type: 'get',
-        template: ArticleContextById,
+        template: ArticleById,
         code: Number(200),
         status: true,
         condition: true
-    }
+    },
+    {
+        url: '/article/allArticle',
+        type: 'get',
+        template: allArticle,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/article/articleContentById',
+        type: 'get',
+        template: ArticleContentById,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/article/articleListByStatus',
+        type: 'get',
+        template: getArticleListByStatus,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/article/addArticle',
+        type: 'post',
+        template: AddArticle,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/article/deleteArticle',
+        type: 'delete',
+        template: deleteArticle,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/article/withdrawalArticle',
+        type: 'post',
+        template: withdrawalArticle,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/article/articleContextById',
+        type: 'post',
+        template: UpdateArticleContextById,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/article/updateArticleAttributeById',
+        type: 'post',
+        template: updateArticleAttributeById,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/article/deleteArticleTagById',
+        type: 'post',
+        template: deleteArticleTagById,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/article/uploadImg',
+        type: 'post',
+        template: uploadImg,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/article/addArticleTags',
+        type: 'post',
+        template: addArticleTags,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/article/addarticleTags',
+        type: 'post',
+        template: addArticleTags,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
 ]
 
 

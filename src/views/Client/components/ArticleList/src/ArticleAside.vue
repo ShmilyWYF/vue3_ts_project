@@ -1,7 +1,7 @@
 <template>
   <div class="ArticleAside">
-    <Introduction style="height: 26.5rem;" :data="introductionData"/>
-    <Sidebar title="最新评论" icon="moon" :data="commentsListData" h="auto">
+    <Introduction style="height: 26.5rem;" :data="data.introduction"/>
+    <Sidebar title="最新评论" icon="moon" :data="data.commentsList.slice(0, 6)" h="auto">
       <template #content="slotProps">
         <div class="imageFrame">
           <el-avatar :size="40" :src="slotProps.item.avatar" />
@@ -13,12 +13,13 @@
         </div>
       </template>
     </Sidebar>
-    <Sidebar title="标签目录" icon="moon" ul-display="flex" h="auto" :data="tagsData"  :ul-li-clss="{padding: '0',margin: '0'}">
+    <Sidebar title="标签目录" icon="moon" ul-display="flex" h="auto" :data="data.tags.slice(0,15)"  :ul-li-clss="{padding: '0',margin: '0'}">
       <template #content="slotProps">
-        <el-tag :type="slotProps.item.type" effect="dark">
+        <el-tag type="info" effect="dark">
           <template #default>
-            <a :href="slotProps.item.url" class="tag-a">{{slotProps.item.label}}</a>
-            <span class="tag-span">10</span>
+<!--            // 点击事件 点击跳转路由传递tagName未参数 -->
+            <a class="tag-a">{{slotProps.item.tagName}}</a>
+            <span class="tag-span">{{slotProps.item.articleCount}}</span>
           </template>
         </el-tag>
       </template>
@@ -34,7 +35,7 @@
        </p>
       </template>
     </Sidebar>
-    <Sidebar title="网站信息" icon="moon" h="auto" :data="WebsiteInformationData" :ul-li-clss="{'justify-content':'space-between'}">
+    <Sidebar title="网站信息" icon="moon" h="auto" :data="data.websiteInformation" :ul-li-clss="{'justify-content':'space-between'}">
       <template #content="slotProps">
         <span>
          {{slotProps.item.title}}
@@ -47,29 +48,51 @@
   </div>
 </template>
 <script setup lang="ts">
-
 import {Introduction, Sidebar} from "@/components";
-import {ref} from "vue";
+import {onUnmounted, reactive, ref} from "vue";
 import store from "@/store";
+import {ArticleAsideinterface, Tagsinterface} from "@/interface";
+import any = jasmine.any;
 
-const commentsListData =  ref<any>([])
-const WebsiteInformationData =  ref<any>([])
-const tagsData = ref<any>([])
-const introductionData = ref<any>([])
+const data = reactive<ArticleAsideinterface>({
+  introduction:{
+    img: '',
+    nickname: '',
+    description: '',
+    url: '',
+    childer: [{}]
+  },
+  commentsList:[{
+    avatar: '',
+    nickname: '',
+    date: new Date(),
+    Content: '',
+  }],
+  websiteInformation: [{
+    title: '',
+    value: 0,
+  }],
+  tags: [],
+})
+
 // 储存时间
 let websiteTime = ref<any>()
 
-store.dispatch('articleStore/getAllArticleAsideList').then((res:any)=>{
-  commentsListData.value = res.commentsList.slice(0,7)
-  WebsiteInformationData.value = res.WebsiteInformation
+store.dispatch('articleStore/getAllArticleAsideList').then((res:ArticleAsideinterface)=>{
+  data.commentsList = res.commentsList
+  data.websiteInformation = res.websiteInformation
+  data.tags = res.tags
+  data.introduction = res.introduction
   // 深拷贝
-  websiteTime.value = JSON.stringify(WebsiteInformationData?.value[0].value*1000)
-  tagsData.value = res.tags.slice(0,10)
-  introductionData.value = res.introduction
+  websiteTime.value = JSON.stringify(<number>data.websiteInformation[0].value*1000)
 })
 
+//在页面销毁之前先销毁定时器
+onUnmounted(() => {
+  clearTimeout(timer)
+})
 
-setInterval(()=>{
+const timer = setInterval(()=>{
   let timeold = new Date().getTime() - <any>new Date(JSON.parse(websiteTime.value))
   let msPerDay = 24 * 60 * 60 * 1000
   let daysold = Math.floor(timeold / msPerDay)
@@ -79,8 +102,9 @@ setInterval(()=>{
   str += day.getHours() + '时'
   str += day.getMinutes() + '分'
   str += day.getSeconds() + '秒'
-  WebsiteInformationData!.value[0].value = str
+  data.websiteInformation[0].value = str
 },1000)
+
 
 </script>
 

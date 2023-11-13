@@ -24,7 +24,7 @@ const constantRoute: Array<RouteRecordRaw> = [
                 },
             },
             {
-                path: `/articles/:id`,
+                path: '/articles/:id',
                 name: 'articles',
                 component: () => import('@/components/Articles/index.vue'),
                 // 开启组件props
@@ -60,21 +60,42 @@ export const asyncRouterMap: any[] = [
                 },
             },
             {
-                path: '/Dashboard/text',
-                name: 'Dashboard/text',
+                path: '/Dashboard/mark',
+                name: 'Dashboard/mark',
                 meta: {
                     require: false,
-                    title: '测试sub'
+                    title: '文章管理',
+                    noRedirect: true,
                 },
                 children: [
                     {
-                        path: '/Dashboard/text',
-                        name: 'articles',
-                        component: () => import('@/views/Dashboard/components/text.vue'),
+                        path: '/Dashboard/mark/edit',
+                        name: 'mark',
+                        component: () => import('@/views/Dashboard/components/markEdit/index.vue'),
                         // 开启组件props
+                        props: true,
+                        meta: {
+                            hide: true,
+                            require: false,
+                            title: '文章编辑'
+                        },
+                    },
+                    {
+                        path: '/Dashboard/mark/articleList',
+                        name: 'articleManage',
+                        component: () => import('@/views/Dashboard/components/articleList/index.vue'),
                         meta: {
                             require: false,
                             title: '文章列表'
+                        },
+                    },
+                    {
+                        path: '/Dashboard/mark/tag',
+                        name: 'draft',
+                        component: () => import('@/views/Dashboard/components/tag/index.vue'),
+                        meta: {
+                            require: false,
+                            title: 'tag'
                         },
                     }
                 ]

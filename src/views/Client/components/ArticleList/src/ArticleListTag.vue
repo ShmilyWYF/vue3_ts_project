@@ -1,6 +1,6 @@
 <template>
   <div class="ArticleListTag" id="ArticleListTag">
-    <el-tabs @tab-click="getArticleListByName" v-model="articleTagActive" ref="tabRef">
+    <el-tabs @tab-click="getArticleListByCategory" v-model="articleTagActive" ref="tabRef">
 
       <el-tab-pane label="ALL" name="ALL">
         <template #label>
@@ -13,7 +13,7 @@
         </template>
       </el-tab-pane>
 
-      <el-tab-pane v-if="isArticleTagList" :label="$t('message.'+item.categoryName)" :name="item.categoryName" v-for="(item,key) in articleTagList" :key="key">
+      <el-tab-pane v-if="isArticleTagList" :label="$t('message.'+item.categoryName)" :name="item.categoryName" v-for="(item,key) in articleCategoryList" :key="key">
         <template #label>
           <el-tag type="info" effect="dark">
             <span class="tag-a">{{item.categoryName}}</span>
@@ -44,10 +44,10 @@ import {computed, onMounted, ref} from 'vue'
 import {Article} from "@/components";
 import store from "@/store";
 import {svg} from "@/icons";
-import {ArticleInterface, ArticleListTagInterface} from "@/interface";
+import {ArticleInterface, CategoryCountInterface, CategoryInterface} from "@/interface";
 
 const tabRef = ref<HTMLElement|any>()
-const articleTagList = ref<ArticleListTagInterface[]>()
+const articleCategoryList = ref<CategoryCountInterface[]>()
 // 控制渲染时机
 const isArticleTagList = ref<boolean>(false)
 
@@ -58,26 +58,10 @@ const pageSize = ref<number>(12)
 // 初始化数据
 const data = ref<ArticleInterface[]>()
 const total = ref<ArticleInterface[]>([])
-/**
- * @author WangYaFeng
- * @date 2023/10/17 18:44
- * @description 根据所选列表导航label列出相应文章列表
- * @return null
- * @param pane
- */
-const getArticleListByName = async (pane?:any) => {
-  const label = pane?.paneName?pane.paneName : (articleTagActive.value ? articleTagActive.value : 'ALL')
-  store.dispatch('articleStore/getArticleListByName', label).then((res: ArticleInterface[]) => {
-        total.value = res
-        data.value = total.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
-      }
-  )
-}
 
-// init数据
 onMounted(()=>{
-  getArticleListTag();
-  getArticleListByName();
+  getArticleCategorylist();
+  getArticleListByCategory();
 })
 
 /**
@@ -86,13 +70,32 @@ onMounted(()=>{
  * @description 获取文章标签列表
  * @return null
  */
-const getArticleListTag = () => {
-   store.dispatch('articleStore/getArticleTagList').then((res: ArticleListTagInterface[]) => {
-      articleTagList.value = res
-      isArticleTagList.value = true
+const getArticleCategorylist = () => {
+  store.dispatch('articleStore/getArticleCategorylist').then((res: CategoryCountInterface[]) => {
+        articleCategoryList.value = res
+        isArticleTagList.value = true
       }
   )
 }
+
+/**
+ * @author WangYaFeng
+ * @date 2023/10/17 18:44
+ * @description 根据所选列表导航label列出相应文章列表
+ * @return null
+ * @param pane
+ */
+const getArticleListByCategory = async (pane?:any) => {
+  const label = pane?.paneName?pane.paneName : (articleTagActive.value ? articleTagActive.value : 'ALL')
+  store.dispatch('articleStore/getArticleListByCategory', label).then((res: ArticleInterface[]) => {
+        total.value = res
+        data.value = total.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
+      }
+  )
+}
+
+
+
 
 /**
  * @author WangYaFeng

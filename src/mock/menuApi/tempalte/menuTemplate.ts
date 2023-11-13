@@ -1,5 +1,4 @@
 export const RolesMenu = (roles:string) =>{
-    console.log(roles)
     return roles!=undefined?[{
         id: '1',
         pid: '1',
@@ -20,7 +19,7 @@ export const RolesMenu = (roles:string) =>{
                 id: '12',
                 pid: '12',
                 title: '测试',
-                path: '/Dashboard/text',
+                path: '/Dashboard/mark',
                 value: '@string',
                 icon: [''],
             }

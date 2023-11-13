@@ -23,7 +23,7 @@ const actions:any = {
     login({commit,state}:any,user:{}){
         return new Promise((resolve, reject) => {
              userApi.login(user).then((res: AxiosResponse) => {
-                 const data = res.data
+                 const {data} = res.data
                  if (!data.token) {
                      ElMessage.error(data)
                      reject(data)
@@ -42,7 +42,10 @@ const actions:any = {
                 resolve(state.userinfo)
             }else {
                 userApi.getInfo(token).then((res:AxiosResponse)=>{
-                    const data = res.data
+                    const {data} = res.data
+                    // if (data?.state&&data?.state !== 200){
+                    //     reject("token无效，请重新登陆")
+                    // }
                     commit('SET_USER_INFO',data)
                     resolve(data)
                 },(error:any)=>{
@@ -54,10 +57,10 @@ const actions:any = {
     logout({commit,state}:any,token:string){
         return new Promise((resolve, reject) => {
                 userApi.logout(token).then((res:AxiosResponse)=>{
-                    const data = res.data
-                    if(data.state!==200){
-                        ElMessage.success('退出失败！')
-                    }
+                    const {data} = res.data
+                    // if(res.code!==200){
+                    //     ElMessage.success('退出失败！')
+                    // }
                     // 删除用户缓存
                     commit('SET_USER_INFO','')
                     // 删除token缓存

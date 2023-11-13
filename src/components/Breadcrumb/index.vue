@@ -1,7 +1,7 @@
 <template>
     <el-breadcrumb separator="/" :separator-icon="arrowIcon" v-show="isbread">
       <template  v-for="(item,key) in breadList" :key="key">
-        <el-breadcrumb-item :to="item.path">
+        <el-breadcrumb-item :to="item.path" :style="{'pointer-events': item.meta.noRedirect?'none':'auto'}">
           {{ item.meta.title }}
         </el-breadcrumb-item>
       </template>

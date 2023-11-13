@@ -27,7 +27,7 @@ const actions: any = {
         let data = roles    //因为没有角色所有是get方法
         return new Promise((resolve, reject) => {
                 menuApi.getMenuRoles(data).then((res: AxiosResponse) => {
-                    let data = res.data
+                    let {data} = res.data
                     console.log("拿到的路由：",data)
                         if(data.length<0){
                             reject('权限表为空!')
@@ -84,7 +84,6 @@ const actions: any = {
                                     const shift = children.shift();
                                     // 判断子路由是否存在异步路由表中
                                     if (childrenArray.includes(shift.path)) {
-                                        console.log(shift)
                                         // 将通过的子路由加入子路由数组
                                         tempChildrenList.push(shift)
                                     }

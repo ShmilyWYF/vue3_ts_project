@@ -40,10 +40,11 @@ class HttpRequest {
    * @param target URL、method插值
    * @return defaultConfig
    */
-  private static mergeOptions (source: {}, target: {}) {
+  private static mergeOptions(source: {}, target: any) {
     if (typeof target !== 'object' || target == null) {
       return source
     }
+    // 合并对象
     return Object.assign(source, target)
   }
 
@@ -64,13 +65,9 @@ class HttpRequest {
       const data = res.data
       console.log('响应信息为：', data)
       if (errorHandle(data)) {
-        // const {config}:any = res
-        // const NoMessageRouter = ['menu/get','get/articleFeatureList','get/articleListByName']
-        // if(!NoMessageRouter.includes(config.url)){
-        //   ElMessage.success('成功了~')
-        // }
+
       }
-      return data
+      return res
     }, error => {
       return Promise.reject(error)
     })

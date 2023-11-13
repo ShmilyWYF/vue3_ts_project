@@ -23,7 +23,7 @@ if (import.meta.env.APP_NODE_ENV === 'development') {
 // init数据
 console.log('初始化数据')
 // 第一次访问时获取配置
-await store.dispatch('useAppStore/theme', '').then((): void => {
+await store.dispatch('useAppStore/theme').then((): void => {
     console.info('获取主题配置 -> ok')
 })
 

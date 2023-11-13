@@ -21,7 +21,7 @@
             <span>{{ children.meta.title }}</span>
           </template>
           <template v-for="(childrenItem,key) in children?.children" :key="key">
-            <el-menu-item :index="childrenItem.path">{{ childrenItem.meta.title }}</el-menu-item>
+            <el-menu-item :index="childrenItem.path" v-if="!childrenItem.meta.hide">{{ childrenItem.meta.title }}</el-menu-item>
           </template>
         </el-sub-menu>
       </template>
@@ -66,7 +66,9 @@ const accessedRouters: any = computed(() => store.getters.accessedRouters)
   border-bottom: none;
 
   .el-menu-item {
-    margin: 0 5px;
+    height: 2rem;
+    color: white;
+    font-weight: 600;
     --el-menu-hover-text-color: rgba(86, 53, 183, 0.75);
   }
 
@@ -75,6 +77,18 @@ const accessedRouters: any = computed(() => store.getters.accessedRouters)
     // sub标题
     .el-sub-menu__title {
       height: auto;
+    }
+    .el-menu-item{
+      width: min-content;
+      height: 1.25rem;
+      padding: 5% !important;
+      margin: .25rem 0;
+      border-radius: .25rem;
+      float: right;
+      &:hover{
+        background-color: #212121;
+        opacity: .8;
+      }
     }
   }
 }

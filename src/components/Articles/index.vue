@@ -41,7 +41,7 @@
       </div>
     </template>
     <template #default>
-      <Mark v-if="isLoading" :key="content.id" :edit-mode="false" :content="content?.articleContent" ref="markRef" @markTocEvnt="markTocEvnt"/>
+      <Mark v-if="isLoading" :key="content.id" :edit-mode="mode" :content="content?.articleContent" ref="markRef" @markTocEvnt="markTocEvnt"/>
     </template>
     <template #aside>
       <ArticleToc :top-distance="25"/>
@@ -55,14 +55,13 @@ import tocbot from 'tocbot'
 import {ref, toRefs} from "vue";
 import store from "@/store";
 
-const props = defineProps(['id'])
+const props = defineProps(['id','mode'])
 const { id }= toRefs(props)
 const content = ref<any>();
 const isLoading = ref<boolean>(false)
-store.dispatch('articleStore/getArticleContextById',id?.value).then(res=>{
+store.dispatch('articleStore/getArticleById',id?.value).then(res=>{
   content.value = res
   isLoading.value = true
-  console.log('放行组件')
 })
 
 
@@ -88,7 +87,7 @@ const markTocEvnt = (container:string)=>{
       display: flex;
       flex-direction: column;
       border: none;
-      padding: 2rem 1rem;
+      padding: 2rem 3.25rem;
       span {
         position: relative;
 
