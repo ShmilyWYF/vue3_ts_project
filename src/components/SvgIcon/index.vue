@@ -1,6 +1,6 @@
 <template>
   <svg aria-hidden="true">
-    <use :href="symbolId" :fill="color" />
+    <use :fill="color" :href="symbolId"/>
   </svg>
 </template>
 
@@ -25,12 +25,12 @@ export default defineComponent({
   },
   setup(props) {
     const symbolId = computed(() => `#${props.prefix}-${props.name}`)
-    return { symbolId }
+    return {symbolId}
   },
 })
 </script>
-<style scoped lang="scss">
-svg{
+<style lang="scss" scoped>
+svg {
   width: 1.5rem;
   height: 1.5rem;
 }

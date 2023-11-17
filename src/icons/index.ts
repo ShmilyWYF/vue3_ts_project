@@ -22,27 +22,26 @@ const components = ['moon']
 // }
 
 
-
-export const svg = (name:string):ReturnType<typeof defineComponent>=> {
+export const svg = (name: string): ReturnType<typeof defineComponent> => {
     // 只对第一层级操作，深拷贝
-    const svg = Object.assign({},SvgIcon)
+    const svg = Object.assign({}, SvgIcon)
     // 解构属性
-    let props={
-        props:{
-            color:{
+    let props = {
+        props: {
+            color: {
                 default: "#333",
                 type: String
             },
-            name:{
+            name: {
                 default: name,
                 required: false
             },
-            prefix:{
+            prefix: {
                 default: "icon",
                 type: String
             }
         }
     }
-    Object.assign(svg,props)
+    Object.assign(svg, props)
     return svg;
 }

@@ -166,7 +166,7 @@ export const FeatureArticle = () => {
 const getLatestItem = (type: boolean): ArticleInterface[] => {
     // 获取长度
     let arr = allArticle.filter(res => {
-        if (res.status !== 3&&res.isDelete !== 1) {
+        if (res.status !== 3 && res.isDelete !== 1) {
             return type ? res.isTop === 1 : res.isFeatured === 1
         }
     }).sort((a: any, b: any) => {
@@ -184,12 +184,12 @@ export const articleCategoryList: CategoryInterface[] = categoryCount()
 export const ArticleListByCategory = (parameters: string) => {
     if (parameters === 'ALL') {
         let arr = allArticle.filter(res => {
-            return res.status != 3&&res.isDelete !== 1
+            return res.status != 3 && res.isDelete !== 1
         })
         return arr
     } else {
         let arr = allArticle.filter(res => {
-            if (res.status != 3&&res.isDelete !== 1) {
+            if (res.status != 3 && res.isDelete !== 1) {
                 return res.categoryName === parameters
             }
         })
@@ -313,8 +313,8 @@ export const AddArticle = (aritcleData: string) => {
 }
 
 // 给文章添加标签
-export const addArticleTags =(obj:string)=>{
-    const {id,tagName}  = JSON.parse(obj)
+export const addArticleTags = (obj: string) => {
+    const {id, tagName} = JSON.parse(obj)
     // 校验是否存在 不存在则添加进列表
     addOrEditTag(JSON.stringify({tagName: tagName}));
     let result: any = null
@@ -328,7 +328,7 @@ export const addArticleTags =(obj:string)=>{
                 result = false
             } else {
                 // 给文章添加标签
-                let key = tags.data.findIndex((item: { tagName: string; })=>{
+                let key = tags.data.findIndex((item: { tagName: string; }) => {
                     return item.tagName?.toLocaleLowerCase() === tagName.toLocaleLowerCase()
                 })
                 allArticle[index].tags.push(tags.data[key])
@@ -344,7 +344,7 @@ export const deleteArticle = (obj: string) => {
     const ids = <[number]>JSON.parse(obj)
     let result = null;
     try {
-        ids.forEach(item=>{
+        ids.forEach(item => {
             let key = allArticle.findIndex(value => value.id === item)
             if (key != -1) {
                 allArticle[key].status = 0
@@ -352,8 +352,8 @@ export const deleteArticle = (obj: string) => {
             }
         })
         result = true
-    }catch (e) {
-        result = false
+    } catch (e: any) {
+        throw new Error(e)
     }
     return result
 }
@@ -393,10 +393,10 @@ export const UpdateArticleContextById = (articleinfo: string) => {
 // 按id更新文章属性 修改文章对象传入名的属性 如status
 export const updateArticleAttributeById = (articleinfo: string) => {
     const {id, value, attributeName} = JSON.parse(articleinfo)
-    let key = allArticle.findIndex(value=>{
+    let key = allArticle.findIndex(value => {
         return value.id === id
     })
-    if (key != -1){
+    if (key != -1) {
         let arr: any = allArticle[key]
         arr[attributeName] = value
         arr.updateTime = parseInt(String(new Date().getTime() / 1000))

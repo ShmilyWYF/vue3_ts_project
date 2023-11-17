@@ -1,15 +1,16 @@
 <template>
-  <div id="loading-bar-wrapper" />
+  <div id="loading-bar-wrapper"/>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 const name = 'Loading'
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /** nprogress styles */
 ::v-deep#loading-bar-wrapper #nprogress {
   pointer-events: none;
+
   .bar {
     background: var(--main-Np-gradient);
     position: absolute;

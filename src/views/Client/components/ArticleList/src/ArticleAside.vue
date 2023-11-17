@@ -1,10 +1,10 @@
 <template>
   <div class="ArticleAside">
-    <Introduction style="height: 26.5rem;" :data="data.introduction"/>
-    <Sidebar title="最新评论" icon="moon" :data="data.commentsList.slice(0, 6)" h="auto">
+    <Introduction :data="data.introduction" style="height: 26.5rem;"/>
+    <Sidebar :data="data.commentsList.slice(0, 6)" h="auto" icon="moon" title="最新评论">
       <template #content="slotProps">
         <div class="imageFrame">
-          <el-avatar :size="40" :src="slotProps.item.avatar" />
+          <el-avatar :size="40" :src="slotProps.item.avatar"/>
         </div>
         <div class="comments">
           <span>{{ slotProps.item.nickname }}</span>
@@ -13,13 +13,14 @@
         </div>
       </template>
     </Sidebar>
-    <Sidebar title="标签目录" icon="moon" ul-display="flex" h="auto" :data="data.tags.slice(0,15)"  :ul-li-clss="{padding: '0',margin: '0'}">
+    <Sidebar :data="data.tags.slice(0,15)" :ul-li-clss="{padding: '0',margin: '0'}" h="auto" icon="moon" title="标签目录"
+             ul-display="flex">
       <template #content="slotProps">
-        <el-tag type="info" effect="dark">
+        <el-tag effect="dark" type="info">
           <template #default>
-<!--            // 点击事件 点击跳转路由传递tagName未参数 -->
-            <a class="tag-a">{{slotProps.item.tagName}}</a>
-            <span class="tag-span">{{slotProps.item.articleCount}}</span>
+            <!--            // 点击事件 点击跳转路由传递tagName未参数 -->
+            <a class="tag-a">{{ slotProps.item.tagName }}</a>
+            <span class="tag-span">{{ slotProps.item.articleCount }}</span>
           </template>
         </el-tag>
       </template>
@@ -27,42 +28,42 @@
         <p class="el-tag-p">查看更多</p>
       </template>
     </Sidebar>
-    <Sidebar title="公告" icon="moon" ul-display="flex" h="auto">
+    <Sidebar h="auto" icon="moon" title="公告" ul-display="flex">
       <template #content>
         <!--        {{announcement}}-->
-       <p style="line-height: normal;">
-         博客项目已完成，代码已开源，开源地址在上方的github地址,仿auroraUI设计,封装大量复用UI组件，axios-mock-store工厂模式
-       </p>
+        <p style="line-height: normal;">
+          博客项目已完成，代码已开源，开源地址在上方的github地址,仿auroraUI设计,封装大量复用UI组件，axios-mock-store工厂模式
+        </p>
       </template>
     </Sidebar>
-    <Sidebar title="网站信息" icon="moon" h="auto" :data="data.websiteInformation" :ul-li-clss="{'justify-content':'space-between'}">
+    <Sidebar :data="data.websiteInformation" :ul-li-clss="{'justify-content':'space-between'}" h="auto" icon="moon"
+             title="网站信息">
       <template #content="slotProps">
         <span>
-         {{slotProps.item.title}}
+         {{ slotProps.item.title }}
         </span>
         <span>
-         {{slotProps.item.value}}
+         {{ slotProps.item.value }}
         </span>
       </template>
     </Sidebar>
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
 import {Introduction, Sidebar} from "@/components";
 import {onUnmounted, reactive, ref} from "vue";
 import store from "@/store";
-import {ArticleAsideinterface, Tagsinterface} from "@/interface";
-import any = jasmine.any;
+import {ArticleAsideinterface} from "@/interface";
 
 const data = reactive<ArticleAsideinterface>({
-  introduction:{
+  introduction: {
     img: '',
     nickname: '',
     description: '',
     url: '',
     childer: [{}]
   },
-  commentsList:[{
+  commentsList: [{
     avatar: '',
     nickname: '',
     date: new Date(),
@@ -78,13 +79,13 @@ const data = reactive<ArticleAsideinterface>({
 // 储存时间
 let websiteTime = ref<any>()
 
-store.dispatch('articleStore/getAllArticleAsideList').then((res:ArticleAsideinterface)=>{
+store.dispatch('articleStore/getAllArticleAsideList').then((res: ArticleAsideinterface) => {
   data.commentsList = res.commentsList
   data.websiteInformation = res.websiteInformation
   data.tags = res.tags
   data.introduction = res.introduction
   // 深拷贝
-  websiteTime.value = JSON.stringify(<number>data.websiteInformation[0].value*1000)
+  websiteTime.value = JSON.stringify(<number>data.websiteInformation[0].value * 1000)
 })
 
 //在页面销毁之前先销毁定时器
@@ -92,7 +93,7 @@ onUnmounted(() => {
   clearTimeout(timer)
 })
 
-const timer = setInterval(()=>{
+const timer = setInterval(() => {
   let timeold = new Date().getTime() - <any>new Date(JSON.parse(websiteTime.value))
   let msPerDay = 24 * 60 * 60 * 1000
   let daysold = Math.floor(timeold / msPerDay)
@@ -103,12 +104,12 @@ const timer = setInterval(()=>{
   str += day.getMinutes() + '分'
   str += day.getSeconds() + '秒'
   data.websiteInformation[0].value = str
-},1000)
+}, 1000)
 
 
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @media (min-width: 1024px) {
   .ArticleAside {
     height: 100%;
@@ -119,29 +120,19 @@ const timer = setInterval(()=>{
     display: flex;
     flex-direction: column;
     row-gap: 1rem;
-    .sidebar{
+
+    .sidebar {
       width: 95% !important;
     }
+
     // 最新评论
     .imageFrame {
       overflow: hidden;
       border-radius: 99rem;
       flex-shrink: 0;
       box-shadow: $accent-shadow;
-      :deep(.el-avatar)>img {
-        transition-property: transform;
-        transition-timing-function: cubic-bezier(.4, 0, .2, 1);
-        transition-duration: .8s;
-        transform: rotate(-1turn);
-        max-width: 100%;
-        height: auto;
-        display: block;
-        vertical-align: middle;
-        &:hover{
-          transform: rotate(1turn);
-        }
-      }
     }
+
     .comments {
       width: 0;
       font-size: .75rem;
@@ -166,16 +157,19 @@ const timer = setInterval(()=>{
         line-height: 1rem;
       }
     }
+
     // 标签列表
-    :deep(.el-tag){
+    :deep(.el-tag) {
       border: 0;
       padding: 0;
       border-radius: .25rem;
       @include background_color('background-color');
-      &:hover{
+
+      &:hover {
         opacity: .5;
       }
-      .tag-a{
+
+      .tag-a {
         color: inherit;
         padding: .35rem .75rem;
         background-color: #000000;
@@ -183,7 +177,8 @@ const timer = setInterval(()=>{
         border-bottom-left-radius: .375rem;
         border-top-left-radius: .375rem;
       }
-      .tag-span{
+
+      .tag-span {
         opacity: .7;
         border-bottom-right-radius: .375rem;
         border-top-right-radius: .375rem;
@@ -192,7 +187,8 @@ const timer = setInterval(()=>{
         @include font_color('text-sub-accent');
       }
     }
-    .el-tag-p{
+
+    .el-tag-p {
       margin: 1rem 0 0 0;
     }
   }

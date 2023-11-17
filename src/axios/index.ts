@@ -5,22 +5,22 @@ class RulesVariable {
 
     // private static _BASE_API: any = 'http://localhost:8080';
 
-    private static _BASE_API: string = '/api';
-
-    private static _IS_AXIOS_BASE: boolean = import.meta.env.APP_IS_AUTO_AXIOS_BASE;
-
     private readonly _isEnable: boolean;
 
     public constructor(isEnable: boolean) {
         this._isEnable = isEnable;
     }
 
-    private static get BASE_API(): string {
-        return this._BASE_API;
-    }
+    private static _IS_AXIOS_BASE: boolean = import.meta.env.APP_IS_AUTO_AXIOS_BASE;
 
     public static get IS_AXIOS_BASE(): boolean {
         return this._IS_AXIOS_BASE;
+    }
+
+    private static _BASE_API: string = '/api';
+
+    private static get BASE_API(): string {
+        return this._BASE_API;
     }
 
     protected get isEnable(): boolean {
@@ -60,7 +60,7 @@ class RulesApiImpl extends RulesVariable implements RulesApi {
     }
 
     private autoCreateApi() {
-        const requireContext:Record<string, any> = import.meta.glob("../Api/*.ts",{eager:true})
+        const requireContext: Record<string, any> = import.meta.glob("../Api/*.ts", {eager: true})
         return Object.keys(requireContext).reduce((prev: any, curr: string) => {
             const fileObject = requireContext[curr].default
             const name: string = curr.replace(/^\..\/Api\/(.*)\.\w+$/, '$1')

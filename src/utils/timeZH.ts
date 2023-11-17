@@ -1,5 +1,14 @@
+// 格式化时间函数
+export const formatTime = (time: any): any => {
+    let date = new Date(time)
+    let year = date.getFullYear()
+    let month = date.getMonth() + 1
+    let day = date.getDate()
+    return year + '-' + month + '-' + day
+}
+
 // 转换数字为中文
-export function timeZh(timestamp: number|string) {
+export function timeZh(timestamp: number | string) {
     let date = new Date(timestamp);
     let Y = date.getFullYear();
     let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
@@ -58,18 +67,18 @@ function toChineseNum(num: string | number) {
 }
 
 // 获得时间函数
-function formatDate(){
+function formatDate() {
     //三目运算符
     const Dates = new Date();
 
     //年份
-    const Year : number = Dates.getFullYear();
+    const Year: number = Dates.getFullYear();
 
     //月份下标是0-11
-    const Months : any = ( Dates.getMonth() + 1 ) < 10  ?  '0' + (Dates.getMonth() + 1) : ( Dates.getMonth() + 1);
+    const Months: any = (Dates.getMonth() + 1) < 10 ? '0' + (Dates.getMonth() + 1) : (Dates.getMonth() + 1);
 
     //具体的天数
-    const Day : any = Dates.getDate() < 10 ? '0' + Dates.getDate() : Dates.getDate();
+    const Day: any = Dates.getDate() < 10 ? '0' + Dates.getDate() : Dates.getDate();
 
     //小时
     const Hours = Dates.getHours() < 10 ? '0' + Dates.getHours() : Dates.getHours();

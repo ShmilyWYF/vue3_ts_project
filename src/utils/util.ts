@@ -1,9 +1,10 @@
 // 深拷贝
-export const deepCopy=(obj:any)=> {
+export const deepCopy = (obj: any) => {
     // hash表，记录所有的对象的引用关系
     let map = new WeakMap();
-    function dp(obj:any) {
-        let result:any = null;
+
+    function dp(obj: any) {
+        let result: any = null;
         let keys = Object.keys(obj);
         let key = null,
             temp = null,
@@ -26,5 +27,6 @@ export const deepCopy=(obj:any)=> {
         }
         return result;
     }
+
     return dp(obj);
 }

@@ -1,12 +1,12 @@
 <template>
-  <div class="common-layout" :class="isVertical?'verticalClass':'horizontalClass'">
+  <div :class="isVertical?'verticalClass':'horizontalClass'" class="common-layout">
     <el-container :direction="isVertical?'horizontal':'vertical'">
       <el-header class="el-header">
         <el-card body-style="height: 100%;background:#00000000;">
           <nav-menu :mode="!isVertical?'horizontal':'vertical'"/>
         </el-card>
       </el-header>
-      <el-main class="el-main" ref="mainRef" id="layoutMain">
+      <el-main id="layoutMain" ref="mainRef" class="el-main">
         <el-card body-style="height:100%">
           <Main :container-main="mainRef" :is-vertical="isVertical"/>
         </el-card>
@@ -25,7 +25,7 @@ const mainRef = ref()
 const props = defineProps(['isVertical'])
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .common-layout {
   background: var(--body-Background);
 }
@@ -42,9 +42,11 @@ const props = defineProps(['isVertical'])
 
 .verticalClass {
   height: 100%;
-  .el-container{
+
+  .el-container {
     height: inherit;
     gap: 2rem;
+
     .el-header {
       height: 100%;
       display: flex;
@@ -52,9 +54,11 @@ const props = defineProps(['isVertical'])
       opacity: 0.5;
       position: relative;
       z-index: 15;
+
       .el-card.is-always-shadow {
         box-shadow: var(--box-card-shadow-header);
       }
+
       .el-card {
         padding: 10px;
         background: #00000000;
@@ -63,11 +67,15 @@ const props = defineProps(['isVertical'])
         --el-card-border-radius: 12px;
         height: calc(100% - 40px);
 
-        :deep(.el-menu--inline){
+        :deep(.el-menu--inline) {
           background-color: transparent !important;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
       }
     }
+
     .el-main {
       height: 100%;
       position: relative;
@@ -75,17 +83,20 @@ const props = defineProps(['isVertical'])
       overflow: auto;
       padding: 1rem 3rem 1rem 0;
       flex: 1;
+
       :deep(.el-card) {
         height: 100%;
         border: 0;
         background: #00000000;
         position: relative;
         overflow: inherit;
-        .main{
+
+        .main {
           height: 100%;
         }
       }
     }
+
     .el-footer {
       display: none;
     }
@@ -94,6 +105,7 @@ const props = defineProps(['isVertical'])
 
 .horizontalClass {
   $PADDING-LEFT-AND-RIGHT: 2.5%;
+
   .el-header {
     height: calc(10vh - 1%);
     width: 100%;

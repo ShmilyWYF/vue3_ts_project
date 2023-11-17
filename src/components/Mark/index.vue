@@ -1,24 +1,24 @@
 <template>
   <mavon-editor
+      ref="markdownRef"
       v-model="articleContext"
-      :navigation="editMode"
-      :ishljs="true"
-      :defaultOpen="editMode?'edit':'preview'"
-      :toolbarsFlag="editMode"
-      :editable="editMode"
-      :subfield="false"
       :codeStyle="codeStyle"
+      :defaultOpen="editMode?'edit':'preview'"
+      :editable="editMode"
+      :html="true"
+      :ishljs="true"
+      :navigation="editMode"
+      :style="{'--show-content-bg':editMode?'transparent':''}"
+      :subfield="false"
+      :toolbarsFlag="editMode"
+      class="mark"
       @change="markCall"
       @fullScreen="fullScreenEvnt"
-      :html="true"
-      class="mark"
-      ref="markdownRef"
-      :style="{'--show-content-bg':editMode?'transparent':''}"
-      @save="cacheDrafts"
       @imgAdd="imgAdd"
+      @save="cacheDrafts"
   />
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
 import {mavonEditor} from 'mavon-Editor'
 import 'mavon-editor/dist/css/index.css'
 // import markdownItMermaid from '@liradb2000/markdown-it-mermaid'
@@ -26,7 +26,7 @@ import 'mavon-editor/dist/css/index.css'
 import {nextTick, onUnmounted, ref, toRefs} from "vue";
 import api from "@/axios";
 
-const emit = defineEmits(['markTocEvnt','saveCache','fullScreen','unMarkbefor'])
+const emit = defineEmits(['markTocEvnt', 'saveCache', 'fullScreen', 'unMarkbefor'])
 const props: any = defineProps({
   editMode: {
     type: Boolean,
@@ -51,6 +51,7 @@ const codeStyle = ref<string>('code-github')
 
 const markCall = () => {
   nextTick(() => {
+    document.documentElement.scrollIntoView({behavior: "smooth"})
     // 渲染后需要延迟1s
     setTimeout(() => {
       // 给元素添加id
@@ -62,7 +63,7 @@ const markCall = () => {
         }
       }
       emit('markTocEvnt', '.v-show-content')
-    }, 1000)
+    }, 1500)
   })
 }
 
@@ -72,21 +73,21 @@ const markCall = () => {
  * @description 缓存草稿
  * @param centent
  */
-const cacheDrafts = (centent:string) =>{
-  emit('saveCache',centent)
+const cacheDrafts = (centent: string) => {
+  emit('saveCache', centent)
 }
 
 // 切换全屏
-const fullScreenEvnt = (bl:boolean) =>{
-  emit('fullScreen',bl)
+const fullScreenEvnt = (bl: boolean) => {
+  emit('fullScreen', bl)
 }
 
 // 上传图片
-const imgAdd = (index:any, file:any) =>{
+const imgAdd = (index: any, file: any) => {
   let formdata = new FormData();
   formdata.append('image', file);
   // axios在接收formdata类型参数时会强制删除content-type浏览器识别空设置为默认false
-  api.articleApi.uploadImg(formdata).then((res:any)=>{
+  api.articleApi.uploadImg(formdata).then((res: any) => {
     const {data} = res.data
     // 第二步.将返回的url替换到文本原位置!
     markdownRef.value.$img2Url(index, data);
@@ -95,11 +96,11 @@ const imgAdd = (index:any, file:any) =>{
 
 //在页面销毁之前先销保存内容
 onUnmounted(() => {
-  emit('unMarkbefor',articleContext.value)
+  emit('unMarkbefor', articleContext.value)
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .mark {
   height: 100%;
   width: 100%;
@@ -109,21 +110,26 @@ onUnmounted(() => {
   word-break: break-all;
   @include background_color('background-color');
   @include box_shadow('box-card-shadow-sidebar-card');
-  :deep(.v-note-op){
-    border:none;
+
+  :deep(.v-note-op) {
+    border: none;
     @include background_color('background-color');
-    div{
-      button{
+
+    div {
+      button {
         @include font_color('text-color');
-        &:hover{
+
+        &:hover {
           background-color: $text-color-secondary !important;
         }
       }
-      .selected{
+
+      .selected {
         @include background_color('background-deputy')
       }
     }
   }
+
   :deep(.v-show-content) {
     @include background_color('background-color');
     color: #bebebe;
@@ -230,14 +236,17 @@ onUnmounted(() => {
   :deep(.v-note-panel) {
     .v-note-edit {
       overflow: auto;
+
       .content-input-wrapper {
         min-height: 100%;
         @include background_color('background-secondary');
-        .content-input{
+
+        .content-input {
           min-height: 50rem;
           @include background_color('background-color');
           border-radius: 1rem;
-          .no-border{
+
+          .no-border {
             padding: 1.25rem;
             background-color: transparent;
             @include font_color('text-color');
@@ -246,14 +255,17 @@ onUnmounted(() => {
         }
       }
     }
-    .single-edit{
+
+    .single-edit {
       flex: 1 !important;
     }
-    .v-note-navigation-wrapper{
-      border:none;
+
+    .v-note-navigation-wrapper {
+      border: none;
       padding: .75rem;
       @include background_color('background-secondary');
-      .v-note-navigation-title{
+
+      .v-note-navigation-title {
         font-weight: 800;
         border-top-left-radius: .75rem;
         border-top-right-radius: .75rem;
@@ -261,7 +273,8 @@ onUnmounted(() => {
         @include font_color('text-color');
         @include background_color('background-color');
       }
-      .v-note-navigation-content{
+
+      .v-note-navigation-content {
         border-bottom-left-radius: .75rem;
         border-bottom-right-radius: .75rem;
         @include background_color('background-color');

@@ -3,11 +3,11 @@
     <el-tree
         ref="treeRef"
         :data="data"
-        show-checkbox
-        node-key="id"
-        :default-expanded-keys="[1]"
         :default-checked-keys="[13]"
-        :props="mappingProps"/>
+        :default-expanded-keys="[1]"
+        :props="mappingProps"
+        node-key="id"
+        show-checkbox/>
 
     <div class="buttons">
       <el-button @click="getCheckedNodes">设置导航</el-button>
@@ -44,7 +44,7 @@ const mappingProps = {
 };
 
 // 获取异步树节点方法
-const asyncTree = (tree: any[]):[] => {
+const asyncTree = (tree: any[]): [] => {
   const treeData: any = []
   let i = 0;
   tree.forEach((res: any) => {
@@ -57,7 +57,7 @@ const asyncTree = (tree: any[]):[] => {
     };
     if (res.children) {
       let j = 0;
-      res.children.forEach((key:{ meta: { title: string; }; path: string; }) => {
+      res.children.forEach((key: { meta: { title: string; }; path: string; }) => {
         j++;
         tem.children.push({
           title: key.meta.title,
@@ -76,7 +76,7 @@ console.log('构建tree树：', data)
 
 // 获取当前选中+半选中的值
 const getCheckedNodes = () => {
-   const data = treeRef.value!.getHalfCheckedNodes().map((res: any) => {
+  const data = treeRef.value!.getHalfCheckedNodes().map((res: any) => {
     let tempTerr: any = [];
     // 获得入栈对象
     Object.assign(tempTerr, res)
@@ -96,7 +96,7 @@ const getCheckedNodes = () => {
     tempTerr.children = tempChildren
     return tempTerr
   })
-  store.commit('routerStore/SET_MENU_TREE',data)
+  store.commit('routerStore/SET_MENU_TREE', data)
   // store.commit('routerStore/SET_MENU_LIST',data)  改为JDBC
   console.log(data, 'get节点对象组')
 }

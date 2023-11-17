@@ -11,7 +11,7 @@
   <slot name="default"/>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import SvgIcon from "@/components/SvgIcon/index.vue";
 import {ref} from "vue";
 import {useI18n} from "vue-i18n";
@@ -27,7 +27,7 @@ const switchLang = (command: string) => {
 
 
 </script>
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .el-dropdown {
   .el-dropdown-link {
     width: auto;
@@ -38,6 +38,7 @@ const switchLang = (command: string) => {
     display: flex;
     column-gap: .25rem;
     align-items: center;
+
     &:hover {
       background-color: $background-dark;
     }

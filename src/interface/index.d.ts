@@ -7,8 +7,8 @@ export interface MockApiInterface {
     condition: boolean
 }
 
-export interface UserInfoInterface{
-    id: number|string,
+export interface UserInfoInterface {
+    id: number | string,
     email: string,
     nickname: string,
     avatar: string,
@@ -20,26 +20,47 @@ export interface UserInfoInterface{
     updateTime?: number
 }
 
+export interface Commentinterface {
+    id: number,
+    user_id: number,
+    topic_id: number,
+    comment_content: string,
+    reply_user_id: number,
+    parent_id: null,
+    type: number,
+    is_delete: number,
+    is_review: number,
+    replys?: any[],
+    create_time: Date,
+    update_time: null,
+}
+
 export interface Tagsinterface {
-    "id": number|string,
+    "id": number | string,
     "tagName": string,
-    "createTime": Date|string,
-    "updateTime"?: Date|string|null
+    "createTime": Date | string,
+    "updateTime"?: Date | string | null
+}
+
+interface initDataInterface {
+    replyContent: string,
+    time: Date,
+    show: boolean
 }
 
 export interface CategoryInterface {
-    id:number|string,
+    id: number | string,
     categoryName: string,
     createTime: Date,
-    updateTime?: Date|string|null
+    updateTime?: Date | string | null
 }
 
 export interface CategoryCountInterface {
-    id:number|string,
+    id: number | string,
     categoryName: string,
     createTime: Date,
-    updateTime?: Date|string|null
-    articleCount:number,
+    updateTime?: Date | string | null
+    articleCount: number,
 }
 
 
@@ -48,11 +69,11 @@ export interface ArticleInterface {
     "articleCover": string,
     "articleTitle": string,
     "articleContent": string,
-    "isTop": number|boolean,
-    "isFeatured": number|boolean,
+    "isTop": number | boolean,
+    "isFeatured": number | boolean,
     "isDelete": number,
     "author": UserInfoInterface,
-    "categoryName": string|[],
+    "categoryName": string | [],
     "tags": Tagsinterface[],
     "status": number,
     createTime?: string,
@@ -60,27 +81,27 @@ export interface ArticleInterface {
 }
 
 export interface ArticleAsideinterface {
-    introduction:{
+    introduction: {
         img?: string,
         nickname?: string,
         description?: string,
         url?: string,
         childer?: [{}]
     },
-    commentsList:[{
+    commentsList: [{
         avatar?: string,
         nickname?: string,
         date?: Date,
         Content?: string,
     }],
-    websiteInformation:[{
+    websiteInformation: [{
         title: string,
-        value: number|string,
+        value: number | string,
     }],
-    tags:Tagsinterface[],
+    tags: Tagsinterface[],
 }
 
 export interface FeatureDatainterface {
     LIST: ArticleInterface[]
-    TOP: ArticleInterface|{}
+    TOP: ArticleInterface | {}
 }

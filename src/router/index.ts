@@ -31,7 +31,7 @@ const constantRoute: Array<RouteRecordRaw> = [
                 props: true,
                 meta: {
                     require: false,
-                    title: '文章列表'
+                    title: '阅读文章'
                 },
             },
         ]
@@ -91,13 +91,49 @@ export const asyncRouterMap: any[] = [
                     },
                     {
                         path: '/Dashboard/mark/tag',
-                        name: 'draft',
+                        name: 'tag',
                         component: () => import('@/views/Dashboard/components/tag/index.vue'),
                         meta: {
                             require: false,
-                            title: 'tag'
+                            title: '标签管理'
                         },
-                    }
+                    },
+                    {
+                        path: '/Dashboard/mark/category',
+                        name: 'category',
+                        component: () => import('@/views/Dashboard/components/category/index.vue'),
+                        meta: {
+                            require: false,
+                            title: '分类管理'
+                        },
+                    },
+                    {
+                        path: '/Dashboard/mark/comment',
+                        name: 'comment',
+                        component: () => import('@/views/Dashboard/components/comment/index.vue'),
+                        meta: {
+                            require: false,
+                            title: '评论管理'
+                        },
+                    },
+                    {
+                        path: '/Dashboard/mark/website',
+                        name: 'website',
+                        component: () => import('@/views/Dashboard/components/website/index.vue'),
+                        meta: {
+                            require: false,
+                            title: '网站设置'
+                        },
+                    },
+                    {
+                        path: '/Dashboard/mark/about',
+                        name: 'about',
+                        component: () => import('@/views/Dashboard/components/about/index.vue'),
+                        meta: {
+                            require: false,
+                            title: '关于'
+                        },
+                    },
                 ]
             }
         ]

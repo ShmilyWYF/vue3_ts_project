@@ -1,23 +1,23 @@
 <template>
-  <div class="drawerstring-Graphics" ref="slider" @mousemove="svgMousemove" @mousedown="boxMousedown">
+  <div ref="slider" class="drawerstring-Graphics" @mousedown="boxMousedown" @mousemove="svgMousemove">
     <div class="drawerstring"/>
     <div class="drawerbutton">
       <svg-icon href="#" name="circle" @mousedown="svgMousedown"/>
     </div>
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
 import SvgIcon from "@/components/SvgIcon/index.vue";
 import {onMounted, ref, toRefs} from "vue";
 
-const props=defineProps({
-  DOMRange:{
+const props = defineProps({
+  DOMRange: {
     required: true
   },
 })
 const emit = defineEmits(['drawerPanelEvnt'])
 // 获得容器，用于鼠标事件可操作范围
-const {DOMRange}:any = toRefs(props)
+const {DOMRange}: any = toRefs(props)
 
 onMounted(() => {
   slider.value.style.transform = `translateY(${-50}%)`
@@ -40,8 +40,8 @@ defineExpose({
 })
 
 // 滑轮组区域鼠标单击触发drawer关闭回调事件
-const boxMousedown = (e:any) => {
-  emit('drawerPanelEvnt',false);
+const boxMousedown = (e: any) => {
+  emit('drawerPanelEvnt', false);
 }
 
 const svgMousedown = (evnt: MouseEvent) => {
@@ -49,7 +49,7 @@ const svgMousedown = (evnt: MouseEvent) => {
   const {clientY} = evnt;
   startPoint.value = clientY / clientHeight.value;
   // 给主容器添加鼠标松开事件
-  DOMRange.value.addEventListener('mouseup',svgMouseup)
+  DOMRange.value.addEventListener('mouseup', svgMouseup)
 }
 const svgMousemove = (evnt: MouseEvent) => {
   if (!isMousePress.value) return
@@ -57,9 +57,9 @@ const svgMousemove = (evnt: MouseEvent) => {
   endPoint.value = Number((((clientY / clientHeight.value) - startPoint.value) * 100 - 50).toFixed(2))
   if (endPoint.value < -50) return;
   slider.value.style.transform = `translateY(${endPoint.value}%)`
-  emit('drawerPanelEvnt',endPoint.value > -47);
+  emit('drawerPanelEvnt', endPoint.value > -47);
 }
-const svgMouseup = (event:any)=>{
+const svgMouseup = (event: any) => {
   isMousePress.value = false
 }
 
@@ -70,14 +70,14 @@ const svgMouseup = (event:any)=>{
  * @param null
  * @return null
  */
-document.addEventListener('mouseup', (e)=>{
-  if(e.clientY > window.innerWidth || e.clientY<0 || e.clientX<0 ||e.clientX>window.innerHeight){
+document.addEventListener('mouseup', (e) => {
+  if (e.clientY > window.innerWidth || e.clientY < 0 || e.clientX < 0 || e.clientX > window.innerHeight) {
     isMousePress.value = false
   }
 })
 
 </script>
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .drawerstring-Graphics {
   width: 2.5%;
   height: 50%;
@@ -99,6 +99,7 @@ document.addEventListener('mouseup', (e)=>{
     height: 30%;
     position: relative;
     z-index: 2001;
+
     svg {
       position: relative;
       top: 0;

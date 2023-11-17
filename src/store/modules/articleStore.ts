@@ -12,7 +12,7 @@ const articleState = {
     articleTagActive: '',
     articleTagList: {},
     articleCategorylist: [],
-    acticleAsideList:{
+    acticleAsideList: {
         commentsList: [],
         WebsiteInformation: [],
         introduction: [],
@@ -21,7 +21,7 @@ const articleState = {
     articleContext: [],
     // *包括草稿
     allArticle: {},
-    articleByStatusList:[]
+    articleByStatusList: []
     // articleList
 }
 
@@ -32,7 +32,7 @@ const mutations = {
     SET_ARTICLE_LIST(articleStore: any, options: []): void {
         articleStore.articleList = options
     },
-    SET_ARTICLE_CATAGORY_ACTIVE(articleStore: any, options:string): void {
+    SET_ARTICLE_CATAGORY_ACTIVE(articleStore: any, options: string): void {
         articleStore.articleTagActive = options
     },
     SET_ARTICLE_TAG_LIST(articleStore: any, options: []): void {
@@ -73,158 +73,158 @@ const actions: any = {
         })
     },
     // 根据文章分类返回文章列表
-    getArticleListByCategory({commit,state}: any, categoryName: string) {
+    getArticleListByCategory({commit, state}: any, categoryName: string) {
         return new Promise((resolve, reject) => {
             // if (state.articleList?.hasOwnProperty(categoryName)) {
             //     commit('SET_ARTICLE_CATAGORY_ACTIVE',categoryName)
             //     resolve(state.articleList[categoryName])
             // } else {
-                articleApi.getArticleListByCategory(categoryName).then((res:AxiosResponse) => {
-                    const {data} = res.data
-                    // 缓存活动标签
-                    commit('SET_ARTICLE_CATAGORY_ACTIVE',categoryName)
-                    // 解析对象
-                    const mergeObject = {...{[categoryName]: data},...state.articleList}
-                    commit('SET_ARTICLE_LIST', mergeObject)
-                    resolve(data)
-                }, (error: any) => {
-                    reject(error)
-                })
+            articleApi.getArticleListByCategory(categoryName).then((res: AxiosResponse) => {
+                const {data} = res.data
+                // 缓存活动标签
+                commit('SET_ARTICLE_CATAGORY_ACTIVE', categoryName)
+                // 解析对象
+                const mergeObject = {...{[categoryName]: data}, ...state.articleList}
+                commit('SET_ARTICLE_LIST', mergeObject)
+                resolve(data)
+            }, (error: any) => {
+                reject(error)
+            })
             // }
         })
     },
     // 获取文章标签列表
-    getArticleTagList({commit,state}:any){
-        return new Promise((resolve, reject)=>{
+    getArticleTagList({commit, state}: any) {
+        return new Promise((resolve, reject) => {
             // if(state.articleTagList){
             //     resolve(state.articleTagList)
             // }else {
-            articleApi.getArticleTagList().then((res:AxiosResponse)=>{
+            articleApi.getArticleTagList().then((res: AxiosResponse) => {
                 const {data} = res.data
-                commit('SET_ARTICLE_TAG_LIST',data)
+                commit('SET_ARTICLE_TAG_LIST', data)
                 resolve(data)
-            },(error:any)=>{
+            }, (error: any) => {
                 reject(error)
             })
             // }
         })
     },
     // 获取文章类别列表
-    getArticleCategorylist({commit,state}:any){
-        return new Promise((resolve, reject)=>{
+    getArticleCategorylist({commit, state}: any) {
+        return new Promise((resolve, reject) => {
             // if(state.articleCategorylist){
             //     resolve(state.articleCategorylist)
             // }else {
-                articleApi.getArticleCategorylist().then((res:AxiosResponse)=>{
-                    const {data} = res.data
-                    commit('SET_ARTICLE_Catogory_LIST',data)
-                    resolve(data)
-                },(error:any)=>{
-                    reject(error)
-                })
+            articleApi.getArticleCategorylist().then((res: AxiosResponse) => {
+                const {data} = res.data
+                commit('SET_ARTICLE_Catogory_LIST', data)
+                resolve(data)
+            }, (error: any) => {
+                reject(error)
+            })
             // }
         })
     },
     // 获取aside列表数据
-    getAllArticleAsideList({commit,state}:any){
+    getAllArticleAsideList({commit, state}: any) {
         return new Promise((resolve, reject) => {
             // if (state.acticleAsideList) {
             //     resolve(state.acticleAsideList)
             // } else {
-            articleApi.getAllArticleAsideList().then((res:AxiosResponse)=>{
+            articleApi.getAllArticleAsideList().then((res: AxiosResponse) => {
                 const {data} = res.data
-                commit('SET_ARTICLE_ASIDE_LIST',data)
+                commit('SET_ARTICLE_ASIDE_LIST', data)
                 resolve(data)
-             },(error:any)=>{
+            }, (error: any) => {
                 reject(error)
             })
             // }
         })
     },
     // 根据id获得文章
-    getArticleById({commit,state}:any,id:number){
+    getArticleById({commit, state}: any, id: number) {
         return new Promise((resolve, reject) => {
             // if(state.articleContext?.hasOwnProperty(id)){
             //         resolve(state.articleContext[id])
             // }else {
-                articleApi.getArticleById(id).then((res:AxiosResponse)=>{
-                    const {data} = res.data
-                    const mergeObject = {... {[data.id]: data,}, ...state.articleContext}
-                    commit('SET_ARTICLE_CONTEXT',mergeObject)
-                    resolve(data)
-                },(error:any)=>{
-                    reject(error)
-                })
+            articleApi.getArticleById(id).then((res: AxiosResponse) => {
+                const {data} = res.data
+                const mergeObject = {...{[data.id]: data,}, ...state.articleContext}
+                commit('SET_ARTICLE_CONTEXT', mergeObject)
+                resolve(data)
+            }, (error: any) => {
+                reject(error)
+            })
             // }
         })
     },
     // 获取所有文章
-    getAllArticle({commit,state}:any){
-        return new Promise((resolve, reject)=>{
-            articleApi.getAllArticle().then((res:AxiosResponse)=>{
+    getAllArticle({commit, state}: any) {
+        return new Promise((resolve, reject) => {
+            articleApi.getAllArticle().then((res: AxiosResponse) => {
                 const {data} = res.data
-                if (!data){
+                if (!data) {
                     reject('获取失败')
                 }
-                commit('SET_ALL_ARTICLE',data)
+                commit('SET_ALL_ARTICLE', data)
                 resolve(data)
-            },(error:Error)=>{
+            }, (error: Error) => {
                 reject(error)
             })
         })
     },
     // 根据状态获取文章列表
-    getArticleListByStatus({commit,state}:any,statusName:string){
-        return new Promise((resolve, reject)=>{
-            articleApi.getArticleListByStatus(statusName).then((res:AxiosResponse)=>{
+    getArticleListByStatus({commit, state}: any, statusName: string) {
+        return new Promise((resolve, reject) => {
+            articleApi.getArticleListByStatus(statusName).then((res: AxiosResponse) => {
                 const {data} = res.data
-                if (!data){
+                if (!data) {
                     reject('获取失败')
                 }
                 // 缓存当前状态查出的列表
-                const mapperObj = {...{[statusName]:data},...state.ArticleByStatusList}
-                commit('SET_ARTICLE_BY_STATUS_LIST',mapperObj)
+                const mapperObj = {...{[statusName]: data}, ...state.ArticleByStatusList}
+                commit('SET_ARTICLE_BY_STATUS_LIST', mapperObj)
                 resolve(data)
-            },(error:Error)=>{
+            }, (error: Error) => {
                 reject(error)
             })
         })
     },
     // 添加文章
-    addArticle({},articleData:{}){
-        return new Promise((resolve, reject)=>{
-            articleApi.addArticle(articleData).then((res:any)=>{
+    addArticle({}, articleData: {}) {
+        return new Promise((resolve, reject) => {
+            articleApi.addArticle(articleData).then((res: any) => {
                 const {data} = res.data
-                if (!data){
+                if (!data) {
                     reject('添加失败')
                 }
                 ElMessage.success('添加成功')
                 // 将添加的当前条加入缓存
                 resolve(data)
-            },(error:Error)=>{
+            }, (error: Error) => {
                 reject(error)
             })
         })
     },
     // 按id获取文章上下文
-    getArticleContentById({},id:number){
+    getArticleContentById({}, id: number) {
         return new Promise((resolve, reject) => {
-          articleApi.getArticleContentById(id).then((res:any)=>{
-              const {data} = res.data
-              // 允许文章为空
-              // if(!data){
-              //     reject('获取上下文失败');
-              // }
-              resolve(data)
-          })
+            articleApi.getArticleContentById(id).then((res: any) => {
+                const {data} = res.data
+                // 允许文章为空
+                // if(!data){
+                //     reject('获取上下文失败');
+                // }
+                resolve(data)
+            })
         })
     },
     // 更新文章
-    updateArticleContextById({state}:any,articleInfo:{id:number,articleContent:string}){
+    updateArticleContextById({state}: any, articleInfo: { id: number, articleContent: string }) {
         return new Promise((resolve, reject) => {
-            articleApi.updateArticleContextById(articleInfo).then((res:any)=>{
+            articleApi.updateArticleContextById(articleInfo).then((res: any) => {
                 const {data} = res.data
-                if (!data){
+                if (!data) {
                     reject("Error,更新失败")
                 }
                 resolve(data)
@@ -232,11 +232,11 @@ const actions: any = {
         })
     },
     // 更新文章标签
-    updateArticleAttributeById({state}:any,articleInfo:{id:number,value:number,attributeName:number}){
+    updateArticleAttributeById({state}: any, articleInfo: { id: number, value: number, attributeName: number }) {
         return new Promise((resolve, reject) => {
-            articleApi.updateArticleAttributeById(articleInfo).then((res:any)=>{
+            articleApi.updateArticleAttributeById(articleInfo).then((res: any) => {
                 const {data} = res.data
-                if (!data){
+                if (!data) {
                     reject("Error,更新失败")
                 }
                 resolve(data)

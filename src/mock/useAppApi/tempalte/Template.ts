@@ -1,4 +1,5 @@
 export default {
+    // 主题配置部分
     themeConfig: {
         theme: '',
         profile_shape: '',
@@ -18,7 +19,9 @@ export default {
         }
     },
     appLoading: false,
-    websiteConfig: '' as any,
+    websiteConfig: {
+        isCommentReview: false
+    },
     viewCount: 0,
     articleCount: 0,
     talkCount: 0,

@@ -1,40 +1,41 @@
 <template>
-  <div class="ArticleListTag" id="ArticleListTag">
-    <el-tabs @tab-click="getArticleListByCategory" v-model="articleTagActive" ref="tabRef">
+  <div id="ArticleListTag" class="ArticleListTag">
+    <el-tabs ref="tabRef" v-model="articleTagActive" @tab-click="getArticleListByCategory">
 
       <el-tab-pane label="ALL" name="ALL">
         <template #label>
-          <el-tag type="info" effect="dark">
+          <el-tag effect="dark" type="info">
             <span class="tag-a tag-all">{{ $t('message.ALL') }}</span>
           </el-tag>
         </template>
-        <template v-for="(item,key) in data" :key="key" >
-          <Article type="1" :data="item" />
+        <template v-for="(item,key) in data" :key="key">
+          <Article :data="item" type="1"/>
         </template>
       </el-tab-pane>
 
-      <el-tab-pane v-if="isArticleTagList" :label="$t('message.'+item.categoryName)" :name="item.categoryName" v-for="(item,key) in articleCategoryList" :key="key">
+      <el-tab-pane v-for="(item,key) in articleCategoryList" v-if="isArticleTagList" :key="key"
+                   :label="$t('message.'+item.categoryName)" :name="item.categoryName">
         <template #label>
-          <el-tag type="info" effect="dark">
-            <span class="tag-a">{{item.categoryName}}</span>
-            <span class="tag-span">{{item.articleCount}}</span>
+          <el-tag effect="dark" type="info">
+            <span class="tag-a">{{ item.categoryName }}</span>
+            <span class="tag-span">{{ item.articleCount }}</span>
           </el-tag>
         </template>
         <template #default>
-          <Article type="1" v-for="(item,key) in data" :key="key" :data="item"/>
+          <Article v-for="(item,key) in data" :key="key" :data="item" type="1"/>
         </template>
       </el-tab-pane>
 
     </el-tabs>
     <el-pagination
-        hide-on-single-page
-        :next-icon="svg('kaoyu')"
-        :prev-icon="svg('jitui')"
-        @current-change="getCurrentChange"
         :current-page="currentPage"
+        :next-icon="svg('kaoyu')"
         :page-size="pageSize"
-        layout="prev, pager, next"
+        :prev-icon="svg('jitui')"
         :total="total.length"
+        hide-on-single-page
+        layout="prev, pager, next"
+        @current-change="getCurrentChange"
     />
   </div>
 </template>
@@ -44,14 +45,14 @@ import {computed, onMounted, ref} from 'vue'
 import {Article} from "@/components";
 import store from "@/store";
 import {svg} from "@/icons";
-import {ArticleInterface, CategoryCountInterface, CategoryInterface} from "@/interface";
+import {ArticleInterface, CategoryCountInterface} from "@/interface";
 
-const tabRef = ref<HTMLElement|any>()
+const tabRef = ref<HTMLElement | any>()
 const articleCategoryList = ref<CategoryCountInterface[]>()
 // 控制渲染时机
 const isArticleTagList = ref<boolean>(false)
 
-const articleTagActive = computed(()=>store.getters.articleTagActive)
+const articleTagActive = computed(() => store.getters.articleTagActive)
 
 const currentPage = ref<number>(1)
 const pageSize = ref<number>(12)
@@ -59,7 +60,7 @@ const pageSize = ref<number>(12)
 const data = ref<ArticleInterface[]>()
 const total = ref<ArticleInterface[]>([])
 
-onMounted(()=>{
+onMounted(() => {
   getArticleCategorylist();
   getArticleListByCategory();
 })
@@ -85,16 +86,14 @@ const getArticleCategorylist = () => {
  * @return null
  * @param pane
  */
-const getArticleListByCategory = async (pane?:any) => {
-  const label = pane?.paneName?pane.paneName : (articleTagActive.value ? articleTagActive.value : 'ALL')
+const getArticleListByCategory = async (pane?: any) => {
+  const label = pane?.paneName ? pane.paneName : (articleTagActive.value ? articleTagActive.value : 'ALL')
   store.dispatch('articleStore/getArticleListByCategory', label).then((res: ArticleInterface[]) => {
         total.value = res
         data.value = total.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
       }
   )
 }
-
-
 
 
 /**
@@ -111,10 +110,8 @@ const getCurrentChange = (Pages: number) => {
 }
 
 
-
-
 </script>
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .ArticleListTag {
   height: auto;
   position: relative;
@@ -139,6 +136,7 @@ const getCurrentChange = (Pages: number) => {
         .el-tabs__active-bar {
           bottom: 5px !important;
         }
+
         .el-tabs__item {
           width: auto;
           height: auto;
@@ -160,6 +158,7 @@ const getCurrentChange = (Pages: number) => {
                 border-bottom-right-radius: .375rem;
                 border-top-right-radius: .375rem;
               }
+
               .tag-a {
                 padding: .45rem .85rem;
                 @include background_color('background-primary');
@@ -179,75 +178,77 @@ const getCurrentChange = (Pages: number) => {
             }
           }
         }
-      &:after {
-        position: static !important;
-      }
-    }
-  }
 
-  :deep(.el-tabs__content) {
-    height: auto;
-
-    .el-tab-pane {
-      display: grid;
-      padding: 0.75rem;
-      position: relative;
-      // 自适应
-      grid-template-rows: repeat(1, minmax(0, 1fr));
-      grid-gap: 2rem;
-
-      .Article {
-        height: 25rem;
-
-        .el-card {
-          //@include box_shadow('box-card-shadow-sidebar')
-          @include box_shadow('box-card-shadow-tabs')
+        &:after {
+          position: static !important;
         }
       }
     }
 
-    @media (min-width: 980px) {
+    :deep(.el-tabs__content) {
+      height: auto;
+
       .el-tab-pane {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-template-rows: auto;
+        display: grid;
+        padding: 0.75rem;
+        position: relative;
+        // 自适应
+        grid-template-rows: repeat(1, minmax(0, 1fr));
+        grid-gap: 2rem;
+
+        .Article {
+          height: 25rem;
+
+          .el-card {
+            //@include box_shadow('box-card-shadow-sidebar')
+            @include box_shadow('box-card-shadow-tabs')
+          }
+        }
+      }
+
+      @media (min-width: 980px) {
+        .el-tab-pane {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          grid-template-rows: auto;
+        }
+      }
+      @media (min-width: 1200px) {
+        .el-tab-pane {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          grid-template-rows: auto;
+        }
+      }
+
+    }
+  }
+
+  :deep(.el-pagination) {
+    font-size: larger;
+    position: relative;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 15;
+
+    button {
+      background: #00000000;
+      @include font_color('text-color');
+
+      &:disabled {
+        display: none;
       }
     }
-    @media (min-width: 1200px) {
-      .el-tab-pane {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        grid-template-rows: auto;
-      }
-    }
 
-  }
-}
-
-:deep(.el-pagination) {
-  font-size: larger;
-  position: relative;
-  justify-content: center;
-  padding: 1rem;
-  z-index: 15;
-
-  button {
-    background: #00000000;
-    @include font_color('text-color');
-
-    &:disabled {
-      display: none;
+    .el-pager li {
+      font-weight: 800;
+      background: #00000000;
     }
   }
 
-  .el-pager li {
-    font-weight: 800;
-    background: #00000000;
-  }
 }
 
-}
 #ArticleListTag {
   .is-active {
-    .tag-a{
+    .tag-a {
       background: $main-Np-gradient !important;
     }
   }

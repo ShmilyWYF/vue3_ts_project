@@ -1,5 +1,5 @@
-export const RolesMenu = (roles:string) =>{
-    return roles!=undefined?[{
+export const RolesMenu = (roles: string) => {
+    return roles != undefined ? [{
         id: '1',
         pid: '1',
         title: '后台管理',
@@ -24,7 +24,7 @@ export const RolesMenu = (roles:string) =>{
                 icon: [''],
             }
         ]
-    }]:[]
+    }] : []
 }
 
 

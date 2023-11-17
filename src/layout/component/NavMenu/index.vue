@@ -1,12 +1,12 @@
 <template>
   <el-menu
-      :default-active="activeIndex"
       :class="[mode==='horizontal'?'menu-horizontal':'menu-vertical']"
+      :default-active="activeIndex"
       :mode="mode"
       router="router"
       style="height: 100%"
   >
-    <el-menu-item disabled class="log">
+    <el-menu-item class="log" disabled>
       Blog
     </el-menu-item>
     <template v-for="(item,keys) in routers" :key="keys">
@@ -21,7 +21,10 @@
             <span>{{ children.meta.title }}</span>
           </template>
           <template v-for="(childrenItem,key) in children?.children" :key="key">
-            <el-menu-item :index="childrenItem.path" v-if="!childrenItem.meta.hide">{{ childrenItem.meta.title }}</el-menu-item>
+            <el-menu-item v-if="!childrenItem.meta.hide" :index="childrenItem.path">{{
+                childrenItem.meta.title
+              }}
+            </el-menu-item>
           </template>
         </el-sub-menu>
       </template>
@@ -55,7 +58,7 @@ const accessedRouters: any = computed(() => store.getters.accessedRouters)
 
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .el-menu {
   background: #00000000 !important;
   --el-menu-base-level-padding: 0px;
@@ -78,14 +81,16 @@ const accessedRouters: any = computed(() => store.getters.accessedRouters)
     .el-sub-menu__title {
       height: auto;
     }
-    .el-menu-item{
+
+    .el-menu-item {
       width: min-content;
       height: 1.25rem;
       padding: 5% !important;
       margin: .25rem 0;
       border-radius: .25rem;
       float: right;
-      &:hover{
+
+      &:hover {
         background-color: #212121;
         opacity: .8;
       }

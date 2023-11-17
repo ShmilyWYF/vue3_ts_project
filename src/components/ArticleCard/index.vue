@@ -1,11 +1,12 @@
 <template>
-  <div class="Article" :style="{'--use-height': h}">
-    <el-card style="height: 100%" body-style="padding: 0;height: 100%;">
+  <div :style="{'--use-height': h}" class="Article">
+    <el-card body-style="padding: 0;height: 100%;" style="height: 100%">
       <div :class="{'feature-article-horizontal':type ==='0','feature-article-Vertical':type === '1'}">
         <div class="feature-thumbnail">
-          <img class="ob-hz-thumbnail"
-               :src="data.articleCover" alt="背景图片">
-          <span class="thumbnail-screen" style="background: linear-gradient(130deg, rgb(36, 198, 220), rgb(84, 51, 255) 41.07%, rgb(255, 0, 153) 76.05%);"/>
+          <img :src="data.articleCover"
+               alt="背景图片" class="ob-hz-thumbnail">
+          <span class="thumbnail-screen"
+                style="background: linear-gradient(130deg, rgb(36, 198, 220), rgb(84, 51, 255) 41.07%, rgb(255, 0, 153) 76.05%);"/>
         </div>
         <div class="feature-content">
           <span>
@@ -44,7 +45,7 @@
     </el-card>
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
 import {ArticleInterface} from "@/interface";
 import {timeZh} from "@/utils/timeZH";
 import {PropType} from "vue";
@@ -53,7 +54,7 @@ const name: string = 'HorizontalArticle';
 
 defineProps({
   data: {
-    type: Object as PropType<ArticleInterface>||{},
+    type: Object as PropType<ArticleInterface> || {},
     required: true
   },
   type: {
@@ -61,14 +62,14 @@ defineProps({
     type: String,
     required: true,
   },
-  h:{
+  h: {
     default: '100%',
     type: String,
   }
 })
 
 </script>
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .Article {
   width: 100%;
   min-height: 20rem;
@@ -89,16 +90,18 @@ defineProps({
     @include background_color('background-color');
     grid-template-rows: repeat(1, 30% 70%);
   }
+
   @media (min-width: 1024px) {
     .feature-article-horizontal {
       grid-template-columns: repeat(2, 50%);
-      grid-template-rows: 100% ;
+      grid-template-rows: 100%;
 
       .feature-thumbnail {
         img {
           height: 100%;
           width: 120%;
         }
+
         &:after {
           left: 70%;
           top: 0;
@@ -106,16 +109,20 @@ defineProps({
           @include background_color('gradient-cover');
         }
       }
+
       .thumbnail-screen {
         height: 100%;
       }
+
       .feature-content {
         padding: 3rem;
         grid-row: auto;
+
         p {
           font-size: 1.125rem;
           line-height: 1.75rem;
         }
+
         h1 {
           font-size: 2.25rem;
           line-height: 2.5rem;
@@ -133,9 +140,10 @@ defineProps({
     position: relative;
     top: 0;
     @include background_color('background-color');
-    grid-template-rows: repeat(1,minmax(0,1fr)) !important;
+    grid-template-rows: repeat(1, minmax(0, 1fr)) !important;
+
     .feature-content {
-      p{
+      p {
         font-size: 1rem;
         line-height: 1.5rem;
         margin-bottom: .5rem;
@@ -143,7 +151,8 @@ defineProps({
         word-break: break-all;
       }
     }
-    @media (min-width: 1024px){
+
+    @media (min-width: 1024px) {
       .feature-content {
         h1 {
           margin-top: 1rem;
@@ -151,8 +160,9 @@ defineProps({
         }
       }
     }
+
     .thumbnail-screen {
-      width: 100%!important;
+      width: 100% !important;
     }
   }
 
@@ -160,6 +170,7 @@ defineProps({
   .el-card {
     border-radius: 1rem;
   }
+
   .el-card:hover {
     transform: scale(1.015);
   }
@@ -168,6 +179,7 @@ defineProps({
     height: 100%;
     position: relative;
     grid-row: span 1/span 1;
+
     &:after {
       pointer-events: none;
       content: '';
@@ -179,6 +191,7 @@ defineProps({
       width: 100%;
       @include background_color('article-cover-cred');
     }
+
     img {
       background-repeat: no-repeat;
       background-size: cover;
@@ -228,39 +241,47 @@ defineProps({
       -webkit-line-clamp: 4;
       -webkit-box-orient: vertical;
     }
+
     b {
       font-size: .75rem;
       line-height: 1rem;
       color: #24c6dc;
       text-transform: uppercase;
     }
+
     @media (min-width: 1024px) {
       b {
         font-size: 1rem;
         line-height: 1.5rem;
       }
     }
+
     b, strong {
       font-weight: bolder;
     }
+
     ul {
       display: inline-flex;
       font-size: .75rem;
       line-height: 1rem;
       padding-left: 1rem;
+
       li {
         margin-right: .75rem;
-        em{
+
+        em {
           @include font_color('text-color-primary')
         }
       }
     }
+
     @media (min-width: 1024px) {
       ul {
         font-size: 1rem;
         line-height: 1.5rem;
       }
     }
+
     h1 {
       font-weight: 800;
       font-size: 1.5rem;
@@ -275,11 +296,13 @@ defineProps({
         transition-property: all;
         transition-timing-function: cubic-bezier(.4, 0, .2, 1);
         transition-duration: .15s;
-        &:hover{
+
+        &:hover {
           @include font_color('text-color-a-hover')
         }
       }
     }
+
     .article-footer {
       margin-top: 13px;
       display: flex;
@@ -295,6 +318,7 @@ defineProps({
         display: flex;
         flex-direction: row;
         align-items: center;
+
         img {
           border-radius: 9999px;
           margin-right: .5rem;
@@ -303,8 +327,10 @@ defineProps({
           max-width: 100%;
           cursor: pointer;
         }
+
         .text-ob {
           color: #6d6d6d;
+
           .text-ob-normal {
             padding-right: .375rem;
             @include font_color('text-color');
@@ -315,7 +341,8 @@ defineProps({
   }
 
 }
-@media screen and (min-width: 1024px){
+
+@media screen and (min-width: 1024px) {
   .Article {
     height: var(--use-height);
   }

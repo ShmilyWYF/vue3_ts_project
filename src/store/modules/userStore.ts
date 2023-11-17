@@ -7,75 +7,75 @@ import {AxiosResponse} from "axios";
 const userApi = api.userApi
 const userState = {
     userinfo: {},
-    token:''
+    token: ''
 }
 
 const mutations = {
-    SET_USER_INFO(routerStore:any,option:{}){
+    SET_USER_INFO(routerStore: any, option: {}) {
         routerStore.userinfo = option
     },
-    SET_USER_TOKEN(routerStore:any,option:{}){
+    SET_USER_TOKEN(routerStore: any, option: {}) {
         routerStore.token = option
     }
 }
 
-const actions:any = {
-    login({commit,state}:any,user:{}){
+const actions: any = {
+    login({commit, state}: any, user: {}) {
         return new Promise((resolve, reject) => {
-             userApi.login(user).then((res: AxiosResponse) => {
-                 const {data} = res.data
-                 if (!data.token) {
-                     ElMessage.error(data)
-                     reject(data)
-                 }
-                 commit('SET_USER_TOKEN',data.token)
-                 setCookie(data.token)
-                 resolve(data.token)
-             },(error:any)=>{
+            userApi.login(user).then((res: AxiosResponse) => {
+                const {data} = res.data
+                if (!data.token) {
+                    ElMessage.error(data)
+                    reject(data)
+                }
+                commit('SET_USER_TOKEN', data.token)
+                setCookie(data.token)
+                resolve(data.token)
+            }, (error: any) => {
                 reject(error)
             })
         })
     },
-    getInfo({commit,state}:any,token:string){
+    getInfo({commit, state}: any, token: string) {
         return new Promise((resolve, reject) => {
-            if(state.userinfo){
+            if (state.userinfo) {
                 resolve(state.userinfo)
-            }else {
-                userApi.getInfo(token).then((res:AxiosResponse)=>{
+            } else {
+                userApi.getInfo(token).then((res: AxiosResponse) => {
                     const {data} = res.data
                     // if (data?.state&&data?.state !== 200){
                     //     reject("token无效，请重新登陆")
                     // }
-                    commit('SET_USER_INFO',data)
+                    commit('SET_USER_INFO', data)
                     resolve(data)
-                },(error:any)=>{
+                }, (error: any) => {
                     reject(error)
                 })
             }
         })
     },
-    logout({commit,state}:any,token:string){
+    logout({commit, state}: any, token: string) {
         return new Promise((resolve, reject) => {
-                userApi.logout(token).then((res:AxiosResponse)=>{
-                    const {data} = res.data
-                    // if(res.code!==200){
-                    //     ElMessage.success('退出失败！')
-                    // }
-                    // 删除用户缓存
-                    commit('SET_USER_INFO','')
-                    // 删除token缓存
-                    commit('SET_USER_TOKEN','')
-                    // 删除cookie
-                    removeCookie()
-                    // 删除路由
-                    if(router.hasRoute('Dashboard')){
-                        router.removeRoute('Dashboard')
-                    }
-                    ElMessage.success(data.message)
-                    resolve(true)
-                },(error:any)=>{
-                    reject(error)
-                })
+            userApi.logout(token).then((res: AxiosResponse) => {
+                const {data} = res.data
+                // if(res.code!==200){
+                //     ElMessage.success('退出失败！')
+                // }
+                // 删除用户缓存
+                commit('SET_USER_INFO', '')
+                // 删除token缓存
+                commit('SET_USER_TOKEN', '')
+                // 删除cookie
+                removeCookie()
+                // 删除路由
+                if (router.hasRoute('Dashboard')) {
+                    router.removeRoute('Dashboard')
+                }
+                ElMessage.success(data.message)
+                resolve(true)
+            }, (error: any) => {
+                reject(error)
+            })
         })
     }
 }

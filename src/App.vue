@@ -8,20 +8,22 @@ import Loading from "@/components/Loading/index.vue";
 </script>
 <style lang="scss">
 @import "@/style/sk.css";
+
 html, body, #app {
   width: 100%;
   padding: 0;
   margin: 0;
   min-width: 390px;
   min-height: 768px;
-  font-size:1rem;
+  font-size: 1rem;
 }
 
-body{
+body {
   display: flex;
   justify-content: center;
   height: 100vh;
-  font-family: Poppins,Rubik, Avenir, Helvetica, Arial, sans-serif, serif;
+  font-family: Poppins, Rubik, Avenir, Helvetica, Arial, sans-serif, serif;
+
   :deep(.el-card__body) {
     height: 100%;
   }
@@ -32,17 +34,32 @@ body {
 }
 
 #app {
-  @include setApp(130deg,240deg);
-  //background: var(--body-Background);
+  @include setApp(130deg, 240deg);
   font-size: 100%;
 }
 
+.el-avatar > img {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+  transition-duration: .8s;
+  transform: rotate(-1turn);
+  max-width: 100%;
+  height: auto;
+  display: block;
+  vertical-align: middle;
+
+  &:hover {
+    transform: rotate(1turn);
+  }
+}
 
 nav {
   padding: 30px;
+
   a {
     font-weight: bold;
     color: #2c3e50;
+
     &.router-link-exact-active {
       color: #42b983;
     }

@@ -1,17 +1,17 @@
 <template>
   <el-affix :offset="topDistance">
-        <Sidebar icon="moon" title="文章目录" h="auto" :default-class="false">
-          <template #content>
-            <div id="toc" class="js-toc-content"></div>
-          </template>
-        </Sidebar>
+    <Sidebar :default-class="false" h="auto" icon="moon" title="文章目录">
+      <template #content>
+        <div id="toc" class="js-toc-content"></div>
+      </template>
+    </Sidebar>
   </el-affix>
 </template>
 <script lang="ts" setup>
 import {Sidebar} from "@/components";
 
 defineProps({
-  topDistance:{
+  topDistance: {
     type: Number,
     default: 50,
   }
@@ -20,29 +20,36 @@ defineProps({
 <style lang="scss">
 @import 'tocbot/src/scss/tocbot';
 @import url('https://fonts.font.im/css?family=Roboto');
-.el-affix{
+
+.el-affix {
   width: auto !important;
   height: auto !important;
 }
-#toc > ol{
+
+#toc > ol {
   padding: 1rem;
 }
-#toc{
-  .toc-list{
+
+#toc {
+  .toc-list {
     @include background_color('background-primary');
     border-radius: .75rem;
     line-height: 1.75rem;
-    .toc-list-item{
+
+    .toc-list-item {
       @include font_color('text-color-primary');
-      .toc-link{
+
+      .toc-link {
         text-decoration: none;
+
         &::before {
           background: none;
         }
       }
     }
-    .is-active-li{
-      .is-active-link{
+
+    .is-active-li {
+      .is-active-link {
         color: #5433ff;
         text-decoration: none;
       }

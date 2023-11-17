@@ -4,7 +4,8 @@
 <script lang="ts">
 export default {
   name: 'FooterTag',
-  setup(){}
+  setup() {
+  }
 }
 </script>
 <style lang="scss" scoped>

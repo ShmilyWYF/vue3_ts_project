@@ -1,6 +1,6 @@
 <template>
   <div class="FeatureList">
-    <el-card class="feature-article-list-box" body-style="height: 100%;padding: 0">
+    <el-card body-style="height: 100%;padding: 0" class="feature-article-list-box">
       <div class="shadow-md">
         <h2>
           <p>EDITOR'S SELECTION</p>
@@ -36,6 +36,7 @@ const props = defineProps({
   grid-template-rows: repeat(1, 20% 39% 39%);
   grid-gap: 1% 0;
   min-height: auto;
+
   .feature-article-list-box {
     overflow: hidden;
     height: 100%;
@@ -44,9 +45,11 @@ const props = defineProps({
     border-radius: 1rem;
     --el-card-border-color: none;
     background: $body-Background;
+
     &:hover {
       transform: scale(1.015);
     }
+
     .shadow-md {
       width: calc(100% - 0.5rem);
       height: calc(100% - 0.5rem);
@@ -64,11 +67,13 @@ const props = defineProps({
       h2 {
         padding: 1.5rem;
         line-height: 2rem;
-        & > p{
+
+        & > p {
           font-weight: lighter;
           overflow: hidden;
-          text-overflow:ellipsis;
+          text-overflow: ellipsis;
         }
+
         span {
           width: 100%;
           position: relative;
@@ -80,10 +85,12 @@ const props = defineProps({
           margin: 0 auto;
           overflow: hidden;
           text-overflow: ellipsis;
+
           svg {
             width: 2rem;
             height: 2rem;
           }
+
           p {
             font-size: 1.5rem;
             overflow: hidden;
@@ -95,15 +102,18 @@ const props = defineProps({
     }
   }
 }
+
 @media (min-width: 1024px) {
   .FeatureList {
     width: calc(100% - 2%);
     height: 24rem;
     grid-template-columns: repeat(1, 18% 40% 40%);
     grid-gap: 0 2%;
-    grid-template-rows: repeat(1, minmax(0,1fr));
+    grid-template-rows: repeat(1, minmax(0, 1fr));
+
     .feature-article-list-box {
       height: 100%;
+
       .shadow-md {
         h2 {
           padding: 2rem;

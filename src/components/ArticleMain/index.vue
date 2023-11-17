@@ -1,31 +1,32 @@
 <template>
-      <el-card class="home-articleList articleMain" body-style="padding: 0;height:100%" :style="{background: background+'!important'}">
-        <el-header :style="headerBody" :class="headerClass">
-          <slot name="header"/>
-        </el-header>
-        <el-container>
-          <el-row :gutter="gutter" style="flex: 1 1 0">
-            <el-col :md="{span: 24}" :lg="{span: 18}">
-              <el-main :style="mainBody" :class="mainClass">
-                <slot name="default"/>
-              </el-main>
-            </el-col>
-            <!--后续构想，小于1200隐藏改为隐入侧边栏淡入淡出-->
-            <el-col class="hidden-md-and-down"  :lg="{span: 6}">
-              <el-aside :style="asideBody" :class="asideClass">
-                <slot name="aside"/>
-              </el-aside>
-            </el-col>
-          </el-row>
-        </el-container>
-      </el-card>
+  <el-card :style="{background: background+'!important'}" body-style="padding: 0;height:100%"
+           class="home-articleList articleMain">
+    <el-header :class="headerClass" :style="headerBody">
+      <slot name="header"/>
+    </el-header>
+    <el-container>
+      <el-row :gutter="gutter" style="flex: 1 1 0">
+        <el-col :lg="{span: 18}" :md="{span: 24}">
+          <el-main :class="mainClass" :style="mainBody">
+            <slot name="default"/>
+          </el-main>
+        </el-col>
+        <!--后续构想，小于1200隐藏改为隐入侧边栏淡入淡出-->
+        <el-col :lg="{span: 6}" class="hidden-md-and-down">
+          <el-aside :class="asideClass" :style="asideBody">
+            <slot name="aside"/>
+          </el-aside>
+        </el-col>
+      </el-row>
+    </el-container>
+  </el-card>
 </template>
 
 <script lang="ts" setup>
-defineProps(['headerBody','mainBody','asideBody','headerClass','mainClass','asideClass','background','gutter']);
+defineProps(['headerBody', 'mainBody', 'asideBody', 'headerClass', 'mainClass', 'asideClass', 'background', 'gutter']);
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .home-articleList {
   min-height: 10rem;
   width: 100%;
@@ -42,6 +43,7 @@ defineProps(['headerBody','mainBody','asideBody','headerClass','mainClass','asid
       --el-main-padding: 0;
     }
   }
+
   :deep(.el-aside) {
     width: 100%;
     height: 100%;

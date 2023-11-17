@@ -1,13 +1,14 @@
 <template>
   <div id="client">
     <el-row :gutter="0" justify="center">
-      <el-col :xs="{span: 24}" :md="{span: 22}" :lg="{span: 20}">
-        <Feature :FeatureData="featureData" :loading="loading" v-slot:FeatureList="slotProp" v-slot:AppBanner="appBanner">
-          <FeatureList :location="slotProp.loading" :list="slotProp.list"/>
+      <el-col :lg="{span: 20}" :md="{span: 22}" :xs="{span: 24}">
+        <Feature v-slot:AppBanner="appBanner" v-slot:FeatureList="slotProp" :FeatureData="featureData"
+                 :loading="loading">
+          <FeatureList :list="slotProp.list" :location="slotProp.loading"/>
         </Feature>
         <ArticleMain :gutter="32">
           <template #header>
-            <sidebar icon="moon" title="文章列表" :show-context="false" h="auto"/>
+            <sidebar :show-context="false" h="auto" icon="moon" title="文章列表"/>
           </template>
           <template #default>
             <Article-List-Tag/>
@@ -22,12 +23,12 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, reactive, ref, toRaw} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {Feature, FeatureList} from '@/views/Client/components/Feature'
 import {ArticleAside, ArticleListTag} from "@/views/Client/components/ArticleList";
 import store from "@/store";
 import {ArticleMain, Sidebar} from "@/components";
-import {ArticleInterface, FeatureDatainterface} from "@/interface";
+import {FeatureDatainterface} from "@/interface";
 
 const name = 'Client'
 
@@ -37,14 +38,14 @@ const featureData = reactive<FeatureDatainterface>({
   TOP: {}
 })
 
-localStorage.setItem('IsSwitchPage',JSON.stringify(false))
+localStorage.setItem('IsSwitchPage', JSON.stringify(false))
 
 onMounted(() => {
   getArticle()
 })
 
 const getArticle = () => {
-  store.dispatch('articleStore/getFeatureArticle').then((res:FeatureDatainterface) => {
+  store.dispatch('articleStore/getFeatureArticle').then((res: FeatureDatainterface) => {
     featureData.TOP = res.TOP
     featureData.LIST = res.LIST
     loading.value = false
@@ -53,7 +54,7 @@ const getArticle = () => {
 
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .el-row {
   align-items: center;
   height: inherit;
@@ -67,6 +68,7 @@ const getArticle = () => {
     gap: 2rem;
   }
 }
+
 .articleMain {
   margin-bottom: 1rem;
 

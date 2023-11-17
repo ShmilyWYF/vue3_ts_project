@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar" :style="{'height': h,'width': w}">
+  <div :style="{'height': h,'width': w}" class="sidebar">
     <el-card>
       <template #header>
         <p>
@@ -8,10 +8,10 @@
           <hr/>
         </p>
       </template>
-      <template #default v-show="showContext">
+      <template v-show="showContext" #default>
         <ul :class="{'sidebar-ul':defaultClass}" :style="{display: ulDisplay }">
           <li v-for="(item,key) in data" :key="key" :style="ulLiClss">
-            <slot name="content" :item="item"/>
+            <slot :item="item" name="content"/>
           </li>
         </ul>
         <slot name="defulet"/>
@@ -19,7 +19,7 @@
     </el-card>
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
 import SvgIcon from "@/components/SvgIcon/index.vue";
 
 const props = defineProps({
@@ -36,31 +36,31 @@ const props = defineProps({
     required: false,
     default: [''],
   },
-  h:{
+  h: {
     type: String,
     required: false,
     default: '10.5rem',
   },
-  w:{
+  w: {
     type: String,
     required: false,
     default: '100%',
   },
-  ulDisplay:{
+  ulDisplay: {
     type: String,
     required: false,
     default: 'block',
   },
-  ulLiClss:{
+  ulLiClss: {
     required: false,
     default: '',
   },
-  showContext:{
+  showContext: {
     type: Boolean,
     required: false,
     default: true,
   },
-  defaultClass:{
+  defaultClass: {
     type: Boolean,
     required: false,
     default: true,
@@ -74,6 +74,7 @@ const props = defineProps({
   min-width: 10.5rem;
   margin: 0 auto;
   padding-bottom: .5rem;
+
   .el-card {
     height: calc(100% - 2.5rem);
     width: calc(100% - 2.5rem);
@@ -99,6 +100,7 @@ const props = defineProps({
         justify-content: flex-start;
         gap: 0.5rem;
         @include font_color('text-color');
+
         span {
           font-weight: 600;
           font-size: larger;
@@ -122,10 +124,12 @@ const props = defineProps({
       padding: 0;
       background: #00000000;
       position: relative;
+
       .sidebar-ul {
         flex-direction: row;
         flex-wrap: wrap;
         gap: 0.5rem;
+
         li {
           box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgba(0, 0, 0, .05);
           padding: .75rem .5rem;
@@ -140,15 +144,17 @@ const props = defineProps({
           border-radius: .5rem;
           @include background_color('background-primary');
           transition-property: box-shadow;
-          transition-timing-function: cubic-bezier(.4,0,.2,1);
+          transition-timing-function: cubic-bezier(.4, 0, .2, 1);
           transition-duration: .15s;
-          &:hover{
+
+          &:hover {
             @include box_shadow('box-card-shadow-sidebar');
           }
 
         }
       }
-      .sidebar-ul-ant{
+
+      .sidebar-ul-ant {
 
       }
     }

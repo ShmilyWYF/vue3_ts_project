@@ -1,25 +1,29 @@
 <template>
   <div id="drawer" ref="drawer">
-    <el-drawer v-model="drawerPanel" :with-header="false" direction="ttb" class="el-drawer-box" @close="closeDrawer">
+    <el-drawer v-model="drawerPanel" :with-header="false" class="el-drawer-box" direction="ttb" @close="closeDrawer">
       <template #default>
         <drop-down>
           <template #default>
-            <el-switch v-model="action" @change="switchEvnt" :active-action-icon="svg('sun')"
-                       :inactive-action-icon="svg('moon')"/>
-            <el-button type="info" :icon="svg('background')" circle @click="switchBackgroundButton"
-                       :loading="isLoading"/>
+            <el-switch v-model="action" :active-action-icon="svg('sun')" :inactive-action-icon="svg('moon')"
+                       @change="switchEvnt"/>
+            <el-button :icon="svg('background')" :loading="isLoading" circle type="info"
+                       @click="switchBackgroundButton"/>
             <div>search</div>
             <el-button v-if="!isLoginState" text @click="dialogFormVisible = true">
               登陆
             </el-button>
             <span v-else>
                <el-dropdown>
-                 <el-avatar :size="35" src="https://static.linhaojun.top/aurora/avatar/52a81cd2772167b645569342e81ce312.jpg"/>
+                 <el-avatar :size="35"
+                            src="https://static.linhaojun.top/aurora/avatar/52a81cd2772167b645569342e81ce312.jpg"/>
                   <template #dropdown>
                     <el-dropdown-menu>
                       <el-dropdown-item @click="UserDialogFormVisible = true">个人中心</el-dropdown-item>
                       <el-dropdown-item @click="userExit">退出</el-dropdown-item>
-                      <el-dropdown-item v-if="userinfo?.type === 1" @click="switchPageEvnt">{{switchPage?'blog':'后台管理'}}</el-dropdown-item>
+                      <el-dropdown-item v-if="userinfo?.type === 1"
+                                        @click="switchPageEvnt">{{
+                          switchPage ? 'blog' : '后台管理'
+                        }}</el-dropdown-item>
                     </el-dropdown-menu>
                   </template>
                 </el-dropdown>
@@ -41,7 +45,7 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, ref, toRefs} from "vue";
+import {ref, toRefs} from "vue";
 import {svg} from "@/icons";
 import {DrawerstringGraphics, DropDown, Login} from "@/components";
 import router from "@/router";
@@ -49,7 +53,6 @@ import store from "@/store";
 import {getCookie} from "@/utils/cookie";
 import api from "@/axios";
 import {AxiosResponse} from "axios";
-import {useRoute, useRouter} from "vue-router";
 
 const props = defineProps({
   isSwitchBgButton: {
@@ -151,7 +154,7 @@ const dialogFormVisible = ref<boolean>(false)
 // 用户个人中心对话弹窗
 const UserDialogFormVisible = ref<boolean>(false)
 // 控制状态栏组件
-const isLoginState = ref<any>(getCookie()?true:JSON.parse(String(localStorage.getItem('isLoginState'))))
+const isLoginState = ref<any>(getCookie() ? true : JSON.parse(String(localStorage.getItem('isLoginState'))))
 // 储存用户信息 为0就是管理员
 const userinfo = ref<any>(store.getters.userinfo)
 // blog/后台切换
@@ -167,33 +170,34 @@ const dialogcall = (token: string) => {
   dialogFormVisible.value = !dialogFormVisible.value
   isLoginState.value = !isLoginState.value
   localStorage.setItem('isLoginState', JSON.stringify(isLoginState.value))
-  api.userApi.getInfo(token).then((res:AxiosResponse)=>{
+  api.userApi.getInfo(token).then((res: AxiosResponse) => {
     const {data} = res.data;
     userinfo.value = data
+    store.commit('userStore/SET_USER_INFO', data)
   })
 }
 
 // 退出当前账户
-const userExit = () =>{
-  store.dispatch('userStore/logout', getCookie()).then(()=>{
+const userExit = () => {
+  store.dispatch('userStore/logout', getCookie()).then(() => {
     isLoginState.value = false
     switchPage.value = false
     isLoginState.value = false
-    localStorage.setItem('isLoginState',String(isLoginState.value))
+    localStorage.setItem('isLoginState', String(isLoginState.value))
     localStorage.setItem('IsSwitchPage', String(switchPage.value))
     router.push({path: '/'})
   })
 }
 
-const switchPageEvnt = () =>{
+const switchPageEvnt = () => {
   switchPage.value = !switchPage.value;
-  switchPage.value?router.push({path: '/Dashboard'}):router.push({path: '/'})
+  switchPage.value ? router.push({path: '/Dashboard'}) : router.push({path: '/'})
   // 缓存
   localStorage.setItem('IsSwitchPage', String(switchPage.value))
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @media (max-width: 1024px) {
   #drawer {
     display: none !important;

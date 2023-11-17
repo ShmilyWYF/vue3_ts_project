@@ -1,14 +1,15 @@
 <template>
-  <div class="main" ref="mainRef">
+  <div ref="mainRef" class="main">
     <Breadcrumb/>
-    <router-view class="view" v-if="isRouterAlive"/>
-    <el-backtop v-if="!isVertical" :right="200" :bottom="100"/>
-    <Drawer @switch-theme="switchTheme" @is-Switch-Bg="isSwitchBgEvent" :is-switch-bg-button="isSwitch" :container="containerMain"/>
+    <router-view v-if="isRouterAlive" class="view"/>
+    <el-backtop v-if="!isVertical" :bottom="100" :right="200"/>
+    <Drawer :container="containerMain" :is-switch-bg-button="isSwitch" @switch-theme="switchTheme"
+            @is-Switch-Bg="isSwitchBgEvent"/>
     <App-Banner :style="isVertical?{height: '55%'}:''"/>
   </div>
   <!--背景板-->
   <transition name="fade">
-    <div class="main-bg" v-show="isSwitch"/>
+    <div v-show="isSwitch" class="main-bg"/>
   </transition>
 </template>
 
@@ -41,14 +42,14 @@ const switchTheme = (args: boolean) => {
 }
 
 // 组件boolean同步
-const isSwitch = ref<boolean|null>(JSON.parse(String(localStorage.getItem('IsSwitchBg'))) || false)
+const isSwitch = ref<boolean | null>(JSON.parse(String(localStorage.getItem('IsSwitchBg'))) || false)
 const isSwitchBgEvent = (event: boolean) => {
   isSwitch.value = event
 }
 
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .main {
   width: 100%;
   margin: 0 auto;
