@@ -1,11 +1,10 @@
 <template>
-  <ArticleMain :gutter="8" aside-class="articleContentAside" background="#00000000"
-               header-class="articleContentheader" main-class="articleContentMarkdown">
+  <ArticleMain :gutter="8" aside-class="articleContentAside" :background="'#00000000'" header-class="articleContentheader" main-class="articleContentMarkdown">
     <template #header>
       <span>
         <b>
           <span>
-            {{ content?.categoryName }}
+            {{ content.categoryName }}
           </span>
         </b>
         <ul>
@@ -15,17 +14,17 @@
         </ul>
       </span>
       <h1>
-        {{ content?.articleTitle }}
+        {{ content.articleTitle }}
       </h1>
       <div class="sticker">
         <div class="sticker-box">
-          <img :src="content?.author.avatar" alt="头像">
+          <img :src="content.author.avatar" alt="头像">
           <span>
                 <strong>
-                    {{ content?.author.nickname }}
+                    {{ content.author.nickname }}
                 </strong>
                 <span>
-                  发布于 {{ timeZh(content?.createTime) }}
+                  发布于 {{ timeZh(content.createTime) }}
                 </span>
           </span>
         </div>
@@ -45,7 +44,7 @@
       <Mark v-if="isLoading" :key="content.id" ref="markRef" :content="content?.articleContent" :edit-mode="mode"
             @markTocEvnt="markTocEvnt"/>
       <comments :commentData="reactiveData.comments" :commentsCall="callCommentsEvnt" :indexCall="setIndexFn"
-                :is-have-more="haveMore"/>
+                :is-have-more="haveMore" style="margin-top: 1rem"/>
     </template>
     <template #aside>
       <ArticleToc :top-distance="25"/>
@@ -61,6 +60,7 @@ import store from "@/store";
 import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {ElMessage} from "element-plus";
+import {ArticleInterface} from "@/interface";
 
 const props = defineProps(['id', 'mode'])
 const {id} = toRefs(props)
@@ -82,17 +82,30 @@ onBeforeMount(async () => {
 })
 
 // 文章上下文
-const content = ref<any>();
+const content = ref<ArticleInterface>({
+  id: 0,
+  articleCover: '',
+  articleTitle: '',
+  articleContent: '',
+  isTop: 0,
+  isFeatured: 0,
+  isDelete: 0,
+  author: {
+    avatar:'',
+    nickname:'',
+  },
+  categoryName: '',
+  tags: null,
+  status: 0,
+  createTime: '',
+  updateTime: '',
+ });
 
 // 初始化变量
 const reactiveData = reactive({
-  id: '' as any,
-  wordNum: '' as any,
-  readTime: '' as any,
   comments: [] as any,
   haveMore: false as any,
   isReload: false as any,
-  images: [] as any
 })
 
 // 后端分页初始化
@@ -130,7 +143,7 @@ const getArticleCommentsList = () => {
     size: pageInfo.size
   }
   // reactiveData.haveMore = true
-  api.commentApi.getComments(params).then((res: AxiosResponse) => {
+  api.commentApi.getCommentListByType(params).then((res: AxiosResponse) => {
     const {data} = res.data
     if (!data) {
       ElMessage.error('获取失败')
@@ -176,7 +189,6 @@ const markTocEvnt = (container: string) => {
 <style lang="scss" scoped>
 .articleMain {
   opacity: 1;
-
   :deep(.articleContentheader) {
     width: 100%;
     height: auto;
@@ -333,7 +345,7 @@ const markTocEvnt = (container: string) => {
     width: auto;
     overflow: unset;
     position: relative;
-    top: 0px;
+    top: 0;
   }
 
   .articleContentMarkdown, .articleContentAside {

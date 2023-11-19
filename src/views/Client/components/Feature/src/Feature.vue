@@ -3,8 +3,8 @@
     <div v-if="loading">
     </div>
     <div v-else class="home-article">
-      <Article :data='FeatureData.TOP' type="0" h="28rem"/>
-      <slot name="FeatureList" :list="FeatureData.LIST"/>
+      <Article :data='FeatureData.TOP' h="28rem" type="0"/>
+      <slot :list="FeatureData.LIST" name="FeatureList"/>
       <slot name="appBanner"/>
     </div>
   </div>

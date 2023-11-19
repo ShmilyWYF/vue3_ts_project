@@ -8,19 +8,19 @@ export interface MockApiInterface {
 }
 
 export interface UserInfoInterface {
-    id: number | string,
-    email: string,
+    id?: number | string,
+    email?: string,
     nickname: string,
     avatar: string,
-    intro: string,
-    website: string,
+    intro?: string,
+    website?: string,
     isSubscribe?: number,
     isDisable?: number,
-    createTime: number,
+    createTime?: number,
     updateTime?: number
 }
 
-export interface Commentinterface {
+export interface CommentMockinterface {
     id: number,
     user_id: number,
     topic_id: number,
@@ -29,10 +29,22 @@ export interface Commentinterface {
     parent_id: null,
     type: number,
     is_delete: number,
-    is_review: number,
+    is_review: number|string,
     replys?: any[],
     create_time: Date,
     update_time: null,
+}
+
+export interface Commentinterface {
+    id: number,
+    userId: number,
+    nickname: string,
+    avatar: string,
+    webSite: {}|any,
+    commentContent: string,
+    createTime: Date,
+    updateTime: Date,
+    replys?: [Commentinterface]|null,
 }
 
 export interface Tagsinterface {
@@ -65,17 +77,17 @@ export interface CategoryCountInterface {
 
 
 export interface ArticleInterface {
-    "id": number,
-    "articleCover": string,
-    "articleTitle": string,
-    "articleContent": string,
-    "isTop": number | boolean,
-    "isFeatured": number | boolean,
-    "isDelete": number,
-    "author": UserInfoInterface,
-    "categoryName": string | [],
-    "tags": Tagsinterface[],
-    "status": number,
+    id: number|string,
+    articleCover: string,
+    articleTitle: string,
+    articleContent: string,
+    isTop: number,
+    isFeatured: number,
+    isDelete: number,
+    author: UserInfoInterface,
+    categoryName: string | [],
+    tags: Tagsinterface[]|null,
+    status: number,
     createTime?: string,
     updateTime?: string,
 }

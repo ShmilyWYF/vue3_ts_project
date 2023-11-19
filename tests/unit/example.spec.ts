@@ -1,4 +1,4 @@
-import {mount, shallowMount} from '@vue/test-utils'
+import {shallowMount} from '@vue/test-utils'
 import Dashboard from "@/views/Dashboard/index.vue";
 
 /**
@@ -10,10 +10,10 @@ import Dashboard from "@/views/Dashboard/index.vue";
  */
 
 describe('Dashboard.vue', () => {
-  it('测试A',()=>{
-    const wrapper = shallowMount((Dashboard));
-    // @ts-ignore
-    const ok = wrapper.vm.ok();
-    expect(ok).toBe(1)
-  })
+    it('测试A', () => {
+        const wrapper = shallowMount((Dashboard));
+        // @ts-ignore
+        const ok = wrapper.vm.ok();
+        expect(ok).toBe(1)
+    })
 })
