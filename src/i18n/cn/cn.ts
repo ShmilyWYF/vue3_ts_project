@@ -7,6 +7,29 @@ export default {
         ALL: '全部',
         Docker: 'Docker',
         JAVA: 'Java',
-        'C++': 'C++'
+        'C++': 'C++',
     },
+    backstage:{
+        deleteDescription: '你确定要删除这个?',
+        inputDescription: '输入搜索/回车添加自定义',
+        withdrawalDescription: '你确定要撤回这个吗?',
+        delete: '删除',
+        edit: '编辑',
+        writing: '编写',
+        withdrawal: '撤回',
+        articleTable:{
+            id:'序号',
+            articleCover:'略缩图',
+            articleTitle:'标题',
+            isTop:'置顶',
+            isFeatured:'推荐',
+            author:'作者',
+            categoryName:'分类',
+            tags:'标签',
+            status:'状态',
+            createTime:'文章发布时间',
+            updateTime:'更新时间',
+            option: '操作',
+        },
+    }
 }

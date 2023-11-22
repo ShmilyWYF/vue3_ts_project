@@ -9,11 +9,11 @@ export interface MockApiInterface {
 
 export interface UserInfoInterface {
     id?: number | string,
-    email?: string,
+    email: string,
     nickname: string,
     avatar: string,
-    intro?: string,
-    website?: string,
+    intro: string,
+    website: string,
     isSubscribe?: number,
     isDisable?: number,
     createTime?: number,

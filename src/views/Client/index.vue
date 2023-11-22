@@ -2,8 +2,7 @@
   <div id="client">
     <el-row :gutter="0" justify="center">
       <el-col :lg="{span: 20}" :md="{span: 22}" :xs="{span: 24}">
-        <Feature v-slot:AppBanner="appBanner" v-slot:FeatureList="slotProp" :FeatureData="featureData"
-                 :loading="loading">
+        <Feature v-slot:FeatureList="slotProp" :FeatureData="featureData" :loading="loading">
           <FeatureList :list="slotProp.list" :location="slotProp.loading"/>
         </Feature>
         <ArticleMain :gutter="32">

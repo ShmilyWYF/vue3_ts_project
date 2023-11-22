@@ -13,8 +13,9 @@ import {
     FeatureArticle,
     getArticleListByStatus,
     updateArticleAttributeById,
+    updateArticleCategory,
     UpdateArticleContextById,
-    uploadImg,
+    updateArticleInfo,
     withdrawalArticle,
 } from "@/mock/articleApi/tempalte";
 
@@ -100,6 +101,14 @@ const articleApi = [
         condition: true
     },
     {
+        url: '/article/updateArticleInfo',
+        type: 'post',
+        template: updateArticleInfo,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
         url: '/article/deleteArticle',
         type: 'delete',
         template: deleteArticle,
@@ -140,14 +149,6 @@ const articleApi = [
         condition: true
     },
     {
-        url: '/article/uploadImg',
-        type: 'post',
-        template: uploadImg,
-        code: Number(200),
-        status: true,
-        condition: true
-    },
-    {
         url: '/article/addArticleTags',
         type: 'post',
         template: addArticleTags,
@@ -159,6 +160,14 @@ const articleApi = [
         url: '/article/addarticleTags',
         type: 'post',
         template: addArticleTags,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/article/updateCategorytoArticle',
+        type: 'post',
+        template: updateArticleCategory,
         code: Number(200),
         status: true,
         condition: true

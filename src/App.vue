@@ -78,7 +78,7 @@ nav {
 }
 
 * {
-  scrollbar-width: 10px;
+  //scrollbar-width: 10;
   scrollbar-base-color: green;
   scrollbar-track-color: red;
   scrollbar-arrow-color: blue;

@@ -4,18 +4,18 @@
     </div>
     <div v-else class="home-article">
       <Article :data='FeatureData.TOP' h="28rem" type="0"/>
-      <slot :list="FeatureData.LIST" name="FeatureList"/>
-      <slot name="appBanner"/>
+      <slot name="FeatureList" :list="FeatureData.LIST" :loading="loading"/>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import {Article} from "@/components";
-import {FeatureDatainterface} from "@/interface";
+import {ArticleInterface, FeatureDatainterface} from "@/interface";
 
 const name = 'Feature'
-
+// vue3.3约束一个作用域插槽。
+// defineSlots<{featureList:(props: {list:ArticleInterface}) => ArticleInterface[]}>()
 const props = defineProps<{
   FeatureData: FeatureDatainterface,
   loading: boolean,

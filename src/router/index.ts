@@ -67,6 +67,7 @@ export const asyncRouterMap: any[] = [
                     title: '文章管理',
                     noRedirect: true,
                 },
+                redirect: '/Dashboard/mark/articleList',
                 children: [
                     {
                         path: '/Dashboard/mark/edit',

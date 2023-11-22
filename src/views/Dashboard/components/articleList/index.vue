@@ -19,17 +19,25 @@
         批量删除
       </el-button>
       <el-input v-model="searchInput" placeholder="输入标题查找文章" @change="" @input="SearchInputEvnt"/>
-      <el-button style="width: 5rem;" type="primary" @click="articleDialog">添加文章</el-button>
+      <el-button style="width: 5rem;" type="primary" @click="articleAddDialog">添加文章</el-button>
     </div>
-    <ArticleManageList :article-ids="articleIds" :loading="loading" :tableData="tableData" @switch-call="CallEvnt"
-                       @modify-array="articleIdsEvnt"/>
-    <el-dialog v-model="isEditDialog" class="authordialog" title="添加文章">
+    <ArticleManageList :article-ids="articleIds"
+                       :loading="loading"
+                       :tableData="tableData"
+                       @switch-call="CallEvnt"
+                       @modify-array="articleIdsEvnt"
+                       @edit-callback="articleEditDialog"/>
+    <el-dialog v-model="isEditOrAddDialog" class="authordialog" :title="isAddOrEdit == 1?'编辑文章信息':'添加文章'">
       <el-form ref="articleFormRef" :model="articleinfo" :rules="rules" label-width="120px">
         <el-form-item label="标题" prop="articleTitle">
-          <el-input v-model="articleinfo.articleTitle"/>
+          <el-input v-model="articleinfo.articleTitle" clearable/>
         </el-form-item>
         <el-form-item label="封面" prop="articleCover">
-          <el-input v-model="articleinfo.articleCover"/>
+          <p style="display: flex;gap:.25rem">
+            <el-input v-model="articleinfo.articleCover" clearable :clear="()=>{}"/>
+            <label for="upload" class="ui-upload">upload</label>
+            <input id="upload" type="file" name="file" multiple="multiple" @change="imgAdd" style="display: none"/>
+          </p>
         </el-form-item>
         <el-form-item label="分类" prop="categoryName" required>
           <el-select
@@ -78,7 +86,8 @@
             <el-option v-for="item in tagslist" :key="item.id" :label="item.tagName" :value="item.tagName"/>
           </el-select>
         </el-form-item>
-        <el-button type="primary" @click="addArticle(articleinfo)">添加</el-button>
+        <el-button type="primary" @click="addArticle(articleinfo)">{{ isAddOrEdit == 1 ? '提交编辑' : '添加' }}
+        </el-button>
       </el-form>
     </el-dialog>
     <!-- 批量删除对话框 -->
@@ -97,29 +106,20 @@
 
 <script lang="ts" setup>
 import {ArticleManageList} from "@/components";
-import {inject, onMounted, reactive, ref,} from "vue";
+import {inject, nextTick, onMounted, reactive, ref,} from "vue";
 import store from "@/store";
-import {ElMessage, FormRules} from "element-plus";
+import {ElMessage, ElNotification, FormRules} from "element-plus";
 import {ArticleInterface} from "@/interface";
 import api from "@/axios";
 import {AxiosResponse} from "axios";
 
 //获取所有文章列表
-const tableData = ref<any[]>([])
+const tableData = ref<ArticleInterface[]>([])
 const loading = ref(true)
 const reloadV: any = inject('reload')
 
 onMounted(async () => {
-  await store.dispatch('articleStore/getAllArticle').then(res => {
-    if (currStatus.value === 'All') {
-      tableData.value = res;
-      tableData.value?.sort((a, b) => {
-        return b.status - a.status
-      })
-    } else {
-      viewStatus(currStatus.value)
-    }
-  })
+  await getAllArticleList()
   loading.value = false
 })
 
@@ -133,7 +133,7 @@ const viewStatus = (status: string) => {
 }
 
 //添加文章
-const isEditDialog = ref<boolean>(false)
+const isEditOrAddDialog = ref<boolean>(false)
 // category选择器加载
 const categoryloading = ref<boolean>(false)
 // category列表
@@ -141,7 +141,7 @@ const categorylist = ref<any>([])
 // 当前查看状态
 const currStatus = ref<string>(localStorage.getItem('currStatus') || 'All')
 // 表单ref
-const articleFormRef = ref()
+const articleFormRef = ref<any>()
 // 文章搜索输入框双向绑定
 const searchInput = ref<string>('')
 // tag列表
@@ -150,6 +150,8 @@ const tagslist = ref<any[]>()
 const articleIds = ref<[]>([])
 // 控制删除弹窗
 const isDelete = ref<boolean>()
+// 控制是添加还是编辑 0添加 1编辑
+const isAddOrEdit = ref<number>(0)
 // 初始化
 const articleinfo: ArticleInterface = reactive({
   id: 0,
@@ -172,30 +174,99 @@ const rules = reactive<FormRules>({
   tags: [{required: true, message: '请选择标签', trigger: 'change'}],
 })
 
+// 获取所有文章列表
+const getAllArticleList = async () => {
+  await store.dispatch('articleStore/getAllArticle').then(res => {
+    if (currStatus.value === 'All') {
+      tableData.value = res;
+      tableData.value?.sort((a, b) => {
+        return b.status - a.status
+      })
+    } else {
+      viewStatus(currStatus.value)
+    }
+  })
+}
+
 // 子调父方法 修改articleids
 const articleIdsEvnt = (args: []) => {
   articleIds.value = args
 }
 
 // 打开添加对话框回调
-const articleDialog = async () => {
+const articleAddDialog = async () => {
+  isAddOrEdit.value = 0
   await api.tagsApi.getTags().then((res: AxiosResponse) => {
     const {data} = res.data
     tagslist.value = data;
   })
   articleinfo.status = 3
-  isEditDialog.value = true;
+  isEditOrAddDialog.value = true;
+  await nextTick(() => {
+    articleFormRef.value!.resetFields();
+  })
 }
 
-// 添加文章事件
+// 打开编辑对话框回调
+const articleEditDialog = async (row: ArticleInterface) => {
+  isAddOrEdit.value = 1
+  await api.tagsApi.getTags().then((res: AxiosResponse) => {
+    const {data} = res.data
+    tagslist.value = data;
+  })
+  let arr: any = []
+  row.tags?.forEach(item => {
+    arr.push(item.tagName)
+  })
+  isEditOrAddDialog.value = true;
+  await nextTick(() => {
+    Object.assign(articleinfo, row)
+    articleinfo.tags = arr
+  })
+}
+
+// 添加or编辑文章事件
 const addArticle = async (articleinfo: ArticleInterface) => {
-  articleFormRef.value.validate((res: boolean) => {
+  articleFormRef.value!.validate((res: boolean) => {
     if (res) {
-      store.dispatch('articleStore/addArticle', articleinfo).then(res => {
-        tableData.value = res
+      if (isAddOrEdit.value != 1) {
+        store.dispatch('articleStore/addArticle', articleinfo).then(res => {
+          tableData.value = res
+        }, ((e: string) => {
+          ElNotification({
+            title: '通知',
+            message: e,
+            type: 'warning'
+          })
+          return
+        }))
+      } else {
+        store.dispatch('articleStore/updateArticle', articleinfo).then(() => {
+          getAllArticleList()
+        }, ((e: string) => {
+          ElNotification({
+            title: '通知',
+            message: e,
+            type: 'warning'
+          })
+          return
+        }))
+      }
+      ElNotification({
+        title: '通知',
+        message: '操作完成',
+        type: 'success'
       })
+      isEditOrAddDialog.value = false;
+      if (articleFormRef.value != undefined) {
+        articleFormRef.value.resetFields();
+      }
     } else {
-      ElMessage.success('请输入~')
+      ElNotification({
+        title: '通知',
+        message: '请检查必填项',
+        type: 'warning'
+      })
     }
   })
 }
@@ -204,7 +275,7 @@ const addArticle = async (articleinfo: ArticleInterface) => {
 const searchCategories = (query: any) => {
   if (query !== '') {
     categoryloading.value = true
-    api.categoryApi.getCategory().then((res: AxiosResponse) => {
+    api.categoryApi.getCategorys().then((res: AxiosResponse) => {
       const {data} = res.data
       categorylist.value = data.filter((item: any) => {
         return item.categoryName.toLowerCase().includes(query.toLowerCase())
@@ -267,7 +338,16 @@ const CallEvnt = (call: []) => {
   }
 }
 
-
+// 上传图片
+const imgAdd = (file: any) => {
+  let formdata = new FormData();
+  formdata.append('image', file.target.files[0]);
+  // axios在接收formdata类型参数时会强制删除content-type浏览器识别空设置为默认false
+  api.imgApi.uploadImg(formdata).then((res: any) => {
+    const {data} = res.data
+    articleinfo.articleCover = data
+  })
+}
 </script>
 
 <style lang="scss" scoped>
@@ -319,5 +399,16 @@ const CallEvnt = (call: []) => {
   }
 }
 
-
+.ui-upload {
+  height: 30px;
+  width: 80px;
+  background-color: #00abff;
+  font-size: 14px;
+  line-height: 30px;
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+  color: #fff;
+  border-radius: 3px;
+}
 </style>

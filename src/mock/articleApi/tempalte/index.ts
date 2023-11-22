@@ -1,7 +1,7 @@
 import Mock from "mockjs";
 import {ArticleInterface, CategoryInterface, Tagsinterface} from "@/interface";
 import {addOrEditTag, tagCount, tags} from "@/mock/tagsApi/tempalte";
-import {category, categoryCount} from "@/mock/categoryApi/tempalte";
+import {addOrEditCategory, category, categoryCount} from "@/mock/categoryApi/tempalte";
 
 // 定义随机占位符
 Mock.Random.extend({
@@ -31,10 +31,10 @@ const data = Mock.mock({
             "isDelete": 0,
             "author": {
                 "id": null,
-                "email": null,
+                "email": '2576572147@qq.com',
                 "nickname": "wyf",
                 "avatar": "https://static.linhaojun.top/aurora/avatar/52a81cd2772167b645569342e81ce312.jpg",
-                "intro": null,
+                "intro": '个人说明',
                 "website": "https://www.linhaojun.top",
                 "isSubscribe": null,
                 "isDisable": null,
@@ -52,8 +52,8 @@ const data = Mock.mock({
 })
 export const allArticle: ArticleInterface[] = data.data.concat(
     {
-        "id": 41,
-        "articleCover": "https://static.linhaojun.top/aurora/articles/3ec095cd9b7bd3f766166a4db14160c6.jpg",
+        'id': 41,
+        'articleCover': "https://static.linhaojun.top/aurora/articles/3ec095cd9b7bd3f766166a4db14160c6.jpg",
         "articleTitle": "docker入门",
         "articleContent": "#  1.docker概述\n\n## 1.1 基本介绍\n\nDocker 是一个开源的应用容器引擎，基于 Go 语言 并遵从 Apache2.0 协议开源。\n\nDocker 可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 机器上，也可以实现虚拟化。\n\n容器是完全使用沙箱机制，相互之间不会有任何接口,更重要的是容器性能开销极低。\n\nDocker 从 17.03 版本之后分为 CE（Community Edition: 社区版） 和 EE（Enterprise Edition: 企业版），我们用社区版就可以了。[官网](https://docs.docker.com/)\n\n##  1.2 应用场景\n\n1. Web 应用的自动化打包和发布。\n\n2. 自动化测试和持续集成、发布。\n\n3. 在服务型环境中部署和调整数据库或其他的后台应用。\n\n4. 从头编译或者扩展现有的 Openshellift 或 Cloud Foundry 平台来搭建自己的 PaaS 环境。\n\n## 1.3 docker 的优势\n\nDocker 是一个用于开发，交付和运行应用程",
         "isTop": 1,
@@ -146,7 +146,8 @@ export const allArticle: ArticleInterface[] = data.data.concat(
         "status": 1,
         "createTime": 1694627295,
         "updateTime": "2023-08-29T10:46:32"
-    })
+    }
+    )
 
 //  特辑和置顶
 export const FeatureArticle = () => {
@@ -167,7 +168,7 @@ const getLatestItem = (type: boolean): ArticleInterface[] => {
     // 获取长度
     let arr = allArticle.filter(res => {
         if (res.status !== 3 && res.isDelete !== 1) {
-            return type ? res.isTop === 1 : res.isFeatured === 1
+            return type ? res.isTop == 1 : res.isFeatured == 1
         }
     }).sort((a: any, b: any) => {
         return a.createTime - b.createTime
@@ -184,13 +185,13 @@ export const articleCategoryList: CategoryInterface[] = categoryCount()
 export const ArticleListByCategory = (parameters: string) => {
     if (parameters === 'ALL') {
         let arr = allArticle.filter(res => {
-            return res.status != 3 && res.isDelete !== 1
+            return res.status != 3 && res.isDelete != 1
         })
         return arr
     } else {
         let arr = allArticle.filter(res => {
-            if (res.status != 3 && res.isDelete !== 1) {
-                return res.categoryName === parameters
+            if (res.status != 3 && res.isDelete != 1) {
+                return res.categoryName == parameters
             }
         })
         return arr
@@ -256,7 +257,7 @@ export const ArticleAsideList = () => {
 export const ArticleById = (id: string): ArticleInterface => {
     let arr: ArticleInterface = allArticle.filter(res => {
         if (res.status != 3) {
-            return res.id === parseInt(id)
+            return res.id == parseInt(id)
         }
     })[0]
     return arr
@@ -312,6 +313,25 @@ export const AddArticle = (aritcleData: string) => {
     return allArticle;
 }
 
+// 更新文章
+export const updateArticleInfo = (aritcleData:string) =>{
+    const articleInfo:{id:number|string,tags:[]} |any = JSON.parse(aritcleData)
+    let index = allArticle.findIndex(value => value.id == articleInfo.id)
+    if (index != -1){
+        let tempTagsList: Tagsinterface[] = [];
+        articleInfo.tags?.forEach((item: string)=>{
+            // 校验是否存在 不存在则添加进列表
+            addOrEditTag(JSON.stringify({tagName:item}))
+            tempTagsList.push(<Tagsinterface>tags.data.find(value => value.tagName == item))
+        })
+        allArticle[index] = articleInfo
+        allArticle[index].tags = tempTagsList
+        return allArticle
+    }else {
+        return false;
+    }
+}
+
 // 给文章添加标签
 export const addArticleTags = (obj: string) => {
     const {id, tagName} = JSON.parse(obj)
@@ -319,7 +339,8 @@ export const addArticleTags = (obj: string) => {
     addOrEditTag(JSON.stringify({tagName: tagName}));
     let result: any = null
     allArticle.forEach((item, index) => {
-        if (item.id === id) {
+        if (item.id == id) {
+            // @ts-ignore
             let arr = allArticle[index].tags.filter(item => {
                 return item.tagName?.toLocaleLowerCase() === tagName.toLocaleLowerCase()
             })
@@ -331,11 +352,33 @@ export const addArticleTags = (obj: string) => {
                 let key = tags.data.findIndex((item: { tagName: string; }) => {
                     return item.tagName?.toLocaleLowerCase() === tagName.toLocaleLowerCase()
                 })
+                // @ts-ignore
                 allArticle[index].tags.push(tags.data[key])
-                result = true
+                result = allArticle[index].tags
             }
         }
     })
+    return result
+}
+
+// 更新文章分类
+export const updateArticleCategory = (obj: string) => {
+    const {id, categoryName} = JSON.parse(obj)
+    // 校验是否存在 不存在则添加进列表
+    addOrEditCategory(JSON.stringify({categoryName: categoryName}));
+    let result: any = null
+    let key = allArticle.findIndex(value => value.id == id)
+    if (key != -1){
+        // 给文章添加标签
+        let categoryKey = category.data.findIndex((item: { categoryName: string; }) => {
+            return item.categoryName?.toLocaleLowerCase() === categoryName.toLocaleLowerCase()
+        })
+        // @ts-ignore
+        allArticle[key].categoryName = category.data[categoryKey].categoryName
+        result = allArticle[key].categoryName
+    }else {
+        return false
+    }
     return result
 }
 
@@ -345,7 +388,7 @@ export const deleteArticle = (obj: string) => {
     let result = null;
     try {
         ids.forEach(item => {
-            let key = allArticle.findIndex(value => value.id === item)
+            let key = allArticle.findIndex(value => value.id == item)
             if (key != -1) {
                 allArticle[key].status = 0
                 allArticle[key].isDelete = 1
@@ -360,7 +403,7 @@ export const deleteArticle = (obj: string) => {
 
 // 撤回文章
 export const withdrawalArticle = (id: number) => {
-    let key = allArticle.findIndex(value => value.id === id)
+    let key = allArticle.findIndex(value => value.id == id)
     if (key != -1) {
         allArticle[key].status = 3
         allArticle[key].isDelete = 0
@@ -374,7 +417,7 @@ export const withdrawalArticle = (id: number) => {
 // 根据文章id获取文章上下文
 export const ArticleContentById = (id: string): string => {
     let arr: string = allArticle.filter((item: ArticleInterface): boolean => {
-        return item.id === parseInt(id)
+        return item.id == parseInt(id)
     })[0].articleContent
     return arr
 }
@@ -383,7 +426,7 @@ export const ArticleContentById = (id: string): string => {
 export const UpdateArticleContextById = (articleinfo: string) => {
     const {id, articleContent} = JSON.parse(articleinfo)
     for (let i = 0; i < allArticle.length; i++) {
-        if (allArticle[i].id === parseInt(id)) {
+        if (allArticle[i].id == parseInt(id)) {
             allArticle[i].articleContent = articleContent
         }
     }
@@ -391,30 +434,35 @@ export const UpdateArticleContextById = (articleinfo: string) => {
 }
 
 // 按id更新文章属性 修改文章对象传入名的属性 如status
-export const updateArticleAttributeById = (articleinfo: string) => {
+export const updateArticleAttributeById = (articleinfo: any) => {
     const {id, value, attributeName} = JSON.parse(articleinfo)
     let key = allArticle.findIndex(value => {
-        return value.id === id
+        return value.id == id
     })
     if (key != -1) {
         let arr: any = allArticle[key]
         arr[attributeName] = value
         arr.updateTime = parseInt(String(new Date().getTime() / 1000))
-        return true
+        console.log(arr)
+        return arr;
     }
     return false
 }
 // 按Id删除文章标签
 export const deleteArticleTagById = (obj: any) => {
     const {articleid, tagid} = JSON.parse(obj)
-    let articleindex = allArticle.findIndex(item => {
-        return item.id === articleid
+    let key = allArticle.findIndex(item => {
+        return item.id == articleid
     })
-    let tagindex = allArticle[articleindex].tags.findIndex(item => {
-        return item.id === tagid
-    })
-    allArticle[articleindex].tags.splice(tagindex, 1)
-    return allArticle;
+    if (key != 0){
+        let allArticles = allArticle[key].tags;
+        let tagindex = allArticles!.findIndex(item => {
+            return item.id == tagid
+        })
+        allArticle[key].tags!.splice(tagindex, 1)
+        return allArticle[key].tags;
+    }
+    return  false
 }
 // 按状态获取文章列表
 export const getArticleListByStatus = (statusName: string) => {
@@ -422,16 +470,12 @@ export const getArticleListByStatus = (statusName: string) => {
         case 'All':
             return allArticle;
         case 'Public':
-            return allArticle.filter(iten => iten.status === 1);
+            return allArticle.filter(iten => iten.status == 1);
         case 'Private':
-            return allArticle.filter(iten => iten.status === 2);
+            return allArticle.filter(iten => iten.status == 2);
         case 'Draft':
-            return allArticle.filter(iten => iten.status === 3);
+            return allArticle.filter(iten => iten.status == 3);
         case 'RecycleBin':
-            return allArticle.filter(iten => iten.isDelete === 1);
+            return allArticle.filter(iten => iten.isDelete == 1);
     }
-}
-// 上传本地图片
-export const uploadImg = () => {
-    return 'https://static.linhaojun.top/aurora/articles/46a87c196a67850fd03370535fc52166.jpg'
 }

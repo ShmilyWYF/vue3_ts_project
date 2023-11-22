@@ -1,7 +1,6 @@
 import api from "@/axios";
 import {ArticleInterface} from "@/interface";
 import {AxiosResponse} from "axios";
-import {ElMessage} from "element-plus";
 
 const {articleApi} = api
 
@@ -198,7 +197,21 @@ const actions: any = {
                 if (!data) {
                     reject('添加失败')
                 }
-                ElMessage.success('添加成功')
+                // 将添加的当前条加入缓存
+                resolve(data)
+            }, (error: Error) => {
+                reject(error)
+            })
+        })
+    },
+    // 更新文章
+    updateArticle({}, articleData: {}) {
+        return new Promise((resolve, reject) => {
+            articleApi.updateArticleInfo(articleData).then((res: any) => {
+                const {data} = res.data
+                if (!data) {
+                    reject('添加失败')
+                }
                 // 将添加的当前条加入缓存
                 resolve(data)
             }, (error: Error) => {
@@ -211,15 +224,11 @@ const actions: any = {
         return new Promise((resolve, reject) => {
             articleApi.getArticleContentById(id).then((res: any) => {
                 const {data} = res.data
-                // 允许文章为空
-                // if(!data){
-                //     reject('获取上下文失败');
-                // }
                 resolve(data)
             })
         })
     },
-    // 更新文章
+    // 更新文章上下文
     updateArticleContextById({state}: any, articleInfo: { id: number, articleContent: string }) {
         return new Promise((resolve, reject) => {
             articleApi.updateArticleContextById(articleInfo).then((res: any) => {
@@ -231,10 +240,10 @@ const actions: any = {
             })
         })
     },
-    // 更新文章标签
+    // 根据id更新参数相应属性
     updateArticleAttributeById({state}: any, articleInfo: { id: number, value: number, attributeName: number }) {
         return new Promise((resolve, reject) => {
-            articleApi.updateArticleAttributeById(articleInfo).then((res: any) => {
+            articleApi.updateArticleAttributeById(articleInfo).then((res: AxiosResponse) => {
                 const {data} = res.data
                 if (!data) {
                     reject("Error,更新失败")

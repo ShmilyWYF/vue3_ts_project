@@ -16,4 +16,4 @@ export {default as Articles} from '@/components/Articles/index.vue'
 export {default as ArticleManageList} from '@/components/ArticleManageList/index.vue'
 export {default as Pagination} from '@/components/Pagination/index.vue'
 export {default as Comments} from '@/components/Comments/index.vue'
-
+export {default as SearchCategory} from '@/components/SearchCategory/index.vue'

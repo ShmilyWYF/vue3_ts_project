@@ -1,10 +1,10 @@
 <template>
   <div class="comment-reply-form">
-    <el-avatar :size="40" :src="avatar"/>
+    <el-avatar :size="40" :src="userinfo?userinfo.avatar:'https://static.linhaojun.top/aurora/config/2af2e2db20740e712f0a011a6f8c9af5.jpg'"/>
     <div class="comment-content-box">
       <textarea v-model="commentContent" :placeholder="initialContent" cols="30" rows="5"/>
       <div>
-        <el-button id="submit-button" size="small" type="primary" @click="emit('cancelReply')">
+        <el-button id="submit-button" size="small" type="primary" @click="commentContent = '';emit('cancelReply')">
           <span>Cancel</span>
         </el-button>
         <el-button id="submit-button" size="small" type="success" @click="saveReply">
@@ -23,7 +23,7 @@ import {useRoute} from "vue-router";
 import api from "@/axios";
 import {AxiosResponse} from "axios";
 
-const props = defineProps<{ replyUserId: number, initialContent: string, parentId: number, index?: number | string }>()
+const props = defineProps<{ replyUserId: number, initialContent: string, parentId: number, index?: number | string}>()
 // 回复用户id、初始化内容、父评论id
 const {initialContent, replyUserId, parentId, index} = toRefs(props)
 // 关闭回复框事件
@@ -31,7 +31,7 @@ const emit = defineEmits(['cancelReply'])
 // 评论内容双向绑定
 const commentContent = ref<string>('')
 // 回复框 展示用户头像
-const avatar = computed(() => store.getters.userinfo.avatar)
+const userinfo = computed(() => store.getters.userinfo)
 // 当前路由获取的id
 const router = useRoute();
 const id = router.path.split('/')[2]
@@ -40,7 +40,7 @@ const emitCallV: any = inject('emitCall')
 
 // 保存回复事件
 const saveReply = () => {
-  if (store.getters.userInfo === '') {
+  if (userinfo.value === ''||userinfo.value === undefined) {
     ElNotification({
       title: 'Warning',
       message: '请登陆后评论',

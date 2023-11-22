@@ -59,11 +59,9 @@ export const addOrEditCategory = (obj: string) => {
             category.data[key].categoryName = categoryName
         }
     } else {
-        // tags列表
         let key = category.data.findIndex((itemtag: CategoryInterface) => {
             return itemtag.categoryName?.toLocaleLowerCase() === categoryName.toLocaleLowerCase()
         })
-        // 没有就添加进tags列表
         if (key === -1) {
             category.data.push({
                 id: category.data.length + 1,

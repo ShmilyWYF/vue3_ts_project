@@ -1,9 +1,9 @@
 <template>
-  <el-table v-loading="loading" :cell-style="cellstyle" :data="data" border header-row-class-name="articleTable"
-            row-class-name="articleTable" @selection-change="selectionChange">
+  <el-table ref="tableRef" v-loading="loading" :cell-style="cellstyle" :data="data" border
+            header-row-class-name="articleTable" row-class-name="articleTable" @selection-change="selectionChange">
     <el-table-column type="selection" width="55"/>
-    <el-table-column label="序号" prop="id" type="index" width="80"/>
-    <el-table-column label="略缩图" prop="articleCover">
+    <el-table-column :label="$t('backstage.articleTable.id')" prop="id" type="index" width="80"/>
+    <el-table-column :label="$t('backstage.articleTable.articleCover')" prop="articleCover">
       <template #default="slotProp">
         <el-image
             :preview-src-list="[String(slotProp.row.articleCover)]"
@@ -14,42 +14,83 @@
         />
       </template>
     </el-table-column>
-    <el-table-column label="标题" prop="articleTitle"/>
-    <el-table-column label="置顶" prop="isTop">
-      <template #default="slotProp">
-        <el-switch v-model="slotProp.row.isTop" :key="slotProp.row.id" :active-value="1" :disabled="slotProp.row.isDelete == 1"
-                   :inactive-value="0" :loading="toploading"
-                   @change="toploading = true" @click="updateProperty(slotProp.row.id,slotProp.row.isTop,'isTop')"/>
+    <el-table-column :label="$t('backstage.articleTable.articleTitle')" prop="articleTitle">
+      <template
+          #default="slotProp:{row:{isEditPropertyShowTitle:boolean,inputTitle:string,id:string,articleTitle:string},$index:number}">
+        <span v-if="slotProp.row.isEditPropertyShowTitle">
+          <el-input v-model="slotProp.row.inputTitle"
+                    @keyup.enter.native="updateProperty(slotProp.row.id,slotProp.row.inputTitle,'articleTitle',slotProp.$index)"/>
+          <p>
+            <el-button size='small'
+                       @click="updateProperty(slotProp.row.id,slotProp.row.inputTitle,'articleTitle',slotProp.$index)">确定</el-button>
+            <el-button size='small' @click="data[slotProp.$index].isEditPropertyShowTitle = false;">取消</el-button>
+          </p>
+        </span>
+        <el-tooltip v-else effect="dark" content="双击编辑" placement="top-start">
+          <p @dblclick="onTitleDbEvnt(slotProp)">
+            {{ slotProp.row.articleTitle }}
+          </p>
+        </el-tooltip>
       </template>
     </el-table-column>
-    <el-table-column label="推荐" prop="isFeatured">
-      <template #default="slotProp">
-        <el-switch v-model="slotProp.row.isFeatured" :key="slotProp.row.id" :active-value="1" :disabled="slotProp.row.isDelete == 1"
-                   :inactive-value="0"
-                   :loading="featuredloading" @change="featuredloading = true" @click="updateProperty(slotProp.row.id,slotProp.row.isFeatured,'isFeatured')"/>
+    <el-table-column :label="$t('backstage.articleTable.isTop')" prop="isTop">
+      <template #default="slotProp:{row:{id:number,isTop:number,isDelete:number,isloadingTop:boolean},$index:any}">
+        <el-switch v-model="slotProp.row.isTop" :key="slotProp.row.id" :active-value="1"
+                   :disabled="slotProp.row.isDelete == 1" :inactive-value="0" :loading="slotProp.row.isloadingTop"
+                   @click="slotProp.row.isloadingTop=true;updateProperty(slotProp.row.id,slotProp.row.isTop,'isTop',slotProp.$index)"/>
       </template>
     </el-table-column>
-    <el-table-column label="作者" prop="author">
+    <el-table-column :label="$t('backstage.articleTable.isFeatured')" prop="isFeatured">
+      <template
+          #default="slotProp:{row:{id:number,isFeatured:number,isDelete:number,isloadingFeatured:boolean},$index:any}">
+        <el-switch v-model="slotProp.row.isFeatured" :key="slotProp.row.id" :active-value="1"
+                   :disabled="slotProp.row.isDelete == 1" :inactive-value="0" :loading="slotProp.row.isloadingFeatured"
+                   @click="slotProp.row.isloadingFeatured=true;updateProperty(slotProp.row.id,slotProp.row.isFeatured,'isFeatured',slotProp.$index)"/>
+      </template>
+    </el-table-column>
+    <el-table-column :label="$t('backstage.articleTable.author')" prop="author">
       <template #default="slotProp">
         <el-button link size="small" type="primary" @click="viewAuthor(slotProp.row.author)">
           查看作者
         </el-button>
       </template>
     </el-table-column>
-    <el-table-column label="分类" prop="categoryName" width="100">
-      <template #default="slotProp">
-        <el-tag :disabled="slotProp.row.isDelete == 1" color="tab-tag" effect="dark">
-          {{ slotProp.row.categoryName }}
-        </el-tag>
+    <el-table-column :label="$t('backstage.articleTable.categoryName')" prop="categoryName" width="100">
+      <template
+          #default="slotProp:{row:{isEditPropertyShowCategory:boolean,inputCategory:string,id:string,categoryName:string,isDelete:boolean,isloadingCategory},$index:number}">
+        <el-popover :visible="slotProp.row.isEditPropertyShowCategory" placement="bottom" trigger="focus">
+          <template #reference>
+            <el-tag color="tab-tag" class="tooltiptext" effect="dark" style="float: none;"
+                    disabled="slotProp.row.isDelete == 1" @dblclick="onCategoryDbEvnt(slotProp)">
+              <el-tooltip effect="dark" content="双击编辑" placement="top">
+                {{ slotProp.row.categoryName }}
+              </el-tooltip>
+            </el-tag>
+          </template>
+          <SearchCategory :model-value="slotProp.row.inputCategory" @update:modelValue="slotProp.row.inputCategory = ''"
+                          @v-change="(value:any)=>{slotProp.row.inputCategory = value}">
+            <template #default="slotCategory">
+              <el-button size='small' type="success"
+                         @click="addOrEditCategory(slotProp.row.inputCategory,slotProp.row.id,slotProp.$index)">确定
+              </el-button>
+              <el-button size='small' type="info" @click="data[slotProp.$index].isEditPropertyShowCategory = false;">
+                取消
+              </el-button>
+            </template>
+          </SearchCategory>
+        </el-popover>
       </template>
     </el-table-column>
-    <el-table-column label="标签" prop="tags" width="180" @close="handleClose">
+    <el-table-column :label="$t('backstage.articleTable.tags')" prop="tags" width="180" @close="handleClose">
       <template #default="slotProp">
-        <el-tag v-for="(item,key) in slotProp.row.tags" :key='key' :closable="!slotProp.row.isDelete == 1" color="tab-tag" effect="dark"
-                style="margin: .1rem;"
-                @close="closeTagEvent({articleid:slotProp.row.id,tagid:item.id})">
-          {{ item.tagName }}
-        </el-tag>
+        <transition-group name="tags">
+          <el-tag v-for="(item,key) in slotProp.row.tags" :key='key' :closable="!slotProp.row.isDelete == 1"
+                  color="tab-tag" effect="dark"
+                  style="margin: .1rem;"
+                  @close="closeTagEvent({articleid:slotProp.row.id,tagid:item.id},slotProp.$index)">
+            {{ item.tagName }}
+          </el-tag>
+        </transition-group>
         <el-popover placement="bottom" trigger="click">
           <template #reference>
             <el-button v-if="!slotProp.row.isDelete == 1" size="small" style="float: left;">
@@ -58,28 +99,33 @@
           </template>
           <el-input
               ref="InputRef"
-              v-model="inputValue"
+              v-model="inputTag"
               size="small"
-              @keyup.enter.native="addArticleTagEvnt(slotProp.row.id)"
+              @keyup.enter.native="addArticleTagEvnt(slotProp.row.id,slotProp.$index)"
           />
         </el-popover>
       </template>
     </el-table-column>
-    <el-table-column label="状态" prop="status" width="80">
+    <el-table-column :label="$t('backstage.articleTable.status')" prop="status" width="80">
       <template #default="slotProp">
         <el-dropdown :disabled="slotProp.row.isDelete == 1">
           <span class="el-dropdown-link">
-            <el-button :disabled="slotProp.row.isDelete == 1">{{ statusVoid(slotProp.row.status) }}</el-button>
+            <el-button :disabled="slotProp.row.isDelete == 1" type="primary" link>{{
+                statusVoid(slotProp.row.status)
+              }}</el-button>
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item v-if="slotProp.row.status !== 1" @click="updateProperty(slotProp.row.id,1,'status')">
+              <el-dropdown-item v-if="slotProp.row.status !== 1"
+                                @click="updateProperty(slotProp.row.id,1,'status',slotProp.$index)">
                 公开
               </el-dropdown-item>
-              <el-dropdown-item v-if="slotProp.row.status !== 2" @click="updateProperty(slotProp.row.id,2,'status')">
+              <el-dropdown-item v-if="slotProp.row.status !== 2"
+                                @click="updateProperty(slotProp.row.id,2,'status',slotProp.$index)">
                 私密
               </el-dropdown-item>
-              <el-dropdown-item v-if="slotProp.row.status !== 3" @click="updateProperty(slotProp.row.id,3,'status')">
+              <el-dropdown-item v-if="slotProp.row.status !== 3"
+                                @click="updateProperty(slotProp.row.id,3,'status',slotProp.$index)">
                 草稿
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -94,31 +140,53 @@
     <!--      </template>-->
     <!--    </el-table-column>-->
 
-    <el-table-column label="文章发布时间" prop="createTime" width="100">
+    <el-table-column :label="$t('backstage.articleTable.createTime')" prop="createTime" width="100">
       <template #default="slotProp">
         {{ new Date(slotProp.row.updateTime).toLocaleDateString() }}
       </template>
     </el-table-column>
-    <el-table-column label="更新时间" prop="updateTime" width="100">
+    <el-table-column :label="$t('backstage.articleTable.updateTime')" prop="updateTime" width="100">
       <template #default="slotProp">
         {{ new Date(slotProp.row.updateTime).toLocaleDateString() }}
       </template>
     </el-table-column>
-
-    <el-table-column fixed="right" label="操作" width="180">
+    <el-table-column :label="$t('backstage.articleTable.option')" fixed="right" width="180">
+      <template #header="slotProp">
+        <div style="display: flex;justify-content: flex-end;">
+          <p style="flex: 1;">操作</p>
+          <el-tooltip effect="dark" content="切换编辑" placement="top">
+            <svg-icon name="expand" style="padding-right: 1rem;" @click="isExpandEdit = !isExpandEdit"/>
+          </el-tooltip>
+        </div>
+      </template>
       <template #default="slotProp" style="display: flex;gap: 0.25rem">
-        <router-link v-if="!slotProp.row.isDelete == 1" :to="'/Dashboard/mark/edit?id='+slotProp.row.id">
-          <el-button :disabled="slotProp.row.isDelete == 1">Edit</el-button>
-        </router-link>
-        <el-popconfirm v-if="!slotProp.row.isDelete == 1" title="Are you sure to delete this?"
-                       @confirm="deleteArticle(slotProp.row.id)">
+        <div v-if="!slotProp.row.isDelete == 1">
+          <transition name="fadeOption">
+            <div v-if="!isExpandEdit">
+              <router-link :to="'/Dashboard/mark/edit?id='+slotProp.row.id">
+                <el-button :disabled="slotProp.row.isDelete == 1" type="primary">{{
+                    $t('backstage.writing')
+                  }}
+                </el-button>
+              </router-link>
+              <el-popconfirm :title="$t('backstage.deleteDescription')" @confirm="deleteArticle(slotProp.row.id)">
+                <template #reference>
+                  <el-button type="danger">{{ $t('backstage.delete') }}</el-button>
+                </template>
+              </el-popconfirm>
+            </div>
+          </transition>
+          <transition name="fadeOption">
+            <el-button v-if="isExpandEdit" :disabled="slotProp.row.isDelete == 1" type="primary"
+                       @click="emit('editCallback',slotProp.row)">{{ $t('backstage.edit') }}
+            </el-button>
+          </transition>
+        </div>
+
+        <el-popconfirm v-else :title="$t('backstage.withdrawalDescription')"
+                       @confirm="withdrawalArticle(slotProp.row.id)">
           <template #reference>
-            <el-button>Delete</el-button>
-          </template>
-        </el-popconfirm>
-        <el-popconfirm v-else title="Are you sure to withdrawal this?" @confirm="withdrawalArticle(slotProp.row.id)">
-          <template #reference>
-            <el-button>withdrawal</el-button>
+            <el-button type="warning">{{ $t('backstage.withdrawal') }}</el-button>
           </template>
         </el-popconfirm>
       </template>
@@ -149,19 +217,21 @@
 
 <script lang="ts" setup>
 import {inject, reactive, ref, toRefs} from "vue";
-import {ElInput, ElMessage} from "element-plus";
+import {ElInput, ElMessage, ElNotification} from "element-plus";
 import store from "@/store";
 import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {ArticleInterface, UserInfoInterface} from "@/interface";
-import {Pagination} from "@/components";
+import {Pagination, SearchCategory, SvgIcon} from "@/components";
 
 const reloadV = inject<any>('reload');
 const props = defineProps<{ tableData: ArticleInterface[] | undefined, loading: boolean, articleIds: [] }>()
 
-const emit = defineEmits(['switchCall', 'modifyArray'])
+const emit = defineEmits(['switchCall', 'modifyArray', 'editCallback'])
 const {tableData} = toRefs(props)
 const data = ref()
+const tableRef = ref<HTMLTableElement>()
+
 
 const {articleIds} = toRefs(props)
 const iSviewAuthor = ref(false);
@@ -194,33 +264,75 @@ const statusVoid = (status: number) => {
   }
 }
 
-const inputValue = ref<string>('')
+const inputTag = ref<string>('')
 const inputDisabled = ref<boolean>(false)
 const InputRef = ref<InstanceType<typeof ElInput>>()
+const isExpandEdit = ref<boolean>(false)
 
+const onTitleDbEvnt = (slotProp: any): boolean => {
+  if (slotProp.row.isDelete == 1) {
+    return false
+  }
+  let key = slotProp.$index
+  // 给对象添加新的属性
+  data.value[key].isEditPropertyShowTitle = true;
+  data.value[key].inputTitle = data.value[key].articleTitle
+  return true
+}
+const onCategoryDbEvnt = (slotProp: any): boolean => {
+  if (slotProp.row.isDelete == 1) {
+    return false
+  }
+  let key = slotProp.$index
+  // 给对象添加新的属性
+  data.value[key].isEditPropertyShowCategory = true;
+  data.value[key].inputCategory = data.value[key].categoryName
+  return true
+}
 
 const handleClose = (tag: string) => {
 }
 
-const updateProperty = async (id: string, value: number, attributeName: string) => {
-  try {
-    await store.dispatch('articleStore/updateArticleAttributeById', {id, value, attributeName}).then(res => {
-      ElMessage.success('更新成功')
-      reloadV()
-    }, (e: any) => {
-      ElMessage.error(e)
-      throw new Error(e)
+const updateProperty = async (id: string | number, value: number | string | {} | [], attributeName: string, currHtmlIndex: number) => {
+  // 是否存在编辑展示属性
+  if (data.value[currHtmlIndex].hasOwnProperty('isEditPropertyShow')) {
+    // 关闭编辑框
+    data.value[currHtmlIndex].isEditPropertyShow = false;
+  }
+  // 排除
+  let exclude = ['isTop', 'isFeatured']
+  if (!exclude.includes(attributeName)) {
+    // 判断是否进行了修改
+    if (value == data.value[currHtmlIndex][attributeName]) {
+      ElNotification({
+        title: '通知',
+        message: '没有任何更改~',
+        type: 'warning'
+      })
+      return
+    }
+  }
+  await store.dispatch('articleStore/updateArticleAttributeById', {id, value, attributeName}).then(res => {
+    data.value[currHtmlIndex] = res
+    ElNotification({
+      title: '通知',
+      message: '更新成功',
+      type: 'success'
     })
-  } catch (e: any) {
-    console.error(e)
-  } finally {
-    toploading.value = false
-    featuredloading.value = false
+  }, (e => {
+    ElNotification({
+      title: '通知',
+      message: e,
+      type: 'error'
+    })
+  }))
+  // 是否存在加载属性
+  if (data.value[currHtmlIndex].hasOwnProperty('isloadingTop' || 'isloadingFeatured')) {
+    // 关闭加载
+    data.value[currHtmlIndex].isloadingTop = false;
+    data.value[currHtmlIndex].isloadingFeatured = false;
   }
 }
-
-const toploading = ref(false)
-const featuredloading = ref(false)
 
 const selectionChange = (Ids: []) => {
   let arr: any[] = []
@@ -229,26 +341,67 @@ const selectionChange = (Ids: []) => {
   })
   emit('modifyArray', arr)
 }
+const addOrEditCategory = async (categoryName: string, id: number | string, index: number) => {
+  if (categoryName == '' || categoryName.length == 0) {
+    ElNotification({
+      title: '通知',
+      message: '请输入分类名~',
+      type: 'warning'
+    })
+    return
+  }
+  if (categoryName == data.value[index].categoryName) {
+    ElNotification({
+      title: '通知',
+      message: '没有任何更改~',
+      type: 'warning'
+    })
+    return
+  }
+  try {
+    api.articleApi.updateCategorytoArticle({categoryName: categoryName, id: id}).then((res: AxiosResponse) => {
+      const categoryName = res.data
+      if (!data) {
+        throw new Error('修改出错')
+      }
+      data.value[index].categoryName = categoryName.data
+    })
+    ElMessage.success('修改成功')
+    data.value[index].isEditPropertyShowCategory = false
+  } catch (e: any) {
+    ElMessage.error(e)
+  }
+}
 
-const addArticleTagEvnt = async (id: number) => {
-  if (inputValue.value !== '' && inputValue.value !== null) {
+const addArticleTagEvnt = async (id: number, index: number) => {
+  if (inputTag.value !== '' && inputTag.value !== null) {
+
     inputDisabled.value = true
     try {
-      api.articleApi.addTagstoArticle({categoryName: inputValue.value, id: id}).then((res: AxiosResponse) => {
-        const {data} = res.data
-        if (!data) {
+      api.articleApi.addTagstoArticle({tagName: inputTag.value, id: id}).then((res: AxiosResponse) => {
+        const tags = res.data
+        if (!tags) {
           throw new Error('文章已存在该标签')
         }
-        ElMessage.success('添加成功')
+        data.value[index].tags = tags.data
+        ElNotification({
+          title: '通知',
+          message: '添加标签成功',
+          type: 'success'
+        })
       })
     } catch (e: any) {
       ElMessage.error(e)
     }
-    inputValue.value = ''
+    inputTag.value = ''
     inputDisabled.value = false
-    reloadV()
+    // reloadV()
   } else {
-    ElMessage.error("请输入要添加的标签")
+    ElNotification({
+      title: '通知',
+      message: '请输入要添加的标签',
+      type: 'warning'
+    })
   }
 }
 
@@ -276,23 +429,47 @@ const withdrawalArticle = async (id: string) => {
   })
 }
 
-const closeTagEvent = (parameters: { articleid: string, tagid: number }) => {
-  api.articleApi.deleteTagById(parameters).then((res: any) => {
-    const {data} = res.data
-    emit('switchCall', data)
-  })
+const closeTagEvent = (parameters: { articleid: string, tagid: number }, index: number) => {
+  try {
+    if (data.value[index].tags.length == 1) {
+      ElNotification({
+        title: '通知',
+        message: '最后一条标签无法删除',
+        type: 'warning'
+      })
+      return
+    }
+    api.articleApi.deleteTagById(parameters).then((res: any) => {
+      const tags = res.data
+      if (!tags) {
+        throw new Error('标签删除出错')
+      }
+      data.value[index].tags = tags.data
+      ElNotification({
+        title: '通知',
+        message: '清除一条标签',
+        type: 'success'
+      })
+    })
+  } catch (e: any) {
+    ElNotification({
+      title: '通知',
+      message: e,
+      type: 'error'
+    })
+  }
 }
 
 const paginationResultsEvnt = (result: any) => {
   data.value = result
 }
 
-// 修改11行的样式
+// 修改x行的样式
 const cellstyle = ({row, column, rowIndex, columnIndex}: any) => {
-  if (columnIndex === 11) {
-    return ''
+  if (columnIndex === 7) {
+    return {}
   } else {
-    return ''
+    return {}
   }
 }
 </script>
@@ -345,6 +522,25 @@ const cellstyle = ({row, column, rowIndex, columnIndex}: any) => {
         }
       }
     }
+  }
+}
+
+
+.fadeOption-enter-active {
+  animation: axisX 1.5s reverse;
+}
+
+.fadeOption-leave-active {
+  animation: axisX 1.5s;
+}
+
+@keyframes axisX {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
   }
 }
 </style>

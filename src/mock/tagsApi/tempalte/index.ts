@@ -70,12 +70,12 @@ export const tags:{data:Tagsinterface[]} = Mock.mock({
 export const tagCount = (bl:boolean=true):Tagsinterface[] => {
     if (bl){
         let arr:Tagsinterface[] = tags.data.map((item: Tagsinterface) => {
-            return Object.assign(item, {articleCount: allArticle.filter(res=>{ return res.status != 3&&res.tags.findIndex((value) =>{return value.tagName===item.tagName}) !== -1}).length||0})
+            return Object.assign(item, {articleCount: allArticle.filter(res=>{ return res.status != 3&&res.tags!.findIndex((value) =>{return value.tagName===item.tagName}) !== -1}).length||0})
         })
         return arr
     }else {
         let arr:Tagsinterface[] = tags.data.map((item: Tagsinterface) => {
-            return Object.assign(item, {articleCount: allArticle.filter(res=>{ return res.tags.findIndex((value) =>{return value.tagName===item.tagName}) !== -1}).length||0})
+            return Object.assign(item, {articleCount: allArticle.filter(res=>{ return res.tags!.findIndex((value) =>{return value.tagName===item.tagName}) !== -1}).length||0})
         })
         return arr
     }
@@ -88,7 +88,7 @@ export const addOrEditTag = (obj: string) => {
     // 存在id 就是修改
     if (id) {
         let key = tags.data.findIndex((itemtag: Tagsinterface) => {
-            return itemtag.id === id
+            return itemtag.id == id
         })
         if (key!= -1){
             tags.data[key].tagName = tagName
@@ -113,7 +113,7 @@ export const addOrEditTag = (obj: string) => {
 export const deleteTags = (obj: string)=>{
     const {data} = JSON.parse(obj)
     data.forEach((itemid:number)=>{
-        let key = tags.data.findIndex((value) => value.id===itemid)
+        let key = tags.data.findIndex((value) => value.id==itemid)
         if (key != -1){
             tags.data.splice(key,1)
         }

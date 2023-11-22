@@ -1,7 +1,6 @@
 <template>
   <div class="articleEditor">
-    <Mark v-if="isLoading" :content="articleContent" :edit-mode="true" @unMarkbefor="saveArticleCache"
-          @save-cache="saveArticleCache" @full-screen="markFullScreenEvnt"/>
+    <Mark v-if="isLoading" :content="articleContent" :edit-mode="true" @unMarkbefor="saveArticleCache" @save-cache="saveArticleCache" @full-screen="markFullScreenEvnt" @exit-evnt="router.push({path: '/Dashboard/mark/articleList'})"/>
   </div>
 </template>
 
@@ -10,6 +9,8 @@ import {Mark} from "@/components";
 import store from "@/store";
 import {ref, toRefs} from "vue";
 import {useRoute} from 'vue-router';
+import {ElNotification} from "element-plus";
+import router from "@/router";
 
 const route = useRoute()
 const props = defineProps(['LayoutMain'])
@@ -27,7 +28,23 @@ store.dispatch('articleStore/getArticleContentById', id.value).then(res => {
 
 // 保存文章
 const saveArticleCache = (centent: string) => {
-  store.dispatch('articleStore/updateArticleContextById', {id: id.value, articleContent: centent})
+  try {
+    store.dispatch('articleStore/updateArticleContextById', {id: id.value, articleContent: centent}).then(() => {
+      ElNotification({
+        title: '通知',
+        message: '文章保存成功~',
+        type: 'success'
+      })
+    }).catch((e:any)=>{
+      throw new Error(e)
+    })
+  }catch (e) {
+    ElNotification({
+      title: '通知',
+      message: '更新文章出错'+e,
+      type: 'error'
+    })
+  }
 }
 
 // 解决层级问题

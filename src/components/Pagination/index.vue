@@ -21,7 +21,7 @@ import {onMounted, PropType, ref, toRefs, watch} from "vue";
 
 const props = defineProps({
   data:{
-    type: Object as PropType<any[]>,
+    type: Object as PropType<any>,
     required: true,
   },
   nextSvg:{

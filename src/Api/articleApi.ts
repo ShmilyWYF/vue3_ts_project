@@ -39,11 +39,6 @@ export default {
         method: 'get',
         url: '/article/articleListByStatus',
     },
-    // 上传图片
-    uploadImg: {
-        method: 'post',
-        url: '/article/uploadImg',
-    },
     // 根据标签id删除对应文章标签
     deleteTagById: {
         method: 'post',
@@ -59,10 +54,20 @@ export default {
         method: 'post',
         url: '/article/addArticle',
     },
+    // 更新文章
+    updateArticleInfo: {
+        method: 'post',
+        url: '/article/updateArticleInfo',
+    },
     // 给文章添加标签
     addTagstoArticle: {
         method: 'post',
         url: '/article/addarticleTags',
+    },
+    // 修改文章分类
+    updateCategorytoArticle: {
+        method: 'post',
+        url: '/article/updateCategorytoArticle',
     },
     // 添加文章
     deleteArticle: {

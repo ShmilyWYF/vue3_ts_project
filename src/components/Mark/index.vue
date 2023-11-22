@@ -16,7 +16,14 @@
       @fullScreen="fullScreenEvnt"
       @imgAdd="imgAdd"
       @save="cacheDrafts"
-  />
+      >
+    <template #left-toolbar-after>
+      <!--自定义退出按钮-->
+        <el-button type="primary" aria-hidden="true" color="op-icon fa" title="退出编辑" @click="emit('exitEvnt')" style="padding: .3rem;margin: 0;height: inherit;border: none">
+            <svg-icon name="exit" color="#c62459" size="1.15"/>
+        </el-button>
+    </template>
+  </mavon-editor>
 </template>
 <script lang="ts" setup>
 import {mavonEditor} from 'mavon-Editor'
@@ -25,8 +32,9 @@ import 'mavon-editor/dist/css/index.css'
 // mavonEditor.getMarkdownIt(markdownItMermaid)
 import {nextTick, onUnmounted, ref, toRefs} from "vue";
 import api from "@/axios";
+import SvgIcon from "@/components/SvgIcon/index.vue";
 
-const emit = defineEmits(['markTocEvnt', 'saveCache', 'fullScreen', 'unMarkbefor'])
+const emit = defineEmits(['markTocEvnt', 'saveCache', 'fullScreen', 'unMarkbefor','exitEvnt'])
 const props: any = defineProps({
   editMode: {
     type: Boolean,
@@ -87,7 +95,7 @@ const imgAdd = (index: any, file: any) => {
   let formdata = new FormData();
   formdata.append('image', file);
   // axios在接收formdata类型参数时会强制删除content-type浏览器识别空设置为默认false
-  api.articleApi.uploadImg(formdata).then((res: any) => {
+  api.imgApi.uploadImg(formdata).then((res: any) => {
     const {data} = res.data
     // 第二步.将返回的url替换到文本原位置!
     markdownRef.value.$img2Url(index, data);

@@ -369,7 +369,7 @@ export const getCommentAll = (obj: string) => {
             })
             let mergeResults = commentsParent.map((item) => {
                 let arr = commentsChild.filter((value: any) => {
-                    return value.parentId === item.id
+                    return value.parentId == item.id
                 })
                 Object.assign(item, {replys: arr})
                 return item;
@@ -394,7 +394,7 @@ export const getCommentAll = (obj: string) => {
             arr.forEach(item=>{
                 let userinfo = allUserInfo.find(value => value.id === item.user_id);
                 let replyUserinfo = allUserInfo.find(value => value.id === item.reply_user_id);
-                let articleinfo = allArticle.find(value => value.id = item.topic_id)
+                let articleinfo = allArticle.find(value => value.id == item.topic_id)
                 let data ={
                     id: item.id,
                     avatar: userinfo?.avatar,

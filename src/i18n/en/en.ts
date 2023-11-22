@@ -7,6 +7,29 @@ export default {
         ALL: 'ALL',
         Docker: 'Docker',
         JAVA: 'Java',
-        'C++': 'C++'
+        'C++': 'C++',
     },
+    backstage:{
+        deleteDescription: 'Are you sure to delete this?',
+        inputDescription: 'enterSearchCarriageAddCustom',
+        withdrawalDescription: 'Are you sure to withdrawal this?',
+        delete: 'Delete',
+        edit: 'Edit',
+        writing: 'writing',
+        withdrawal: 'withdrawal',
+        articleTable:{
+            id:'SerialNumber',
+            articleCover:'ArticleCover',
+            articleTitle:'Title',
+            isTop:'Top',
+            isFeatured:'Featured',
+            author:'Author',
+            categoryName:'CategoryName',
+            tags:'Tags',
+            status:'Status',
+            createTime:'createTime',
+            updateTime:'updateTime',
+            option: 'option',
+        },
+    }
 }
