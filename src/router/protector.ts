@@ -8,7 +8,7 @@ export default (router: Router) => {
     router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
             start()
             //设置白名单
-            let whiteList = ['/', '/home', '/articles', '/articles']
+            let whiteList = ['/', '/home', '/articles', '/tags']
             let articles = /\/articles\/[0-9]+/
             // 白名单路由校验
             if (articles.test(to.path) || whiteList.includes(to.path)) {

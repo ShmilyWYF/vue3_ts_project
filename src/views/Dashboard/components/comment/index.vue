@@ -288,7 +288,8 @@ const paginationResultsEvnt = (result: any) => {
 <style scoped lang="scss">
 .comment-List-box {
   padding: 1rem;
-  height: 90% !important;
+  height: 0 !important;
+  flex: 1;
 
   .option-box {
     display: flex;

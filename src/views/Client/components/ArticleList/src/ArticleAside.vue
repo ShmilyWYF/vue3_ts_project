@@ -2,41 +2,37 @@
   <div class="ArticleAside">
     <Introduction :data="data.introduction" style="height: 26.5rem;"/>
     <Sidebar :data="data.commentsList.slice(0, 6)" h="auto" icon="moon" title="最新评论">
-      <template #content="slotProps">
+      <template #content="slotProps:{item:CommentInterface}">
         <div class="imageFrame">
           <el-avatar :size="40" :src="slotProps.item.avatar"/>
         </div>
         <div class="comments">
           <span>{{ slotProps.item.nickname }}</span>
-          <p style="overflow: hidden;text-overflow: ellipsis;">{{ slotProps.item.date }}</p>
-          <div class="commentContent">{{ slotProps.item.Content }}</div>
+          <p style="overflow: hidden;text-overflow: ellipsis;">{{ slotProps.item.createTime }}</p>
+          <div class="commentContent">{{ slotProps.item.commentContent }}</div>
         </div>
       </template>
     </Sidebar>
-    <Sidebar :data="data.tags.slice(0,15)" :ul-li-clss="{padding: '0',margin: '0'}" h="auto" icon="moon" title="标签目录"
+    <Sidebar :data="data.tags.slice(0,15)" :ul-li-style="{padding: '0',margin: '0'}" h="auto" icon="moon" title="标签目录"
              ul-display="flex">
-      <template #content="slotProps">
+      <template #content="slotProps:{item:Tagsinterface}">
         <el-tag effect="dark" type="info">
           <template #default>
-            <!--            // 点击事件 点击跳转路由传递tagName未参数 -->
-            <a class="tag-a">{{ slotProps.item.tagName }}</a>
-            <span class="tag-span">{{ slotProps.item.articleCount }}</span>
+              <router-link class="tag-a" :to="'/tags?tagName=' + slotProps.item.tagName">{{ slotProps.item.tagName }}</router-link>
+              <span class="tag-span">{{ slotProps.item.articleCount }}</span>
           </template>
         </el-tag>
       </template>
       <template #defulet>
-        <p class="el-tag-p">查看更多</p>
+            <p class="el-tag-p" @click="router.push({path:'/tags'})">{{ $t('message.ViewMore') }}...</p>
       </template>
     </Sidebar>
-    <Sidebar h="auto" icon="moon" title="公告" ul-display="flex">
-      <template #content>
-        <!--        {{announcement}}-->
-        <p style="line-height: normal;">
-          博客项目已完成，代码已开源，开源地址在上方的github地址,仿auroraUI设计,封装大量复用UI组件，axios-mock-store工厂模式
-        </p>
+    <Sidebar h="auto" icon="moon" title="公告">
+      <template #defulet>
+        {{ data.announcement }}
       </template>
     </Sidebar>
-    <Sidebar :data="data.websiteInformation" :ul-li-clss="{'justify-content':'space-between'}" h="auto" icon="moon"
+    <Sidebar :data="data.websiteInformation" :ul-li-style="{'justify-content':'space-between'}" h="auto" icon="moon"
              title="网站信息">
       <template #content="slotProps">
         <span>
@@ -53,7 +49,8 @@
 import {Introduction, Sidebar} from "@/components";
 import {onUnmounted, reactive, ref} from "vue";
 import store from "@/store";
-import {ArticleAsideinterface} from "@/interface";
+import {ArticleAsideinterface, CommentInterface, Tagsinterface} from "@/interface";
+import router from "@/router";
 
 const data = reactive<ArticleAsideinterface>({
   introduction: {
@@ -61,29 +58,30 @@ const data = reactive<ArticleAsideinterface>({
     nickname: '',
     description: '',
     url: '',
-    childer: [{}]
+    childer: [{
+      articleCount: 0,
+      title: ''
+    }]
   },
   commentsList: [{
     avatar: '',
     nickname: '',
-    date: new Date(),
-    Content: '',
+    createTime: new Date(),
+    commentContent: "",
   }],
   websiteInformation: [{
     title: '',
     value: 0,
   }],
   tags: [],
+  announcement: '',
 })
 
 // 储存时间
 let websiteTime = ref<any>()
 
-store.dispatch('articleStore/getAllArticleAsideList').then((res: ArticleAsideinterface) => {
-  data.commentsList = res.commentsList
-  data.websiteInformation = res.websiteInformation
-  data.tags = res.tags
-  data.introduction = res.introduction
+store.dispatch('articleStore/getAllArticleAsideList').then((result: ArticleAsideinterface) => {
+  Object.assign(data,result)
   // 深拷贝
   websiteTime.value = JSON.stringify(<number>data.websiteInformation[0].value * 1000)
 })
@@ -187,12 +185,14 @@ const timer = setInterval(() => {
         @include font_color('text-sub-accent');
       }
     }
-
     .el-tag-p {
       margin: 1rem 0 0 0;
+      cursor: pointer;
     }
   }
 }
 
-
+//[class^="router-link"]{
+//  text-decoration: none;
+//}
 </style>

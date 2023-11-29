@@ -35,23 +35,24 @@ export interface CommentMockinterface {
     update_time: null,
 }
 
-export interface Commentinterface {
-    id: number,
-    userId: number,
+export interface CommentInterface {
+    id?: number,
+    userId?: number,
     nickname: string,
     avatar: string,
-    webSite: {}|any,
+    webSite?: {}|any,
     commentContent: string,
     createTime: Date,
-    updateTime: Date,
-    replys?: [Commentinterface]|null,
+    updateTime?: Date,
+    replys?: [CommentInterface]|null,
 }
 
 export interface Tagsinterface {
     "id": number | string,
     "tagName": string,
     "createTime": Date | string,
-    "updateTime"?: Date | string | null
+    "updateTime"?: Date | string | null,
+    articleCount?: number,
 }
 
 interface initDataInterface {
@@ -72,7 +73,7 @@ export interface CategoryCountInterface {
     categoryName: string,
     createTime: Date,
     updateTime?: Date | string | null
-    articleCount: number,
+    articleCount?: number,
 }
 
 
@@ -92,25 +93,26 @@ export interface ArticleInterface {
     updateTime?: string,
 }
 
+export interface IntroductionInterface{
+    img?: string,
+    nickname?: string,
+    description?: string,
+    url?: string,
+    childer?: [{
+        articleCount: 0,
+        title: ''
+    }]
+}
+
 export interface ArticleAsideinterface {
-    introduction: {
-        img?: string,
-        nickname?: string,
-        description?: string,
-        url?: string,
-        childer?: [{}]
-    },
-    commentsList: [{
-        avatar?: string,
-        nickname?: string,
-        date?: Date,
-        Content?: string,
-    }],
+    introduction: IntroductionInterface,
+    commentsList: [CommentInterface],
     websiteInformation: [{
         title: string,
         value: number | string,
     }],
     tags: Tagsinterface[],
+    announcement: string,
 }
 
 export interface FeatureDatainterface {

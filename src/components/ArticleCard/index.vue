@@ -18,11 +18,9 @@
             </ul>
           </span>
           <h1 class="article-title">
-            <a>
-              <router-link :to="/articles/+data.id">
-                <span>{{ data.articleTitle }}</span>
-              </router-link>
-            </a>
+            <router-link :to="/articles/+data.id">
+              <span>{{ data.articleTitle }}</span>
+            </router-link>
           </h1>
           <p>
             {{ data.articleContent }}
@@ -220,6 +218,8 @@ defineProps({
 
   span {
     z-index: 30;
+    display: flex;
+    flex-direction: row;
   }
 
   .feature-content {
@@ -277,8 +277,13 @@ defineProps({
 
     @media (min-width: 1024px) {
       ul {
+        flex: 1;
+        width: 0;
         font-size: 1rem;
         line-height: 1.5rem;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
     }
 
@@ -290,6 +295,7 @@ defineProps({
       @include font_color('text-color');
 
       a {
+        display: inline-block;
         background-color: transparent;
         color: inherit;
         text-decoration: inherit;

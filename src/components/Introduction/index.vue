@@ -1,5 +1,5 @@
 <template>
-  <el-card v-if="data.value !== {}" class="introduction">
+  <el-card v-if="data !== {}" class="introduction">
     <div>
       <ul class="introduction-top">
         <li style="padding-top: 1rem">
@@ -21,7 +21,7 @@
         </li>
         <ul>
           <li v-for="(item,key) in data.childer" :key="key">
-            <span>{{ item.count }}</span>
+            <span>{{ item.articleCount }}</span>
             <p>{{ item.title }}</p>
           </li>
         </ul>
@@ -31,12 +31,9 @@
 </template>
 <script lang="ts" setup>
 import SvgIcon from "@/components/SvgIcon/index.vue";
+import {IntroductionInterface} from "@/interface";
 
-defineProps({
-  data: {
-    required: true,
-  }
-})
+defineProps<{ data: IntroductionInterface }>()
 </script>
 <style lang="scss" scoped>
 

@@ -2,7 +2,9 @@
   <el-breadcrumb v-show="isbread" :separator-icon="arrowIcon" separator="/">
     <template v-for="(item,key) in breadList" :key="key">
       <el-breadcrumb-item :style="{'pointer-events': item.meta.noRedirect?'none':'auto'}" :to="item.path">
-        {{ item.meta.title }}
+        <span class="breadcrumb-item-a">
+          {{ item.meta.title }}
+        </span>
       </el-breadcrumb-item>
     </template>
   </el-breadcrumb>
@@ -13,15 +15,16 @@ import {computed, defineComponent, ref} from "vue";
 import {ArrowRight} from '@element-plus/icons-vue'
 import {useRoute} from "vue-router";
 
+const router = useRoute()
 const arrowIcon = <ReturnType<typeof defineComponent>>ArrowRight
 const isbread = ref<boolean>(false)
 
 const breadList = <any>computed(() => {
-  let matcheds = useRoute().matched;
+  const matched = router.matched;
   // 排除页面
   const exclude = ['home', 'articles']
-  isbread.value = !exclude.includes(String(matcheds[1].name))
-  return matcheds
+  isbread.value = !exclude.includes(String(matched[1].name))
+  return matched
 })
 </script>
 
@@ -33,11 +36,26 @@ const breadList = <any>computed(() => {
 }
 
 .el-breadcrumb {
-  width: 85%;
-  padding: 1%;
+  display: flex;
+  flex: .075;
+  min-height: 3.5rem;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 1rem;
+  font-size: large;
+  font-weight: 600;
   background: #00000000;
   @include font_color('text-color');
   position: relative;
-  z-index: 15
+  z-index: 15;
+  .breadcrumb-item-a{
+    color: #212121;
+    font-weight: 600;
+    cursor:pointer;
+    &:hover{
+      color: #5433ff;
+    }
+  }
 }
 </style>

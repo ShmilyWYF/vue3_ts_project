@@ -16,7 +16,6 @@
 
 <script lang="ts" setup>
 import {svg} from "@/icons";
-import {ArticleInterface, Commentinterface} from "@/interface";
 import {onMounted, PropType, ref, toRefs, watch} from "vue";
 
 const props = defineProps({

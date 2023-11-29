@@ -12,7 +12,6 @@
       :subfield="false"
       :toolbarsFlag="editMode"
       class="mark"
-      @change="markCall"
       @fullScreen="fullScreenEvnt"
       @imgAdd="imgAdd"
       @save="cacheDrafts"
@@ -43,37 +42,37 @@ const props: any = defineProps({
   },
   content: {
     type: String,
+    default: '',
   }
 })
-
 const {editMode, content} = toRefs(props);
 
 //prop为只读属性,需要深拷贝
 const deepValue = JSON.stringify(content.value)
-const articleContext = ref<string>(JSON.parse(deepValue))
+const articleContext = ref(JSON.parse(deepValue))
+
 // 获取编辑器Vue实例子
 const markdownRef = ref<any>({})
 
 // 配色方案
 const codeStyle = ref<string>('code-github')
 
-const markCall = () => {
-  nextTick(() => {
-    document.documentElement.scrollIntoView({behavior: "smooth"})
-    // 渲染后需要延迟1s
-    setTimeout(() => {
-      // 给元素添加id
-      const element = <Element>document.querySelector('.v-show-content');
-      let reg = /^H[1-4]$/
-      for (let i = 0; i < element.children.length; i++) {
-        if (reg.test(element.children[i].tagName)) {
-          element.children[i].id = String(i)
-        }
+
+nextTick(() => {
+  document.documentElement.scrollIntoView({behavior: "smooth"})
+  // 渲染后需要延迟1s
+  setTimeout(() => {
+    // 给元素添加id
+    const element = <Element>document.querySelector('.v-show-content');
+    let reg = /^H[1-4]$/
+    for (let i = 0; i < element.children.length; i++) {
+      if (reg.test(element.children[i].tagName)) {
+        element.children[i].id = String(i)
       }
-      emit('markTocEvnt', '.v-show-content')
-    }, 1500)
-  })
-}
+    }
+    emit('markTocEvnt', '.v-show-content')
+  }, 1500)
+})
 
 /**
  * @author WangYaFeng
@@ -218,6 +217,7 @@ onUnmounted(() => {
 
       code {
         @include font_color('text-color-primary');
+        white-space: normal;
       }
 
       div {

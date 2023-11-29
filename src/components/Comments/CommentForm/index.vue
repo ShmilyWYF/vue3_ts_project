@@ -30,7 +30,7 @@ const id = router.path.split('/')[2]
 
 // 保存评论事件
 const saveComment = () => {
-  if (store.getters.userinfo === '') {
+  if (!store.getters.userinfo||store.getters.userinfo == '') {
     ElNotification({
       title: 'Warning',
       message: '请登陆后评论',
@@ -108,24 +108,25 @@ const loadCommentData = async () => {
 .commentForm-box {
   display: flex;
   flex: 1;
-  padding: 1.25rem;
-
+  gap: .5rem;
+  width: inherit;
   .el-avatar {
+    width: auto;
     flex-shrink: 0;
   }
 
   .comment {
-    width: 100%;
     display: flex;
     flex: 1;
     flex-wrap: wrap-reverse;
     flex-direction: column;
-    margin: 0 1.25rem;
     @include font_color('text-color');
 
     textarea {
+      min-height: 10rem;
+      padding: 1rem 0;
+      text-indent: 10px;
       resize: none;
-      padding: 1rem;
       border-radius: .5rem;
       line-height: inherit;
       color: inherit;
@@ -165,6 +166,12 @@ const loadCommentData = async () => {
     hr {
       width: 100%;
     }
+  }
+}
+@media screen and (min-width: 1024px){
+  .commentForm-box{
+    width: calc(100% - 4rem);
+    padding: 1rem 2rem 0;
   }
 }
 </style>

@@ -8,6 +8,7 @@ export default {
         Docker: 'Docker',
         JAVA: 'Java',
         'C++': 'C++',
+        ViewMore: 'ViewMore',
     },
     backstage:{
         deleteDescription: 'Are you sure to delete this?',

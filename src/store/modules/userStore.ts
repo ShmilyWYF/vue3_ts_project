@@ -6,7 +6,7 @@ import {AxiosResponse} from "axios";
 
 const userApi = api.userApi
 const userState = {
-    userinfo: {},
+    userinfo: {} as '',
     token: ''
 }
 

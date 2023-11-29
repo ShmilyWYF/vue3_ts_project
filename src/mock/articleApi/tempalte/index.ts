@@ -198,6 +198,15 @@ export const ArticleListByCategory = (parameters: string) => {
     }
 }
 
+// 按标签列出的文章
+export const articleListByTags = (parameters: string) => {
+        let arr = allArticle.filter(item => {
+            let key = item.tags?.findIndex(value => value.tagName == parameters)
+            return key != -1;
+        })
+        return arr
+}
+
 // 获取文章旁白列表
 export const ArticleAsideList = () => {
     const {commentsList} = Mock.mock({
@@ -205,8 +214,8 @@ export const ArticleAsideList = () => {
             {
                 avatar: 'https://static.linhaojun.top/aurora/avatar/52a81cd2772167b645569342e81ce312.jpg',
                 nickname: '@cname',
-                date: '@date',
-                Content: '@string("upper","10","35")',
+                createTime: '@date',
+                commentContent: '@string("upper","10","35")',
             }
         ]
     })
@@ -248,7 +257,8 @@ export const ArticleAsideList = () => {
             },
         ],
         // 标签
-        tags: tagCount()
+        tags: tagCount(),
+        announcement: '博客项目已完成，代码已开源，开源地址在上方的github地址,仿auroraUI设计,封装大量复用UI组件，axios-mock-store工厂模式',
     }
 }
 
@@ -443,7 +453,6 @@ export const updateArticleAttributeById = (articleinfo: any) => {
         let arr: any = allArticle[key]
         arr[attributeName] = value
         arr.updateTime = parseInt(String(new Date().getTime() / 1000))
-        console.log(arr)
         return arr;
     }
     return false

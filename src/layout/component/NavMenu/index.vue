@@ -50,7 +50,6 @@ console.log("当前模式", mode?.value)
 const activeIndex = ref('/home')
 // 公共路由部分
 const routers: any = computed(() => {
-  console.log(useRoute().matched[0])
   return [useRoute().matched[0]]
 })
 // 私有路由部分

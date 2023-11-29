@@ -31,23 +31,21 @@
         <div class="sticker-statistics">
               <span>
                 <svg-icon name="moon"/>
-              <span>39.7K</span>
+              <span>{{ parseInt(String(content.articleContent.length/100))/10 }}K</span>
               </span>
           <span>
                 <svg-icon name="moon"/>
-              <span>99mins</span>
+              <span>{{ Math.round(HTMLContent(content.articleContent).length / 400) }}mins</span>
               </span>
         </div>
       </div>
     </template>
-    <template #default>
-      <Mark v-if="isLoading" :key="content.id" ref="markRef" :content="content?.articleContent" :edit-mode="mode"
-            @markTocEvnt="markTocEvnt"/>
-      <comments :commentData="reactiveData.comments" :commentsCall="callCommentsEvnt" :indexCall="setIndexFn"
-                :is-have-more="haveMore" style="margin-top: 1rem"/>
+    <template #default v-if="isLoading">
+        <Mark :key="content.id" ref="markRef" :content="content.articleContent" :edit-mode="mode" @markTocEvnt="markTocEvnt"/>
+        <comments ref="commentsRef" :commentData="reactiveData.comments" :commentsCall="callCommentsEvnt" :indexCall="setIndexFn" :is-have-more="haveMore" style="margin-top: 1rem"/>
     </template>
     <template #aside>
-      <ArticleToc :top-distance="25"/>
+      <ArticleToc :top-distance="25" :to-ref="commentsRef" v-show="ArticleTocLoad"/>
     </template>
   </ArticleMain>
 </template>
@@ -55,16 +53,18 @@
 import {timeZh} from "@/utils/timeZH";
 import {ArticleMain, ArticleToc, Comments, Mark, SvgIcon} from "@/components";
 import tocbot from 'tocbot'
-import {computed, onBeforeMount, reactive, ref, toRefs} from "vue";
+import {computed, onBeforeMount, provide, reactive, ref, toRefs} from "vue";
 import store from "@/store";
 import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {ElMessage} from "element-plus";
 import {ArticleInterface} from "@/interface";
+import integer from "async-validator/dist-types/validator/integer";
 
 const props = defineProps(['id', 'mode'])
 const {id} = toRefs(props)
 const isLoading = ref<boolean>(false)
+const ArticleTocLoad = ref<boolean>(false)
 // 需要返回的引索
 const index = ref<number | string>(0)
 const setIndexFn = (value: number | string) => {
@@ -74,15 +74,15 @@ const setIndexFn = (value: number | string) => {
 onBeforeMount(async () => {
   // 提交store缓存 设置类型为1
   store.commit('commentStore/SET_COMMENT_TYPE', 1)
-  store.dispatch('articleStore/getArticleById', id?.value).then(res => {
-    content.value = res
+  store.dispatch('articleStore/getArticleById', id?.value).then((res:ArticleInterface) => {
+    Object.assign(content,res)
     isLoading.value = true
     getArticleCommentsList()
   })
 })
 
 // 文章上下文
-const content = ref<ArticleInterface>({
+const content = reactive<ArticleInterface>({
   id: 0,
   articleCover: '',
   articleTitle: '',
@@ -93,6 +93,14 @@ const content = ref<ArticleInterface>({
   author: {
     avatar:'',
     nickname:'',
+    createTime: 0,
+    email: "",
+    id: undefined,
+    intro: "",
+    isDisable: 0,
+    isSubscribe: 0,
+    updateTime: 0,
+    website: ""
   },
   categoryName: '',
   tags: null,
@@ -107,6 +115,17 @@ const reactiveData = reactive({
   haveMore: false as any,
   isReload: false as any,
 })
+
+// 评论组件Ref
+const commentsRef = ref<any>()
+
+// 文章上下文处理
+const HTMLContent = (content: any):string => {
+  return content
+      .replace(/<\/?[^>]*>/g, '')
+      .replace(/[|]*\n/, '')
+      .replace(/&npsp;/gi, '')
+}
 
 // 后端分页初始化
 const pageInfo = reactive({
@@ -166,14 +185,13 @@ const fetchReplies = (indexValue: number | string) => {
   let id = reactiveData.comments[indexValue].id
   api.commentApi.getRepliesByCommentId(id).then((res: AxiosResponse) => {
     const {data} = res.data
-    // 给当前评论添加子项
-    console.log(reactiveData.comments, data)
     reactiveData.comments[indexValue].replys = data.replys
   })
 }
 
 // 渲染文章导航栏
 const markTocEvnt = (container: string) => {
+  ArticleTocLoad.value = true
   tocbot.init({
     tocSelector: '#toc',
     contentSelector: container,

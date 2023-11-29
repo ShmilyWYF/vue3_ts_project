@@ -1,32 +1,32 @@
 <template>
   <div id="ArticleListTag" class="ArticleListTag">
-    <el-tabs ref="tabRef" v-model="articleTagActive" @tab-click="getArticleListByCategory">
+      <el-tabs ref="tabRef" v-model="articleTagActive" @tab-click="getArticleListByCategory">
 
-      <el-tab-pane label="ALL" name="ALL">
-        <template #label>
-          <el-tag effect="dark" type="info">
-            <span class="tag-a tag-all">{{ $t('message.ALL') }}</span>
-          </el-tag>
-        </template>
-        <template v-for="(item,key) in data" :key="key">
-          <Article :data="item" type="1"/>
-        </template>
-      </el-tab-pane>
+        <el-tab-pane label="ALL" name="ALL">
+          <template #label>
+            <el-tag effect="dark" type="info">
+              <span class="tag-a tag-all">{{ $t('message.ALL') }}</span>
+            </el-tag>
+          </template>
+          <template v-for="(item,key) in data" :key="key">
+            <Article :data="item" type="1"/>
+          </template>
+        </el-tab-pane>
 
-      <el-tab-pane v-for="(item,key) in articleCategoryList" v-if="isArticleTagList" :key="key"
-                   :label="$t('message.'+item.categoryName)" :name="item.categoryName">
-        <template #label>
-          <el-tag effect="dark" type="info">
-            <span class="tag-a">{{ item.categoryName }}</span>
-            <span class="tag-span">{{ item.articleCount }}</span>
-          </el-tag>
-        </template>
-        <template #default>
-          <Article v-for="(item,key) in data" :key="key" :data="item" type="1"/>
-        </template>
-      </el-tab-pane>
-
-    </el-tabs>
+        <el-tab-pane v-for="(item,key) in articleCategoryList" v-if="isArticleTagList" :key="key"
+                     :label="$t('message.'+item.categoryName)" :name="item.categoryName">
+          <template #label>
+            <el-tag effect="dark" type="info">
+              <span class="tag-a">{{ item.categoryName }}</span>
+              <span class="tag-span">{{ item.articleCount }}</span>
+            </el-tag>
+          </template>
+          <template #default>
+            <Article v-for="(item,key) in data" :key="key" :data="item" type="1"/>
+          </template>
+        </el-tab-pane>
+      </el-tabs>
+    <Svg-Icon name="more" class="tabs-btn-svg" ref="btnRef" @click="btnClick" size="2" v-show="articleCategoryList.length > 8"/>
     <el-pagination
         :current-page="currentPage"
         :next-icon="svg('kaoyu')"
@@ -42,16 +42,17 @@
 
 <script lang="ts" setup>
 import {computed, onMounted, ref} from 'vue'
-import {Article} from "@/components";
+import {Article, SvgIcon} from "@/components";
 import store from "@/store";
 import {svg} from "@/icons";
 import {ArticleInterface, CategoryCountInterface} from "@/interface";
 
-const tabRef = ref<HTMLElement | any>()
-const articleCategoryList = ref<CategoryCountInterface[]>()
+const tabRef = ref<{$el: HTMLDivElement} | any>()
+const articleCategoryList = ref<CategoryCountInterface[]>([])
 // 控制渲染时机
 const isArticleTagList = ref<boolean>(false)
-
+const btnRef = ref<{ $el: HTMLButtonElement } | any>()
+const isBtnClick = ref<boolean>(false)
 const articleTagActive = computed(() => store.getters.articleTagActive)
 
 const currentPage = ref<number>(1)
@@ -105,10 +106,24 @@ const getArticleListByCategory = async (pane?: any) => {
  */
 const getCurrentChange = (Pages: number) => {
   currentPage.value = Pages;
-  tabRef.value.$el.scrollIntoView();
+  const {$el} = <{$el:HTMLDivElement}>tabRef.value;
+  $el.scrollIntoView();
   data.value = total.value.slice((Pages - 1) * pageSize.value, Pages * pageSize.value)
 }
 
+const btnClick = () =>{
+  const {$el} = btnRef.value
+  let tab = <{ $el: HTMLElement }>tabRef.value
+  let child = <HTMLElement>tab.$el.children[0].children[0].children[0].children[0];
+  if (!isBtnClick.value){
+    $el.style.transform = 'rotate(-90deg)'
+    child.style.height = '6rem'
+  }else {
+    $el.style.transform = 'rotate(0deg)'
+    child.style.height = '3rem'
+  }
+  isBtnClick.value = !isBtnClick.value
+}
 
 </script>
 <style lang="scss" scoped>
@@ -122,19 +137,18 @@ const getCurrentChange = (Pages: number) => {
   .el-tabs {
     :deep(.el-tabs__header) {
       width: calc(100% - 8%);
-      padding: 1% 3%;
-      margin: 0 auto;
+      margin: 0 auto 1rem;
+      padding: 0 1rem 1rem;
       border-bottom-left-radius: 0.5rem;
       border-bottom-right-radius: 0.5rem;
       @include background_color('background-color');
       @include box_shadow('box-card-shadow-tabs');
-
       .el-tabs__nav-wrap, .el-tabs__nav-scroll, .el-tabs__nav {
-        width: 100%;
+        width: 95%;
         gap: 1.25rem;
 
         .el-tabs__active-bar {
-          bottom: 5px !important;
+          display: none;
         }
 
         .el-tabs__item {
@@ -160,8 +174,9 @@ const getCurrentChange = (Pages: number) => {
               }
 
               .tag-a {
-                padding: .45rem .85rem;
+                padding: 0.65rem 1rem;
                 @include background_color('background-primary');
+                @include font_color('text-color');
                 text-decoration: inherit;
                 border-bottom-left-radius: .375rem;
                 border-top-left-radius: .375rem;
@@ -171,7 +186,7 @@ const getCurrentChange = (Pages: number) => {
                 opacity: .7;
                 border-bottom-right-radius: .375rem;
                 border-top-right-radius: .375rem;
-                padding: .45rem .5rem;
+                padding: 0.65rem .5rem;
                 @include background_color('background-primary');
                 @include font_color('text-sub-accent');
               }
@@ -181,6 +196,22 @@ const getCurrentChange = (Pages: number) => {
 
         &:after {
           position: static !important;
+        }
+
+        .el-tabs__nav-prev, .el-tabs__nav-next{
+          display: none;
+        }
+      }
+
+      .el-tabs__nav {
+        overflow-y: hidden;
+        height: 3rem;
+        flex-wrap: wrap
+      }
+      @media screen and  (max-width: 1024px) {
+        .el-tabs__nav{
+          flex-wrap: wrap;
+          height: auto;
         }
       }
     }
@@ -200,7 +231,6 @@ const getCurrentChange = (Pages: number) => {
           height: 25rem;
 
           .el-card {
-            //@include box_shadow('box-card-shadow-sidebar')
             @include box_shadow('box-card-shadow-tabs')
           }
         }
@@ -220,6 +250,12 @@ const getCurrentChange = (Pages: number) => {
       }
 
     }
+  }
+
+  .tabs-btn-svg {
+    position: absolute;
+    right: 5rem;
+    top: 0;
   }
 
   :deep(.el-pagination) {

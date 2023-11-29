@@ -1,6 +1,7 @@
 <template>
   <div class="comment-reply-form">
-    <el-avatar :size="40" :src="userinfo?userinfo.avatar:'https://static.linhaojun.top/aurora/config/2af2e2db20740e712f0a011a6f8c9af5.jpg'"/>
+    <el-avatar :size="50"
+               :src="userinfo?userinfo.avatar:'https://static.linhaojun.top/aurora/config/2af2e2db20740e712f0a011a6f8c9af5.jpg'"/>
     <div class="comment-content-box">
       <textarea v-model="commentContent" :placeholder="initialContent" cols="30" rows="5"/>
       <div>
@@ -23,7 +24,7 @@ import {useRoute} from "vue-router";
 import api from "@/axios";
 import {AxiosResponse} from "axios";
 
-const props = defineProps<{ replyUserId: number, initialContent: string, parentId: number, index?: number | string}>()
+const props = defineProps<{ replyUserId: number, initialContent: string, parentId: number, index?: number | string }>()
 // 回复用户id、初始化内容、父评论id
 const {initialContent, replyUserId, parentId, index} = toRefs(props)
 // 关闭回复框事件
@@ -40,7 +41,7 @@ const emitCallV: any = inject('emitCall')
 
 // 保存回复事件
 const saveReply = () => {
-  if (userinfo.value === ''||userinfo.value === undefined) {
+  if (userinfo.value === '' || userinfo.value === undefined) {
     ElNotification({
       title: 'Warning',
       message: '请登陆后评论',
@@ -124,16 +125,16 @@ const fetchReplies = async () => {
   display: flex;
   flex-direction: row;
   margin-top: 1.25rem;
+  gap: 0.75rem;
 
   .el-avatar {
     flex-shrink: 0;
   }
 
   .comment-content-box {
-    width: fit-content;
+    width: inherit;
     display: flex;
     flex-direction: column;
-    margin: 0 1.25rem;
     @include font_color('text-color');
 
     textarea {
@@ -154,6 +155,7 @@ const fetchReplies = async () => {
       }
     }
 
+
     > div {
       text-align: right;
 
@@ -172,6 +174,12 @@ const fetchReplies = async () => {
           transform: scale(1.1);
         }
       }
+    }
+  }
+
+  @media screen and (max-width: 1024px) {
+    .comment-content-box {
+      max-width: 12.5rem;
     }
   }
 }

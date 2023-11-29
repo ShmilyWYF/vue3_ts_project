@@ -1,7 +1,20 @@
 <template>
   <!--遮罩-->
-  <div id="appBanner" class="app-banner app-banner-screen app-banner-image"/>
+  <div id="appBanner" class="app-banner app-banner-screen app-banner-image" v-show="isAppBanner"/>
 </template>
+
+<script lang="ts" setup>
+import {useRouter} from "vue-router";
+import {ref, watch} from "vue";
+
+const router = useRouter()
+const isAppBanner = ref<boolean>(true)
+watch(()=>router.currentRoute.value,(value, oldValue) => {
+  let matcheds = value.matched;
+  const arr = ['home', 'articles', 'tags']
+  isAppBanner.value = arr.includes(String(matcheds[1].name))
+})
+</script>
 
 <style lang="scss" scoped>
 @media(min-width: 1024px) {

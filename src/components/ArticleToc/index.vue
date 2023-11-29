@@ -1,22 +1,27 @@
 <template>
   <el-affix :offset="topDistance">
     <Sidebar :default-class="false" h="auto" icon="moon" title="文章目录">
-      <template #content>
-        <div id="toc" class="js-toc-content"></div>
+      <template #defulet="slotProps">
+        <div id="toc" class="js-toc-content"/>
+        <SidebarNavigator  :jump-to-component="toRef" v-show="slotProps.afterRender"/>
       </template>
     </Sidebar>
   </el-affix>
 </template>
 <script lang="ts" setup>
-import {Sidebar} from "@/components";
+import {Sidebar, SidebarNavigator} from "@/components";
 
 defineProps({
   topDistance: {
     type: Number,
     default: 50,
+  },
+  toRef:{
+    required: true,
   }
 })
 </script>
+
 <style lang="scss">
 @import 'tocbot/src/scss/tocbot';
 @import url('https://fonts.font.im/css?family=Roboto');

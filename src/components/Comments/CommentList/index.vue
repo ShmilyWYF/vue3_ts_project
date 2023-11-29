@@ -59,6 +59,11 @@ const loadMore = async () => {
   align-items: flex-start;
   gap: 1.25rem;
 }
+@media screen and (min-width: 1024px) {
+  .commentList-box {
+    width: inherit;
+  }
+}
 
 .button-three {
   color: #fff;

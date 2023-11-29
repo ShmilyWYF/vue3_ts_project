@@ -12,6 +12,7 @@ const constantRoute: Array<RouteRecordRaw> = [
         meta: {
             require: false,
             title: '首页',
+            noRedirect: false,
         },
         children: [
             {
@@ -21,6 +22,7 @@ const constantRoute: Array<RouteRecordRaw> = [
                 meta: {
                     require: true,
                     title: 'blog',
+                    noRedirect: false,
                 },
             },
             {
@@ -31,7 +33,20 @@ const constantRoute: Array<RouteRecordRaw> = [
                 props: true,
                 meta: {
                     require: false,
-                    title: '阅读文章'
+                    title: '阅读文章',
+                    noRedirect: true,
+                },
+            },
+            {
+                path: '/tags',
+                name: 'tags',
+                component: () => import('@/components/TagList/index.vue'),
+                // 开启组件props
+                props: true,
+                meta: {
+                    require: false,
+                    title: '标签列表',
+                    noRedirect: false,
                 },
             },
         ]

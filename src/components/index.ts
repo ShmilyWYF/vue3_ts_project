@@ -17,3 +17,5 @@ export {default as ArticleManageList} from '@/components/ArticleManageList/index
 export {default as Pagination} from '@/components/Pagination/index.vue'
 export {default as Comments} from '@/components/Comments/index.vue'
 export {default as SearchCategory} from '@/components/SearchCategory/index.vue'
+export {default as SidebarNavigator} from '@/components/SidebarNavigator/index.vue'
+export {default as TagList} from '@/components/TagList/index.vue'

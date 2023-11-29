@@ -17,6 +17,7 @@ import {
     UpdateArticleContextById,
     updateArticleInfo,
     withdrawalArticle,
+    articleListByTags
 } from "@/mock/articleApi/tempalte";
 
 const articleApi = [
@@ -48,6 +49,14 @@ const articleApi = [
         url: '/article/articleListByCategory',
         type: 'get',
         template: ArticleListByCategory,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/article/articleListByTags',
+        type: 'get',
+        template: articleListByTags,
         code: Number(200),
         status: true,
         condition: true

@@ -1,4 +1,5 @@
 <template>
+<div>
   <div class="comment-item-box">
     <el-avatar :size="50" :src="commentData.avatar"/>
     <div class="content-box">
@@ -11,22 +12,23 @@
           </div>
         </div>
       </div>
-      <CommentReplyForm v-show="initData.show" :index="index" :initialContent="initData.replyContent"
-                        :parentId="commentData.id" :replyUserId="commentData.userId" @cancel-reply="cancelReply"/>
       <transition-group name="fade">
         <slot :commentReplyData="commentData" name="childComment"/>
       </transition-group>
+      <CommentReplyForm v-if="commentData.replys" v-show="initData.show" :index="index" :initialContent="initData.replyContent" :parentId="commentData.id" :replyUserId="commentData.userId" @cancel-reply="cancelReply"/>
     </div>
   </div>
+  <CommentReplyForm v-if="!commentData.replys" v-show="initData.show" :index="index" :initialContent="initData.replyContent" :parentId="commentData.id" :replyUserId="commentData.userId" @cancel-reply="cancelReply"/>
+</div>
 </template>
 
 <script lang="ts" setup>
 import {reactive, toRefs} from 'vue'
 import {formatTime} from "@/utils/timeZH";
-import {Commentinterface, initDataInterface} from "@/interface";
+import {CommentInterface, initDataInterface} from "@/interface";
 import CommentReplyForm from "@/components/Comments/CommentReplyForm/index.vue";
 
-const props = defineProps<{ commentData: Commentinterface, index?: number | string }>()
+const props = defineProps<{ commentData: CommentInterface, index?: number | string }>()
 const {commentData, index} = toRefs(props)
 
 // 初始化数据
@@ -49,6 +51,7 @@ const cancelReply = () => {
   display: flex;
   gap: .75rem;
   max-width: 100%;
+
   .el-avatar {
     flex-shrink: 0;
   }
@@ -57,6 +60,7 @@ const cancelReply = () => {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+
     .content {
       width: fit-content;
       position: relative;
@@ -66,7 +70,7 @@ const cancelReply = () => {
       @include box_shadow('box-card-showow-comment');
       // 会覆裁剪阴影
       //clip-path: polygon(5% 0, 100% 0, 100% 100%, 5% 100%, 5% 35%, 0 25%, 5% 15%);
-      &:before{
+      &:before {
         content: "";
         width: .75rem;
         height: .75rem;
@@ -77,6 +81,7 @@ const cancelReply = () => {
         top: 30%;
         margin-top: -5px;
       }
+
       .commentContent {
         line-height: 26px;
         white-space: pre-line;

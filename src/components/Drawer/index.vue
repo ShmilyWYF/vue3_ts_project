@@ -100,9 +100,26 @@ const drawerPanelEvnt = (even: boolean) => {
 const closeDrawer = () => {
   const {endPoint, slider}: any = sliders.value
   // 获取css表
-  const styleSheet = document.styleSheets[5];
+  /**
+   * @author WangYaFeng
+   * @date 2023/11/30 1:40
+   * @description 根据id查找css表位置
+   * @param null
+   * @return null
+   */
+  // Object.keys(styleSheets).forEach((res:any)=>{
+  //   let arr = styleSheets[res].cssRules;
+  //   Object.keys(arr).forEach((item:any)=>{
+  //     let text = styleSheets[res].cssRules[item].cssText;
+  //     if(text.includes('#drawer')){
+  //       key = res;
+  //     }
+  //   })
+  // })
+  const styleSheet = document.styleSheets[0];
   // css表注入动画
   styleSheet.insertRule(`@keyframes shake {from{ transform: translateY(${endPoint}%) } to { transform: translateY(-50%); }`, 0);
+
   // 挂载动画
   slider.style.animation = `shake 200ms linear`;
   // 添加延时

@@ -4,10 +4,15 @@ export default {
         method: 'get',
         url: 'article/featureArticle'
     },
-    //按标签名获得文章列表
+    //按分类名获得文章列表
     getArticleListByCategory: {
         method: 'get',
         url: '/article/articleListByCategory'
+    },
+    //按标签名获得文章列表
+    getArticleListByTags: {
+        method: 'get',
+        url: '/article/articleListByTags'
     },
     // 文章标签列表
     getArticleTagList: {

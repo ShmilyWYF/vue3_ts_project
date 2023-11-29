@@ -9,18 +9,19 @@
         </p>
       </template>
       <template v-show="showContext" #default>
-        <ul :class="{'sidebar-ul':defaultClass}" :style="{display: ulDisplay }">
-          <li v-for="(item,key) in data" :key="key" :style="ulLiClss">
-            <slot :item="item" name="content"/>
+        <ul :class="{'sidebar-ul':defaultClass}" :style="data != ''?{display: ulDisplay }:{display: 'none'}">
+          <li v-for="(item,key) in data" :key="key" :style="ulLiStyle" :class="ulLiClass">
+            <slot :item="item" name="content" :afterRender="afterRender"/>
           </li>
         </ul>
-        <slot name="defulet"/>
+        <slot name="defulet" :afterRender="afterRender"/>
       </template>
     </el-card>
   </div>
 </template>
 <script lang="ts" setup>
 import SvgIcon from "@/components/SvgIcon/index.vue";
+import {nextTick, onMounted, ref} from "vue";
 
 const props = defineProps({
   title: {
@@ -51,7 +52,11 @@ const props = defineProps({
     required: false,
     default: 'block',
   },
-  ulLiClss: {
+  ulLiStyle: {
+    required: false,
+    default: '',
+  },
+  ulLiClass: {
     required: false,
     default: '',
   },
@@ -66,7 +71,12 @@ const props = defineProps({
     default: true,
   }
 })
-
+const afterRender = ref<boolean>(false)
+onMounted(()=>{
+  nextTick(()=>{
+    afterRender.value = true
+  })
+})
 </script>
 <style lang="scss" scoped>
 .sidebar {
@@ -152,10 +162,6 @@ const props = defineProps({
           }
 
         }
-      }
-
-      .sidebar-ul-ant {
-
       }
     }
   }
