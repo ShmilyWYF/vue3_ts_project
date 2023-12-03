@@ -1,8 +1,10 @@
 import {
-    commentData, deleteCommentById,
-    getAllCommentData, getCommentAll,
+    commentData,
+    deleteCommentById,
+    getAllCommentData,
     getCommentListByType,
-    getRepliesByCommentId, releaseCommentById,
+    getRepliesByCommentId,
+    releaseCommentById,
     saveComments
 } from "@/mock/commentApi/tempalte";
 

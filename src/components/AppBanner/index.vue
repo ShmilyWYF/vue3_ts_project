@@ -5,15 +5,15 @@
 
 <script lang="ts" setup>
 import {useRouter} from "vue-router";
-import {ref, watch} from "vue";
+import { computed } from "vue";
 
 const router = useRouter()
-const isAppBanner = ref<boolean>(true)
-watch(()=>router.currentRoute.value,(value, oldValue) => {
-  let matcheds = value.matched;
-  const arr = ['home', 'articles', 'tags']
-  isAppBanner.value = arr.includes(String(matcheds[1].name))
+const isAppBanner = computed(()=>{
+  let arr = ['home', 'articles', 'tags']
+  let matcheds = router.currentRoute.value.matched
+  return arr.includes(String(matcheds[1].name))
 })
+
 </script>
 
 <style lang="scss" scoped>

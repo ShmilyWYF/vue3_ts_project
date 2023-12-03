@@ -11,7 +11,7 @@
 
 <script lang="ts" setup>
 import {Article} from "@/components";
-import {ArticleInterface, FeatureDatainterface} from "@/interface";
+import {FeatureDatainterface} from "@/interface";
 
 const name = 'Feature'
 // vue3.3约束一个作用域插槽。

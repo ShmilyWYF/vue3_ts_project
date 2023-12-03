@@ -18,8 +18,32 @@ export const RolesMenu = (roles: string) => {
             {
                 id: '12',
                 pid: '12',
-                title: '测试',
+                title: '文章管理',
                 path: '/Dashboard/mark',
+                value: '@string',
+                icon: [''],
+            },
+            {
+                id: '13',
+                pid: '13',
+                title: '评论管理',
+                path: '/Dashboard/comment',
+                value: '@string',
+                icon: [''],
+            },
+            {
+                id: '14',
+                pid: '14',
+                title: '网站设置',
+                path: '/Dashboard/website',
+                value: '@string',
+                icon: [''],
+            },
+            {
+                id: '15',
+                pid: '15',
+                title: '关于',
+                path: '/Dashboard/about',
                 value: '@string',
                 icon: [''],
             }

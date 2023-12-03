@@ -41,11 +41,32 @@ const constantRoute: Array<RouteRecordRaw> = [
                 path: '/tags',
                 name: 'tags',
                 component: () => import('@/components/TagList/index.vue'),
-                // 开启组件props
                 props: true,
                 meta: {
-                    require: false,
-                    title: '标签列表',
+                    require: true,
+                    title: '标签',
+                    noRedirect: false,
+                },
+            },
+            {
+                path: '/about',
+                name: 'about',
+                component: () => import('@/components/TagList/index.vue'),
+                props: true,
+                meta: {
+                    require: true,
+                    title: '关于',
+                    noRedirect: false,
+                },
+            },
+            {
+                path: '/message',
+                name: 'Message',
+                component: () => import('@/components/TagList/index.vue'),
+                props: true,
+                meta: {
+                    require: true,
+                    title: '留言',
                     noRedirect: false,
                 },
             },
@@ -123,35 +144,35 @@ export const asyncRouterMap: any[] = [
                             title: '分类管理'
                         },
                     },
-                    {
-                        path: '/Dashboard/mark/comment',
-                        name: 'comment',
-                        component: () => import('@/views/Dashboard/components/comment/index.vue'),
-                        meta: {
-                            require: false,
-                            title: '评论管理'
-                        },
-                    },
-                    {
-                        path: '/Dashboard/mark/website',
-                        name: 'website',
-                        component: () => import('@/views/Dashboard/components/website/index.vue'),
-                        meta: {
-                            require: false,
-                            title: '网站设置'
-                        },
-                    },
-                    {
-                        path: '/Dashboard/mark/about',
-                        name: 'about',
-                        component: () => import('@/views/Dashboard/components/about/index.vue'),
-                        meta: {
-                            require: false,
-                            title: '关于'
-                        },
-                    },
                 ]
-            }
+            },
+            {
+                path: '/Dashboard/comment',
+                name: 'comment',
+                component: () => import('@/views/Dashboard/components/comment/index.vue'),
+                meta: {
+                    require: true,
+                    title: '评论管理'
+                },
+            },
+            {
+                path: '/Dashboard/website',
+                name: 'website',
+                component: () => import('@/views/Dashboard/components/website/index.vue'),
+                meta: {
+                    require: true,
+                    title: '网站设置'
+                },
+            },
+            {
+                path: '/Dashboard/about',
+                name: 'about',
+                component: () => import('@/views/Dashboard/components/about/index.vue'),
+                meta: {
+                    require: true,
+                    title: '关于'
+                },
+            },
         ]
     }
 ]

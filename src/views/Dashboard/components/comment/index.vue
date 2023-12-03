@@ -221,7 +221,7 @@ const selectionChange = (commentId:[]) => {
 }
 // 更新评论审核
 const releaseComments = (id?: number) => {
-  var param = {}
+  let param: {}
   if (id == null) {
     param = {data: commentIds.value}
   } else {
@@ -250,7 +250,7 @@ const releaseComments = (id?: number) => {
 }
 // 删除评论
 const deleteComments = (id?: number) => {
-  var param = {}
+  let param: {}
   if (id == null) {
     param = {data: commentIds.value}
   } else {

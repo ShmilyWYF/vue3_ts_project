@@ -60,7 +60,7 @@ export default (router: Router) => {
     )
 
 
-    router.afterEach((to, from, failure) => {
+    router.afterEach(() => {
         close()
         document.getElementById('loading-bar-wrapper')?.focus()
     })

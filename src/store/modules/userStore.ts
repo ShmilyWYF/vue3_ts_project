@@ -24,13 +24,12 @@ const actions: any = {
         return new Promise((resolve, reject) => {
             userApi.login(user).then((res: AxiosResponse) => {
                 const {data} = res.data
-                if (!data.token) {
-                    ElMessage.error(data)
-                    reject(data)
+                if (data.code != 200) {
+                    reject(data.messages)
                 }
                 commit('SET_USER_TOKEN', data.token)
                 setCookie(data.token)
-                resolve(data.token)
+                resolve(data)
             }, (error: any) => {
                 reject(error)
             })

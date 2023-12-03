@@ -181,7 +181,7 @@ const selectionChange = (tags: []) => {
 }
 
 const deleteTag = async (id: number | null) => {
-  let param = {};
+  let param: {};
   if (id == null) {
     param = {data: tagIds.value}
   } else {

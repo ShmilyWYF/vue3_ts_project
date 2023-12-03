@@ -125,6 +125,7 @@ const props = defineProps(['isVertical'])
       opacity: 0.9;
       --el-card-border-radius: 12px;
       height: calc(100% - 40px);
+      width: 90%;float: right;
     }
   }
 

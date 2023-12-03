@@ -53,13 +53,12 @@
 import {timeZh} from "@/utils/timeZH";
 import {ArticleMain, ArticleToc, Comments, Mark, SvgIcon} from "@/components";
 import tocbot from 'tocbot'
-import {computed, onBeforeMount, provide, reactive, ref, toRefs} from "vue";
+import {computed, onBeforeMount, reactive, ref, toRefs} from "vue";
 import store from "@/store";
 import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {ElMessage} from "element-plus";
 import {ArticleInterface} from "@/interface";
-import integer from "async-validator/dist-types/validator/integer";
 
 const props = defineProps(['id', 'mode'])
 const {id} = toRefs(props)
@@ -148,6 +147,7 @@ const callCommentsEvnt = (evntName: string) => {
       fetchReplies(index.value);
       break; // index从遍历的评论某条获取回复
     case 'articleLoadMore':
+      reactiveData.haveMore = false
       getArticleCommentsList();
       break; // 初始化获取数据
   }

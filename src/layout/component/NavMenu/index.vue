@@ -4,11 +4,8 @@
       :default-active="activeIndex"
       :mode="mode"
       router="router"
-      style="height: 100%"
+      style="height: 100%;gap: .75rem;"
   >
-    <el-menu-item class="log" disabled>
-      Blog
-    </el-menu-item>
     <template v-for="(item,keys) in routers" :key="keys">
       <template v-for="(children,key) in item.children" :key="key">
         <el-menu-item v-if="children.meta.require" :index="children.path">
@@ -129,13 +126,14 @@ const accessedRouters: any = computed(() => store.getters.accessedRouters)
 
 span {
   color: white;
-  padding: 5% 5%;
+  padding: 0.35rem 0.5rem;
   border-radius: 0.25rem;
   font-size: larger;
   font-weight: 800;
+  @include font_color('text-color');
 
   &:hover {
-    background: #212121;
+    @include background_color('background-color');
     opacity: 0.8;
   }
 }

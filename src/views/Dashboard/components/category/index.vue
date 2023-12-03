@@ -182,7 +182,7 @@ const selectionChange = (categorys: []) => {
 }
 
 const deleteTag = async (id: number | null) => {
-  let param = {};
+  let param: {};
   if (id == null) {
     param = {data: categoryIds.value}
   } else {

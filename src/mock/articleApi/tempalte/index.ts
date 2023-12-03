@@ -2,6 +2,7 @@ import Mock from "mockjs";
 import {ArticleInterface, CategoryInterface, Tagsinterface} from "@/interface";
 import {addOrEditTag, tagCount, tags} from "@/mock/tagsApi/tempalte";
 import {addOrEditCategory, category, categoryCount} from "@/mock/categoryApi/tempalte";
+import {websiteConfig} from "@/mock/useAppApi/tempalte/Template";
 
 // 定义随机占位符
 Mock.Random.extend({
@@ -258,7 +259,7 @@ export const ArticleAsideList = () => {
         ],
         // 标签
         tags: tagCount(),
-        announcement: '博客项目已完成，代码已开源，开源地址在上方的github地址,仿auroraUI设计,封装大量复用UI组件，axios-mock-store工厂模式',
+        notice: websiteConfig.notice,
     }
 }
 

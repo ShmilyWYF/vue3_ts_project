@@ -29,7 +29,7 @@
     </Sidebar>
     <Sidebar h="auto" icon="moon" title="公告">
       <template #defulet>
-        {{ data.announcement }}
+        {{ data.notice }}
       </template>
     </Sidebar>
     <Sidebar :data="data.websiteInformation" :ul-li-style="{'justify-content':'space-between'}" h="auto" icon="moon"
@@ -74,7 +74,7 @@ const data = reactive<ArticleAsideinterface>({
     value: 0,
   }],
   tags: [],
-  announcement: '',
+  notice: '',
 })
 
 // 储存时间

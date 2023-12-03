@@ -1,50 +1,34 @@
 <template>
-  <el-card class="main-card">
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <!-- 修改信息 -->
-      <el-tab-pane label="网站信息" name="info">
-        <el-form :model="websiteConfigForm" label-position="left" label-width="100px">
-          <el-form-item label="作者头像">
-            <el-upload
-                :headers="headers"
-                :on-success="handleAuthorAvatarSuccess"
-                :show-file-list="false"
-                action="/api/admin/config/images"
-                class="avatar-uploader">
-              <img v-if="websiteConfigForm.authorAvatar" :src="websiteConfigForm.authorAvatar" class="avatar"/>
-              <i v-else class="el-icon-plus avatar-uploader-icon"/>
-            </el-upload>
+  <el-card class="website-box">
+    <el-tabs v-model="websiteActive" @tab-click="getListByLabel">
+      <el-tab-pane label="网站设置" name="info">
+        <el-form :model="websiteConfigForm" label-position="left" label-width="100px" ref="websiteRef" :rules="webSiteRule">
+          <el-form-item label="网站logo" prop="webSiteLog">
+            <label for="upload" class="ui-upload">
+              <el-image style="width: 100px; height: 100px" :src="websiteConfigForm.webSiteLog" fit="fill"/>
+            </label>
+            <input id="upload" type="file" name="file" multiple="multiple" @change="updateImg"
+                   style="display: none"/>
           </el-form-item>
-          <el-form-item label="网站logo">
-            <el-upload
-                :headers="headers"
-                :on-success="handleLogoSuccess"
-                :show-file-list="false"
-                action="/api/admin/config/images"
-                class="avatar-uploader">
-              <img v-if="websiteConfigForm.logo" :src="websiteConfigForm.logo" class="avatar"/>
-              <i v-else class="el-icon-plus avatar-uploader-icon"/>
-            </el-upload>
+          <el-form-item label="网站名称" prop="siteName">
+            <el-input v-model="websiteConfigForm.siteName" size="small" style="width: 400px"/>
           </el-form-item>
-          <el-form-item label="网站名称">
-            <el-input v-model="websiteConfigForm.name" size="small" style="width: 400px"/>
-          </el-form-item>
-          <el-form-item label="网站英文名称">
+          <el-form-item label="网站英文名称" prop="englishName">
             <el-input v-model="websiteConfigForm.englishName" size="small" style="width: 400px"/>
           </el-form-item>
-          <el-form-item label="网站作者">
-            <el-input v-model="websiteConfigForm.author" size="small" style="width: 400px"/>
+          <el-form-item label="评论需要审核" prop="isCommentReview">
+            <el-radio-group v-model="websiteConfigForm.isCommentReview">
+              <el-radio :label="0">关闭</el-radio>
+              <el-radio :label="1">开启</el-radio>
+            </el-radio-group>
           </el-form-item>
-          <el-form-item label="作者介绍">
-            <el-input v-model="websiteConfigForm.authorIntro" size="small" style="width: 400px"/>
-          </el-form-item>
-          <el-form-item label="多语言">
+          <el-form-item label="多语言" prop="multiLanguage">
             <el-radio-group v-model="websiteConfigForm.multiLanguage">
               <el-radio :label="0">关闭</el-radio>
               <el-radio :label="1">开启</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="网站创建日期">
+          <el-form-item label="网站创建日期" prop="websiteCreateTime">
             <el-date-picker
                 v-model="websiteConfigForm.websiteCreateTime"
                 placeholder="选择日期"
@@ -52,7 +36,7 @@
                 type="date"
                 value-format="yyyy-MM-dd"/>
           </el-form-item>
-          <el-form-item label="网站公告">
+          <el-form-item label="网站公告" prop="notice">
             <el-input
                 v-model="websiteConfigForm.notice"
                 :rows="5"
@@ -60,225 +44,218 @@
                 style="width: 400px"
                 type="textarea"/>
           </el-form-item>
-          <el-form-item label="备案号">
-            <el-input v-model="websiteConfigForm.beianNumber" size="small" style="width: 400px"/>
-          </el-form-item>
-          <el-form-item label="qq登录">
+          <el-form-item label="qq登录" prop="qqLogin">
             <el-radio-group v-model="websiteConfigForm.qqLogin">
               <el-radio :label="0">关闭</el-radio>
               <el-radio :label="1">开启</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-button size="medium" style="margin-left: 6.3rem" type="primary" @click="updateWebsiteConfig">
+          <el-form-item label="备案号" prop="beianNumber">
+            <el-input v-model="websiteConfigForm.beianNumber" size="small" style="width: 400px"/>
+          </el-form-item>
+          <el-button size="small" style="margin-left: 6.3rem" type="primary" @click="updateWebsiteConfig">
             修改
           </el-button>
         </el-form>
       </el-tab-pane>
-      <!-- 网站公告 -->
-      <el-tab-pane label="社交信息" name="notice">
-        tip:空白默认不显示
-        <el-form :model="websiteConfigForm" label-width="70px">
-          <el-form-item label="Github">
-            <el-input v-model="websiteConfigForm.github" size="small" style="width: 400px; margin-right: 1rem"/>
-          </el-form-item>
-          <el-form-item label="Gitee">
-            <el-input v-model="websiteConfigForm.gitee" size="small" style="width: 400px; margin-right: 1rem"/>
-          </el-form-item>
-          <el-form-item label="QQ">
-            <el-input v-model="websiteConfigForm.qq" size="small" style="width: 400px; margin-right: 1rem"/>
-          </el-form-item>
-          <el-form-item label="WeChat">
-            <el-input v-model="websiteConfigForm.weChat" size="small" style="width: 400px; margin-right: 1rem"/>
-          </el-form-item>
-          <el-form-item label="微博">
-            <el-input v-model="websiteConfigForm.weibo" size="small" style="width: 400px; margin-right: 1rem"/>
-          </el-form-item>
-          <el-form-item label="CSDN">
-            <el-input v-model="websiteConfigForm.csdn" size="small" style="width: 400px; margin-right: 1rem"/>
-          </el-form-item>
-          <el-form-item label="知乎">
-            <el-input v-model="websiteConfigForm.zhihu" size="small" style="width: 400px; margin-right: 1rem"/>
-          </el-form-item>
-          <el-form-item label="掘金">
-            <el-input v-model="websiteConfigForm.juejin" size="small" style="width: 400px; margin-right: 1rem"/>
-          </el-form-item>
-          <el-form-item label="twitter">
-            <el-input v-model="websiteConfigForm.twitter" size="small" style="width: 400px; margin-right: 1rem"/>
-          </el-form-item>
-          <el-form-item label="stackoverflow">
-            <el-input v-model="websiteConfigForm.stackoverflow" size="small" style="width: 400px; margin-right: 1rem"/>
-          </el-form-item>
-          <el-button size="medium" style="margin-left: 4.375rem" type="primary" @click="updateWebsiteConfig">
-            修改
-          </el-button>
-        </el-form>
-      </el-tab-pane>
-      <!-- 修改密码 -->
-      <el-tab-pane label="其他设置" name="password">
-        <el-form :model="websiteConfigForm" label-position="left" label-width="120px">
+
+      <el-tab-pane label="用户设置" name="user">
+        <el-form :model="userConfigForm" label-position="left" label-width="120px" ref="userRef" :rules="userRule">
           <el-row style="width: 600px">
             <el-col :md="12">
-              <el-form-item label="用户头像">
-                <el-upload
-                    :headers="headers"
-                    :on-success="handleUserAvatarSuccess"
-                    :show-file-list="false"
-                    action="/api/admin/config/images"
-                    class="avatar-uploader">
-                  <img v-if="websiteConfigForm.userAvatar" :src="websiteConfigForm.userAvatar" class="avatar"/>
-                  <i v-else class="el-icon-plus avatar-uploader-icon"/>
-                </el-upload>
-              </el-form-item>
-            </el-col>
-            <el-col :md="12">
-              <el-form-item label="游客头像">
-                <el-upload
-                    :headers="headers"
-                    :on-success="handleTouristAvatarSuccess"
-                    :show-file-list="false"
-                    action="/api/admin/config/images"
-                    class="avatar-uploader">
-                  <img v-if="websiteConfigForm.touristAvatar" :src="websiteConfigForm.touristAvatar" class="avatar"/>
-                  <i v-else class="el-icon-plus avatar-uploader-icon"/>
-                </el-upload>
+              <el-form-item label="游客头像" prop="avatar">
+                <label for="upload" class="ui-upload">
+                  <el-image style="width: 100px; height: 100px" :src="userConfigForm.avatar" fit="fill"/>
+                </label>
+                <input id="upload" type="file" name="file" multiple="multiple" @change="updateImg"
+                       style="display: none"/>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-form-item label="邮箱通知">
-            <el-radio-group v-model="websiteConfigForm.isEmailNotice">
+          <el-form-item label="邮箱通知" prop="isEmailNotice">
+            <el-radio-group v-model="userConfigForm.isEmailNotice">
               <el-radio :label="0">关闭</el-radio>
               <el-radio :label="1">开启</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="评论审核">
-            <el-radio-group v-model="websiteConfigForm.isCommentReview">
-              <el-radio :label="0">关闭</el-radio>
-              <el-radio :label="1">开启</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="打赏状态">
-            <el-radio-group v-model="websiteConfigForm.isReward">
-              <el-radio :label="0">关闭</el-radio>
-              <el-radio :label="1">开启</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-row v-show="websiteConfigForm.isReward == 1" style="width: 600px">
-            <el-col :md="12">
-              <el-form-item label="微信收款码">
-                <el-upload
-                    :on-success="handleWeiXinSuccess"
-                    :show-file-list="false"
-                    action="/api/admin/config/images"
-                    class="avatar-uploader">
-                  <img v-if="websiteConfigForm.weiXinQRCode" :src="websiteConfigForm.weiXinQRCode" class="avatar"/>
-                  <i v-else class="el-icon-plus avatar-uploader-icon"/>
-                </el-upload>
-              </el-form-item>
-            </el-col>
-            <el-col :md="12">
-              <el-form-item label="支付宝收款码">
-                <el-upload
-                    :on-success="handleAlipaySuccess"
-                    :show-file-list="false"
-                    action="/api/admin/config/images"
-                    class="avatar-uploader">
-                  <img v-if="websiteConfigForm.alipayQRCode" :src="websiteConfigForm.alipayQRCode" class="avatar"/>
-                  <i v-else class="el-icon-plus avatar-uploader-icon"/>
-                </el-upload>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-button size="medium" style="margin-left: 6.3rem" type="primary" @click="updateWebsiteConfig">
-            修改
+          <el-button size="small" style="margin-left: 6.3rem" type="primary" @click="updateUserConfig">
+            保存
           </el-button>
         </el-form>
       </el-tab-pane>
+
     </el-tabs>
   </el-card>
 </template>
 
-<script>
-export default {
-  created() {
-    // this.getWebsiteConfig()
-  },
-  data: function () {
-    return {
-      websiteConfigForm: {},
-      activeName: 'info',
-      headers: {token: sessionStorage.getItem('token')}
-    }
-  },
-  methods: {
-    getWebsiteConfig() {
-      this.axios.get('/api/admin/website/config').then(({data}) => {
-        this.websiteConfigForm = data.data
-      })
-    },
-    handleClick(tab) {
-    },
-    handleAuthorAvatarSuccess(response) {
-      this.websiteConfigForm.authorAvatar = response.data
-    },
-    handleLogoSuccess(response) {
-      this.websiteConfigForm.logo = response.data
-    },
-    handleUserAvatarSuccess(response) {
-      this.websiteConfigForm.userAvatar = response.data
-    },
-    handleTouristAvatarSuccess(response) {
-      this.websiteConfigForm.touristAvatar = response.data
-    },
-    handleWeiXinSuccess(response) {
-      this.websiteConfigForm.weiXinQRCode = response.data
-    },
-    handleAlipaySuccess(response) {
-      this.websiteConfigForm.alipayQRCode = response.data
-    },
-    updateWebsiteConfig() {
-      this.axios.put('/api/admin/website/config', this.websiteConfigForm).then(({data}) => {
-        if (data.flag) {
-          this.$notify.success({
-            title: '成功',
-            message: data.message
-          })
-        } else {
-          this.$notify.error({
-            title: '失败',
-            message: data.message
-          })
-        }
-      })
-    }
+<script lang="ts" setup>
+import { onMounted, reactive, ref} from "vue";
+import api from "@/axios";
+import {ElNotification, FormRules} from "element-plus";
+import {AxiosResponse} from "axios";
+
+const websiteActive = ref('info')
+const websiteRef = ref<HTMLElement | any>()
+const userRef = ref<HTMLElement | any>()
+
+const websiteConfigForm = reactive({
+  webSiteLog: '',
+  siteName: '',
+  englishName: '',
+  multiLanguage: 0,
+  isCommentReview: 0,
+  websiteCreateTime: '',
+  notice: '',
+  beianNumber: '',
+  qqLogin: '',
+})
+
+const userConfigForm = reactive({
+  avatar: 'https://static.linhaojun.top/aurora/avatar/52a81cd2772167b645569342e81ce312.jpg',
+  isEmailNotice: 0,
+})
+
+const webSiteRule = reactive<FormRules>({
+  webSiteLog: {required: true, message: '请上传图片', trigger: 'change'},
+  siteName: {required: true, message: '请设置网站名称', trigger: 'blur'},
+  englishName: {required: true, message: '请设置网站英文名称', trigger: 'blur'},
+  multiLanguage: {required: true, message: '请选择是否开启多语言', trigger: 'blur'},
+  isCommentReview: {required: true, message: '请选择是否开启评论审核', trigger: 'blur'},
+  websiteCreateTime: {required: true, message: '请选择网站创建时间', trigger: 'blur'},
+  notice: {required: true, message: '网站公告不能为空', trigger: 'blur'},
+  beianNumber: {required: true, message: '备案号不能为空', trigger: 'blur'},
+  qqLogin: {required: true, message: '请选择是否启用qq登陆', trigger: 'blur'},
+})
+
+const userRule = reactive<FormRules>({
+  avatar: {required: true, message: '请上传图片', trigger: 'change'},
+  isEmailNotice: {required: true, message: '请选择是否开启电子邮件通知', trigger: 'blur'},
+})
+
+onMounted(()=>{
+  getListByLabel({paneName: websiteActive.value})
+})
+
+const getListByLabel = (pane: any) => {
+  switch (pane.paneName) {
+    case 'info': getWebSiteConfig();break;
+    case 'user': getUserConfig();break;
   }
+}
+
+const updateImg = (file: any) => {
+  let formdata = new FormData();
+  formdata.append('image', file.target.files[0]);
+  // axios在接收formdata类型参数时会强制删除content-type浏览器识别空设置为默认false
+  api.imgApi.uploadImg(formdata).then((res: any) => {
+    const {data} = res.data
+    if (websiteActive.value == 'info'){
+      websiteConfigForm.webSiteLog = data
+    }
+    if (websiteActive.value == 'user'){
+      userConfigForm.avatar = data
+    }
+  })
+}
+
+const getWebSiteConfig = () => {
+  api.useAppApi.getWebSiteConfig().then((res: AxiosResponse) => {
+    const {data} = res.data
+    Object.assign(websiteConfigForm, data)
+  })
+}
+
+const getUserConfig = () =>{
+  api.useAppApi.getUserConfig().then((res: AxiosResponse) => {
+    const {data} = res.data
+    Object.assign(userConfigForm, data)
+  })
+}
+
+// 更新网站配置
+const updateWebsiteConfig = () => {
+  websiteRef.value.validate((is: boolean) => {
+    if (is) {
+      api.useAppApi.updateWebSiteConfig(websiteConfigForm).then((res: AxiosResponse) => {
+        const {data} = res.data
+        if (!data) {
+          throw new Error('更新出现错误')
+        }
+        Object.assign(websiteConfigForm, data)
+        ElNotification({
+          title: '通知',
+          message: '更新完成',
+          type: 'success'
+        })
+      }, (error: string) => {
+        ElNotification({
+          title: '通知',
+          message: error,
+          type: 'warning'
+        })
+      })
+    } else {
+      ElNotification({
+        title: '通知',
+        message: '请检查表单后再试',
+        type: 'warning'
+      })
+    }
+  })
+}
+
+// 更新用户配置
+const updateUserConfig = () => {
+  userRef.value.validate((is: boolean) => {
+    if (is) {
+      api.useAppApi.updateUserConfig(userConfigForm).then((res: AxiosResponse) => {
+        const {data} = res.data
+        if (!data) {
+          throw new Error('更新出现错误')
+        }
+        Object.assign(userConfigForm, data)
+        ElNotification({
+          title: '通知',
+          message: '更新完成',
+          type: 'success'
+        })
+      }, (error: string) => {
+        ElNotification({
+          title: '通知',
+          message: error,
+          type: 'warning'
+        })
+      })
+    } else {
+      ElNotification({
+        title: '通知',
+        message: '请检查表单后再试',
+        type: 'warning'
+      })
+    }
+  })
 }
 </script>
 
-<style>
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
+<style scoped lang="scss">
+.website-box {
+  padding: 1rem;
+  height: 0 !important;
+  flex: 1;
 
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
+  .el-form {
+    flex: 1;
+    padding: 1rem;
+    background: #fff;
+    border-radius: 1rem;
 
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 120px;
-  height: 120px;
-  line-height: 120px;
-  text-align: center;
-}
-
-.avatar {
-  width: 120px;
-  height: 120px;
-  display: block;
+    :deep(.el-form-item) {
+      .el-form-item__label {
+        width: 120px !important;
+        color: inherit;
+        font-weight: 600;
+      }
+    }
+  }
 }
 </style>

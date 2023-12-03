@@ -6,9 +6,9 @@
           <template #default>
             <el-switch v-model="action" :active-action-icon="svg('sun')" :inactive-action-icon="svg('moon')"
                        @change="switchEvnt"/>
-            <el-button :icon="svg('background')" :loading="isLoading" circle type="info"
+            <el-button v-if="isloading" :icon="svg('background')" :loading="isLoading" circle type="info"
                        @click="switchBackgroundButton"/>
-            <div>search</div>
+            <div v-if="isloading">search</div>
             <el-button v-if="!isLoginState" text @click="dialogFormVisible = true">
               登陆
             </el-button>
@@ -35,24 +35,25 @@
     <el-affix target=".main">
       <DrawerstringGraphics ref="sliders" :DOMRange="drawer" @drawerPanelEvnt="drawerPanelEvnt"/>
     </el-affix>
-    <el-dialog v-model="dialogFormVisible" title="登陆">
+    <el-dialog v-model="dialogFormVisible" title="登陆" class="login-box">
       <Login @dialogCall="dialogcall"/>
     </el-dialog>
-    <el-dialog v-model="UserDialogFormVisible" title="个人中心">
-      <el-card>123</el-card>
+    <el-dialog v-model="UserDialogFormVisible" title="个人中心" class="personal-center-box">
+       <UserFrom :from-data="userinfo"/>
     </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {ref, toRefs} from "vue";
+import {computed, onMounted, ref, toRefs} from "vue";
 import {svg} from "@/icons";
-import {DrawerstringGraphics, DropDown, Login} from "@/components";
-import router from "@/router";
+import {DrawerstringGraphics, DropDown, Login, UserFrom} from "@/components";
 import store from "@/store";
 import {getCookie} from "@/utils/cookie";
 import api from "@/axios";
 import {AxiosResponse} from "axios";
+import {useRouter} from "vue-router";
+import {ElMessage} from "element-plus";
 
 const props = defineProps({
   isSwitchBgButton: {
@@ -66,6 +67,24 @@ const props = defineProps({
   }
 })
 const {isSwitchBgButton, container} = toRefs(props)
+
+onMounted(()=>{
+   excludeComponents(['home', 'articles', 'tags'])
+})
+
+const router = useRouter()
+const isloading = computed(()=>{
+  // let arr = ['home', 'articles', 'tags', 'message', 'about']
+  return excludeComponents(['home', 'articles', 'tags'])
+})
+
+const excludeComponents = (arr:string[]) =>{
+  let matcheds = router.currentRoute.value.matched
+  if (!arr.includes(String(matcheds[1].name))){
+    emit('IsSwitchBg',false)
+  }
+  return arr.includes(String(matcheds[1].name))
+}
 
 const emit = defineEmits(['SwitchTheme', 'IsSwitchBg']);
 
@@ -173,7 +192,22 @@ const UserDialogFormVisible = ref<boolean>(false)
 // 控制状态栏组件
 const isLoginState = ref<any>(getCookie() ? true : JSON.parse(String(localStorage.getItem('isLoginState'))))
 // 储存用户信息 为0就是管理员
-const userinfo = ref<any>(store.getters.userinfo)
+interface userInfoVo {
+  id: number,
+  password: string,
+  nickname: string,
+  avatar: string,
+  createTime: Date,
+  email: string,
+  intro: string,
+  isDisable: number,
+  isSubscribe: number,
+  updateTime: Date | null,
+  website: string,
+  type: number,
+  last_login_time: Date,
+}
+const userinfo = ref<userInfoVo>(store.getters.userinfo)
 // blog/后台切换
 const switchPage = ref(JSON.parse(String(localStorage.getItem('IsSwitchPage'))))
 /**
@@ -188,9 +222,13 @@ const dialogcall = (token: string) => {
   isLoginState.value = !isLoginState.value
   localStorage.setItem('isLoginState', JSON.stringify(isLoginState.value))
   api.userApi.getInfo(token).then((res: AxiosResponse) => {
-    const {data} = res.data;
+    const {data}:{data:userInfoVo} = res.data;
+    if (data.isDisable != 0){
+      ElMessage.error('账号已被禁用，请联系管理员')
+    }
     userinfo.value = data
     store.commit('userStore/SET_USER_INFO', data)
+    ElMessage.success('欢迎回来~')
   })
 }
 
@@ -230,20 +268,20 @@ const switchPageEvnt = () => {
   z-index: 10;
 
   :deep(.el-overlay) {
-    width: 95% !important;
     margin: 0 auto;
     background: #00000000 !important;
     z-index: 10 !important;
 
     .el-drawer-box {
-      width: 20% !important;
-      height: 10% !important;
+      width: fit-content !important;
+      height: 6rem !important;
       opacity: 0.9;
       border: 0 solid;
-      position: absolute !important;
-      left: auto !important;
+      position: relative !important;
       border-bottom-left-radius: 1rem;
       border-bottom-right-radius: 1rem;
+      float: right;
+      margin-right: 2.5%;
 
       .el-drawer__body {
         display: flex;
@@ -278,10 +316,27 @@ const switchPageEvnt = () => {
       }
     }
 
-    @media (max-width: 1200px) {
-      .el-drawer-box {
-        width: 35% !important;
+    .personal-center-box {
+      width: 25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      @include font_color('text-color');
+      @include background_color('background-primary');
+
+      .el-dialog__header{
+        .el-dialog__title{
+          color: inherit;
+        }
       }
+      .el-dialog__body{
+        width: calc(100% - 40px);
+      }
+    }
+
+    .login-box {
+      width: 25rem;
+      border-radius: 1rem;
     }
   }
 }

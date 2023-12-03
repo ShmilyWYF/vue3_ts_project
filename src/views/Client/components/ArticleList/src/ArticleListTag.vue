@@ -1,6 +1,6 @@
 <template>
-  <div id="ArticleListTag" class="ArticleListTag">
-      <el-tabs ref="tabRef" v-model="articleTagActive" @tab-click="getArticleListByCategory">
+  <div id="ArticleListCategory" class="ArticleListCategory">
+      <el-tabs ref="tabRef" v-model="articleCategoryActive" @tab-click="getArticleListByCategory">
 
         <el-tab-pane label="ALL" name="ALL">
           <template #label>
@@ -13,7 +13,7 @@
           </template>
         </el-tab-pane>
 
-        <el-tab-pane v-for="(item,key) in articleCategoryList" v-if="isArticleTagList" :key="key"
+        <el-tab-pane v-for="(item,key) in articleCategoryList" v-if="isArticleCategoryList" :key="key"
                      :label="$t('message.'+item.categoryName)" :name="item.categoryName">
           <template #label>
             <el-tag effect="dark" type="info">
@@ -50,10 +50,10 @@ import {ArticleInterface, CategoryCountInterface} from "@/interface";
 const tabRef = ref<{$el: HTMLDivElement} | any>()
 const articleCategoryList = ref<CategoryCountInterface[]>([])
 // 控制渲染时机
-const isArticleTagList = ref<boolean>(false)
+const isArticleCategoryList = ref<boolean>(false)
 const btnRef = ref<{ $el: HTMLButtonElement } | any>()
 const isBtnClick = ref<boolean>(false)
-const articleTagActive = computed(() => store.getters.articleTagActive)
+const articleCategoryActive = computed(() => store.getters.articleTagActive)
 
 const currentPage = ref<number>(1)
 const pageSize = ref<number>(12)
@@ -75,7 +75,7 @@ onMounted(() => {
 const getArticleCategorylist = () => {
   store.dispatch('articleStore/getArticleCategorylist').then((res: CategoryCountInterface[]) => {
         articleCategoryList.value = res
-        isArticleTagList.value = true
+        isArticleCategoryList.value = true
       }
   )
 }
@@ -88,7 +88,7 @@ const getArticleCategorylist = () => {
  * @param pane
  */
 const getArticleListByCategory = async (pane?: any) => {
-  const label = pane?.paneName ? pane.paneName : (articleTagActive.value ? articleTagActive.value : 'ALL')
+  const label = pane?.paneName ? pane.paneName : (articleCategoryActive.value ? articleCategoryActive.value : 'ALL')
   store.dispatch('articleStore/getArticleListByCategory', label).then((res: ArticleInterface[]) => {
         total.value = res
         data.value = total.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
@@ -127,7 +127,7 @@ const btnClick = () =>{
 
 </script>
 <style lang="scss" scoped>
-.ArticleListTag {
+.ArticleListCategory {
   height: auto;
   position: relative;
   display: flex;
@@ -282,7 +282,7 @@ const btnClick = () =>{
 
 }
 
-#ArticleListTag {
+#ArticleListCategory {
   .is-active {
     .tag-a {
       background: $main-Np-gradient !important;

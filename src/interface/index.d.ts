@@ -7,6 +7,19 @@ export interface MockApiInterface {
     condition: boolean
 }
 
+export interface UserAuthinterface {
+    id: number,
+    user_info_id: number,
+    username: string,
+    password: string,
+    login_type: number,
+    ip_address: string,
+    ip_source: string,
+    create_time: Date,
+    update_time: Date | null,
+    last_login_time: Date | null,
+}
+
 export interface UserInfoInterface {
     id?: number | string,
     email: string,
@@ -16,8 +29,8 @@ export interface UserInfoInterface {
     website: string,
     isSubscribe?: number,
     isDisable?: number,
-    createTime?: number,
-    updateTime?: number
+    createTime?: Date,
+    updateTime?: Date|null,
 }
 
 export interface CommentMockinterface {
@@ -29,22 +42,22 @@ export interface CommentMockinterface {
     parent_id: null,
     type: number,
     is_delete: number,
-    is_review: number|string,
+    is_review: number | string,
     replys?: any[],
     create_time: Date,
     update_time: null,
 }
 
 export interface CommentInterface {
-    id?: number,
-    userId?: number,
+    id?: number | 0,
+    userId?: number | 0,
     nickname: string,
     avatar: string,
-    webSite?: {}|any,
+    webSite?: {} | any,
     commentContent: string,
     createTime: Date,
     updateTime?: Date,
-    replys?: [CommentInterface]|null,
+    replys?: [CommentInterface] | null,
 }
 
 export interface Tagsinterface {
@@ -78,7 +91,7 @@ export interface CategoryCountInterface {
 
 
 export interface ArticleInterface {
-    id: number|string,
+    id: number | string,
     articleCover: string,
     articleTitle: string,
     articleContent: string,
@@ -87,13 +100,13 @@ export interface ArticleInterface {
     isDelete: number,
     author: UserInfoInterface,
     categoryName: string | [],
-    tags: Tagsinterface[]|null,
+    tags: Tagsinterface[] | null,
     status: number,
     createTime?: string,
     updateTime?: string,
 }
 
-export interface IntroductionInterface{
+export interface IntroductionInterface {
     img?: string,
     nickname?: string,
     description?: string,
@@ -112,10 +125,22 @@ export interface ArticleAsideinterface {
         value: number | string,
     }],
     tags: Tagsinterface[],
-    announcement: string,
+    notice: string,
 }
 
 export interface FeatureDatainterface {
     LIST: ArticleInterface[]
     TOP: ArticleInterface | {}
+}
+
+export interface WebSiteConfigInterface {
+    webSiteLog: string,
+    siteName: string,
+    englishName: string,
+    multiLanguage: boolean,
+    isCommentReview: boolean,
+    websiteCreateTime: Date,
+    notice: string,
+    beianNumber: string,
+    qqLogin: 0,
 }

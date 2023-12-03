@@ -18,7 +18,6 @@ import {AppBanner, Breadcrumb} from "@/components";
 import {Drawer} from "@/layout/component";
 import store from "@/store";
 import {nextTick, provide, readonly, ref, toRefs} from "vue";
-import router from "@/router";
 
 const props = defineProps(['containerMain', 'isVertical'])
 const {containerMain} = toRefs(props)

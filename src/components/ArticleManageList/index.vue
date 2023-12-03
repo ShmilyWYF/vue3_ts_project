@@ -194,7 +194,7 @@
 
     <template #append>
       <el-dialog v-model="iSviewAuthor" class="authordialog" title="作者信息">
-        <el-card class="box-card">
+        <el-card>
           <template #header>
             <span>
               <el-avatar :size="50" :src="authorinfo.avatar"/>
