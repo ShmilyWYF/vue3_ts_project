@@ -1,6 +1,12 @@
-import {UserAuthinterface, UserInfoInterface} from "@/interface";
+import {UserAuthinterface, UserInfoInterface, userInfoVo} from "@/interface";
 
-const userAuth=<UserAuthinterface[]>[
+const hasEmailBindCaptcha = {
+    email: '',
+    token: '',
+    chptcha: '',
+}
+
+const userAuth = <UserAuthinterface[]>[
     {
         id: 1,
         user_info_id: 1,
@@ -24,6 +30,18 @@ const userAuth=<UserAuthinterface[]>[
         update_time: null,
         last_login_time: new Date(),
         login_type: 0,
+    },
+    {
+        id: 999,
+        user_info_id: 999,
+        username: "123@qq.com",
+        password: "123456Sa",
+        ip_address: "1.1.1.1",
+        ip_source: "中国",
+        create_time: new Date(),
+        update_time: null,
+        last_login_time: new Date(),
+        login_type: 999,
     }
 ]
 
@@ -37,6 +55,7 @@ export const userinfo = <UserInfoInterface[]>[
         website: "https://github.com",
         isSubscribe: 0,
         isDisable: 0,
+        isDelete: 0,
         createTime: new Date(),
         updateTime: null,
     },
@@ -49,50 +68,86 @@ export const userinfo = <UserInfoInterface[]>[
         website: "https://github.com",
         isSubscribe: 0,
         isDisable: 0,
-        // createTime: parseInt(String(new Date().getTime() / 1000)),
+        isDelete: 0,
+        createTime: new Date(),
+        updateTime: null,
+    },
+    {
+        id: 999,
+        email: '123@qq.com',
+        nickname: '超级管理员',
+        avatar: 'https://static.linhaojun.top/aurora/avatar/52a81cd2772167b645569342e81ce312.jpg',
+        intro: "超级管理员介绍",
+        website: "https://github.com",
+        isSubscribe: 0,
+        isDisable: 0,
+        isDelete: 0,
         createTime: new Date(),
         updateTime: null,
     }
 ]
 
-export const userToken = (user: any) => {
-    const {username,password} = JSON.parse(user)
-    // 服务器储存用户信息返回token给浏览器，服务器设置sesstion储存时间，如3天； 三天后浏览器token过期需要重新认证
-    let index = userAuth.findIndex(value => value.username == username);
-    if (index != -1){
-        if (userAuth[index].password != password){
-            return {code:205,messages:'密码错误~'};
+export const getAlluser = (obj: string) => {
+    let arr: userInfoVo[] = []
+    userAuth.forEach((item) => {
+        let index = userinfo.findIndex(value => value.id === item.user_info_id);
+        if (index != -1 && userinfo[index].isDelete != 1&& userAuth[index].login_type != 999) {
+            arr.unshift(<userInfoVo>{
+                avatar: userinfo[index].avatar,
+                createTime: userinfo[index].createTime,
+                email: userinfo[index].email,
+                id: userinfo[index].id,
+                intro: userinfo[index].intro,
+                isDisable: userinfo[index].isDisable,
+                isSubscribe: userinfo[index].isSubscribe,
+                last_login_time: item.last_login_time,
+                nickname: userinfo[index].nickname,
+                password: item.password,
+                type: item.login_type,
+                updateTime: userinfo[index].updateTime,
+                website: userinfo[index].website
+            })
+            return arr
         }
-        if (userAuth[index].login_type != 1){
-            return {code:200,messages:'登陆成功~',token: 'ordinaryUser'}
-        }else {
-            return {code:200,messages:'登陆成功~',token: 'adminUser'}
-        }
-    }else {
-        return {code:400,messages:'未找到用户'};
+    })
+    if (obj == 'null') {
+        return arr
+    }
+    if (obj == '1') {
+        return arr.filter(value => value.isDisable == 1)
+    }
+    if (obj == '0') {
+        return arr.filter(value => value.isDisable == 0)
+    }
+    if (obj == '2') {
+        return arr.filter(value => value.type == 1)
+    }
+    if (obj == '3') {
+        return arr.filter(value => value.type == 0)
     }
 }
 
-interface userInfoVo {
-    id: number,
-    password: string,
-    nickname: string,
-    avatar: string,
-    createTime: Date,
-    email: string,
-    intro: string,
-    isDisable: number,
-    isSubscribe: number,
-    updateTime: Date | null,
-    website: string,
-    type: number,
-    last_login_time: Date,
+export const userToken = (user: any) => {
+    const {username, password} = JSON.parse(user)
+    console.log(username)
+    // 服务器储存用户信息返回token给浏览器，服务器设置sesstion储存时间，如3天； 三天后浏览器token过期需要重新认证
+    let index = userAuth.findIndex(value => value.username == username);
+    if (index != -1) {
+        if (userAuth[index].password != password) {
+            return {token: null};
+        }
+        hasEmailBindCaptcha.email = username;
+        hasEmailBindCaptcha.token = String(Math.floor(Math.random() * 1000000000) + '0' + String(Date.now()));
+        return {token: hasEmailBindCaptcha.token};
+    } else {
+        return {token: null};
+    }
 }
 
 export const getUserinfo = (token: string) => {
-    if (token == 'adminUser') {
-         let auth = userAuth.find(value => value.id = 1);
-         let info = userinfo.find(value => value.id == auth?.user_info_id );
+    if (token == hasEmailBindCaptcha.token){
+        let auth = userAuth.find(value => value.username == hasEmailBindCaptcha.email);
+        let info = userinfo.find(value => value.id == auth?.user_info_id);
         return <userInfoVo>{
             avatar: info?.avatar,
             createTime: info?.createTime,
@@ -100,32 +155,17 @@ export const getUserinfo = (token: string) => {
             id: auth?.id,
             intro: info?.intro,
             isDisable: info?.isDisable,
+            isDelete: info?.isDelete,
             isSubscribe: info?.isSubscribe,
             nickname: info?.nickname,
             password: auth?.password,
             updateTime: null,
             website: info?.website,
-            type: auth?.login_type,
+            type: auth?.type,
             last_login_time: auth?.last_login_time,
         }
-    } else {
-        let auth = userAuth.find(value => value.id = 2);
-        let info = userinfo.find(value => value.id == auth?.id );
-        return <userInfoVo>{
-            avatar: info?.avatar,
-            createTime: info?.createTime,
-            email: info?.email,
-            id: auth?.id,
-            intro: info?.intro,
-            isDisable: info?.isDisable,
-            isSubscribe: info?.isSubscribe,
-            nickname: info?.nickname,
-            password: auth?.password,
-            updateTime: null,
-            website: info?.website,
-            type: auth?.login_type,
-            last_login_time: auth?.last_login_time,
-        }
+    }else {
+        return null
     }
 }
 
@@ -144,39 +184,40 @@ export const userOut = (token: string) => {
     }
 }
 
-const hasEmailBindCaptcha =  {
-    email: '',
-    chptcha: '',
-}
 
-export const getCaptchaByEmail = (email:string) => {
+
+export const getCaptchaByEmail = (email: string) => {
     hasEmailBindCaptcha.email = email;
     hasEmailBindCaptcha.chptcha = String(Math.floor(Math.random() * 9999 + 1000))
     console.log(hasEmailBindCaptcha.chptcha)
-    setTimeout(()=>{
+    setTimeout(() => {
         hasEmailBindCaptcha.email = ''
         hasEmailBindCaptcha.chptcha = ''
-        console.log('验证码过期~',hasEmailBindCaptcha)
-    },60*1000)
-    return {code:200,messages:'验证码已发送~'}
+        console.log('验证码过期~', hasEmailBindCaptcha)
+    }, 60 * 1000)
+    return {code: 200, messages: '验证码已发送~'}
 }
 
-export const registerUser = (registerinfo:string) =>{
-    const {username,captcha,password} = <{ username: string, captcha: string, password: string }>JSON.parse(registerinfo)
-    if (hasEmailBindCaptcha.chptcha == captcha&&hasEmailBindCaptcha.email == username){
+export const registerUser = (registerinfo: string) => {
+    const {username, captcha, password} = <{
+        username: string,
+        captcha: string,
+        password: string
+    }>JSON.parse(registerinfo)
+    if (hasEmailBindCaptcha.chptcha == captcha && hasEmailBindCaptcha.email == username) {
         let index = userAuth.findIndex(value => value.username === username);
-        if (index != -1){
-            return {code:200,messages:'用户已存在~'}
-        }else {
+        if (index != -1) {
+            return {code: 200, messages: '用户已存在~'}
+        } else {
             userinfo.unshift({
                 avatar: "https://static.linhaojun.top/aurora/avatar/52a81cd2772167b645569342e81ce312.jpg",
                 createTime: new Date(),
                 email: username,
-                id: userinfo.length+1,
+                id: userinfo.length + 1,
                 intro: "",
                 isDisable: 0,
                 isSubscribe: 0,
-                nickname: String(Math.floor(Math.random() * 1000000000)+'0'+String(Date.now())),
+                nickname: String(Math.floor(Math.random() * 1000000000) + '0' + String(Date.now())),
                 updateTime: null,
                 website: "",
             })
@@ -186,7 +227,7 @@ export const registerUser = (registerinfo:string) =>{
             })
             userAuth.unshift({
                 create_time: new Date(),
-                id: userAuth.length+1,
+                id: userAuth.length + 1,
                 ip_address: "1.1.1.1",
                 ip_source: "中国",
                 last_login_time: null,
@@ -196,42 +237,63 @@ export const registerUser = (registerinfo:string) =>{
                 user_info_id: 0,
                 username: userinfo[index].email
             })
-            return {code:200,messages:'注册成功~'}
+            return {code: 200, messages: '注册成功~'}
         }
     }
-    return {code:500,messages:'出错,验证码已过期，请再试~'}
+    return {code: 500, messages: '出错,验证码已过期，请再试~'}
 }
 
-export const restUser = (registerinfo:string) => {
-    const {username,captcha,password} = <{ username: string, captcha: string, password: string }>JSON.parse(registerinfo)
-    if (hasEmailBindCaptcha.chptcha == captcha&&hasEmailBindCaptcha.email == username){
+export const restUser = (registerinfo: string) => {
+    const {username, captcha, password} = <{
+        username: string,
+        captcha: string,
+        password: string
+    }>JSON.parse(registerinfo)
+    if (hasEmailBindCaptcha.chptcha == captcha && hasEmailBindCaptcha.email == username) {
         let index = userAuth.findIndex(value => value.username == username);
         userAuth[index].password = password
-        return {code: 200,messages:'密码重置成功~'}
+        return {code: 200, messages: '密码重置成功~'}
     }
-    return {code: 500,messages:'验证码错误~'}
+    return {code: 500, messages: '验证码错误~'}
 }
 
-export const UpdateUserinfo = (user:string)=> {
+export const UpdateUserinfo = (user: string) => {
     let parse = <userInfoVo>JSON.parse(user);
-    try {
-        const index = userAuth.findIndex(value => value.id = parse.id);
-        if (index != -1) {
-            userAuth[index].password = parse.password;
-            userAuth[index].update_time = new Date();
-        }
-        let userinfoIndex = userinfo.findIndex(value => value.id == userAuth[index].user_info_id);
-        if (userinfoIndex != -1) {
-            userinfo[userinfoIndex].updateTime = new Date();
-            userinfo[userinfoIndex].isSubscribe = parse.isSubscribe;
-            userinfo[userinfoIndex].intro = parse.intro;
-            userinfo[userinfoIndex].nickname = parse.nickname;
-            userinfo[userinfoIndex].website = parse.website;
-            userinfo[userinfoIndex].avatar = parse.avatar;
-        }
-        return {code:200,messages:'修改成功~'}
-    } catch (e) {
-        return {code:500,messages:'出现错误~'}
+    const index = userAuth.findIndex(value => value.id = parse.id);
+    if (index != -1) {
+        userAuth[index].password = parse.password;
+        userAuth[index].update_time = new Date();
+        userAuth[index].login_type = parse.type;
     }
+    let userinfoIndex = userinfo.findIndex(value => value.id == userAuth[index].user_info_id);
+    if (userinfoIndex != -1) {
+        userinfo[userinfoIndex].updateTime = new Date();
+        userinfo[userinfoIndex].isSubscribe = parse.isSubscribe;
+        userinfo[userinfoIndex].intro = parse.intro;
+        userinfo[userinfoIndex].nickname = parse.nickname;
+        userinfo[userinfoIndex].website = parse.website;
+        userinfo[userinfoIndex].avatar = parse.avatar;
+    }
+}
 
+export const deleteUser = (obj: string) => {
+    const {data} = JSON.parse(obj)
+    data.forEach((itemid: number) => {
+        let key = userAuth.findIndex((value) => value.id == itemid)
+        let userinfokey = userinfo.findIndex((value) => value.id == userAuth[key].user_info_id)
+        if (userinfokey != -1&&userinfo[userinfokey].isDelete != 1) {
+            userinfo[userinfokey].isDelete = 1;
+        }
+    })
+}
+
+export const disableUserById = (obj: string) => {
+    let {data, isDisable}:{data:[],isDisable:number} = JSON.parse(obj);
+    data.forEach((id)=>{
+        let key = userAuth.findIndex((value) => value.id == id)
+        let userinfokey = userinfo.findIndex((value) => value.id == userAuth[key].user_info_id)
+        if (key != -1&&userinfo[userinfokey].isDelete != 1) {
+            userinfo[userinfokey].isDisable = isDisable
+        }
+    })
 }

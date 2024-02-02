@@ -7,7 +7,7 @@
 import Loading from "@/components/Loading/index.vue";
 </script>
 <style lang="scss">
-@import "@/style/sk.css";
+@import "@/style/fade.css";
 
 html, body, #app {
   width: 100%;
@@ -83,7 +83,5 @@ nav {
   scrollbar-track-color: red;
   scrollbar-arrow-color: blue;
 }
-
-
 </style>
 

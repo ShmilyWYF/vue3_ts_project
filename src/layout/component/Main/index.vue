@@ -2,7 +2,7 @@
   <div ref="mainRef" class="main">
     <Breadcrumb/>
     <router-view v-if="isRouterAlive" class="view"/>
-<!--    <el-backtop v-if="!isVertical" :bottom="100" :right="200"/>-->
+    <el-backtop v-if="!isVertical" :bottom="100" :right="200"/>
     <Drawer :container="containerMain" :is-switch-bg-button="isSwitch" @switch-theme="switchTheme"
             @is-Switch-Bg="isSwitchBgEvent"/>
     <App-Banner :style="isVertical?{height: '55%'}:''"/>
@@ -50,6 +50,8 @@ const isSwitchBgEvent = (event: boolean) => {
 </script>
 
 <style lang="scss" scoped>
+@import "@/style/fade.css";
+
 .main {
   width: 100%;
   margin: 0 auto;
@@ -90,38 +92,6 @@ const isSwitchBgEvent = (event: boolean) => {
   @include background_color('background-color')
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s;
-}
 
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
-
-.fade-enter-active {
-  animation: fade-in 0.5s;
-}
-
-.fade-leave-active {
-  animation: fade-in 0.5s reverse;
-}
-
-@keyframes fade-in {
-  0% {
-    transform: scale(0);
-  }
-  25% {
-    transform: scale(0.25);
-  }
-  50% {
-    transform: scale(0.5);
-  }
-  75% {
-    transform: scale(0.75);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
 
 </style>

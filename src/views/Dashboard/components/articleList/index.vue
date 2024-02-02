@@ -21,12 +21,13 @@
       <el-input v-model="searchInput" placeholder="输入标题查找文章" @change="" @input="SearchInputEvnt"/>
       <el-button style="width: 5rem;" type="primary" @click="articleAddDialog">添加文章</el-button>
     </div>
-    <ArticleManageList :article-ids="articleIds"
-                       :loading="loading"
+    <ArticleManageList :loading="loading"
                        :tableData="tableData"
                        @switch-call="CallEvnt"
                        @modify-array="articleIdsEvnt"
-                       @edit-callback="articleEditDialog"/>
+                       @edit-callback="articleEditDialog"
+                       @over-load="overLoadEvent"
+                      />
     <el-dialog v-model="isEditOrAddDialog" class="authordialog" :title="isAddOrEdit == 1?'编辑文章信息':'添加文章'">
       <el-form ref="articleFormRef" :model="articleinfo" :rules="rules" label-width="120px">
         <el-form-item label="标题" prop="articleTitle">
@@ -111,7 +112,7 @@ import store from "@/store";
 import {ElMessage, ElNotification, FormRules} from "element-plus";
 import {ArticleInterface} from "@/interface";
 import api from "@/axios";
-import {AxiosResponse} from "axios";
+import axios, {AxiosResponse} from "axios";
 
 //获取所有文章列表
 const tableData = ref<ArticleInterface[]>([])
@@ -123,12 +124,24 @@ onMounted(async () => {
   loading.value = false
 })
 
-const viewStatus = (status: string) => {
+const viewStatus = (statusValue: string) => {
   searchInput.value = ''
-  currStatus.value = status
-  localStorage.setItem('currStatus', status)
-  store.dispatch('articleStore/getArticleListByStatus', status).then(res => {
-    tableData.value = res;
+  currStatus.value = statusValue
+  localStorage.setItem('currStatus', statusValue)
+  if (statusValue == 'All'){
+    getAllArticleList();
+    return
+  }
+  let paramr:{status?:number,delete?:number} = {};
+  switch (statusValue) {
+    case 'Public': paramr.status = 2;break;
+    case 'Private': paramr.status = 1;break;
+    case 'Draft': paramr.status = 0;break;
+    case 'RecycleBin': paramr.delete = 1;break;
+  }
+  api.articleApi.getArticleListByStatus(paramr).then((res:AxiosResponse) =>{
+    const {data} = res.data
+    tableData.value = data
   })
 }
 
@@ -176,10 +189,14 @@ const rules = reactive<FormRules>({
 
 // 获取所有文章列表
 const getAllArticleList = async () => {
-  await store.dispatch('articleStore/getAllArticle').then(res => {
+  await api.articleApi.getAllArticle().then((res:AxiosResponse) => {
+    let {data,message}:{data:ArticleInterface[],message:string} = res.data;
+    if (!data){
+      ElMessage.info(message)
+      return tableData.value = []
+    }
     if (currStatus.value === 'All') {
-      tableData.value = res;
-      tableData.value?.sort((a, b) => {
+      tableData.value = data.sort((a, b) => {
         return b.status - a.status
       })
     } else {
@@ -230,37 +247,29 @@ const addArticle = async (articleinfo: ArticleInterface) => {
   articleFormRef.value!.validate((res: boolean) => {
     if (res) {
       if (isAddOrEdit.value != 1) {
-        store.dispatch('articleStore/addArticle', articleinfo).then(res => {
-          tableData.value = res
-        }, ((e: string) => {
+        api.articleApi.addArticle(articleinfo).then((res:AxiosResponse)=>{
+          let {message,type,code} = res.data;
           ElNotification({
             title: '通知',
-            message: e,
-            type: 'warning'
+            message: message,
+            type: type
           })
-          return
-        }))
+        })
       } else {
-        store.dispatch('articleStore/updateArticle', articleinfo).then(() => {
-          getAllArticleList()
-        }, ((e: string) => {
+        api.articleApi.updateArticleInfo(articleinfo).then((res:AxiosResponse)=>{
+          let {message,type} = res.data;
           ElNotification({
             title: '通知',
-            message: e,
-            type: 'warning'
+            message: message,
+            type: type
           })
-          return
-        }))
+        })
       }
-      ElNotification({
-        title: '通知',
-        message: '操作完成',
-        type: 'success'
-      })
       isEditOrAddDialog.value = false;
       if (articleFormRef.value != undefined) {
         articleFormRef.value.resetFields();
       }
+      getAllArticleList();
     } else {
       ElNotification({
         title: '通知',
@@ -338,14 +347,21 @@ const CallEvnt = (call: []) => {
   }
 }
 
+// 文章overloadEvent
+const overLoadEvent = () =>{
+  getAllArticleList();
+}
+
 // 上传图片
-const imgAdd = (file: any) => {
+const imgAdd = async (file: any) => {
   let formdata = new FormData();
-  formdata.append('image', file.target.files[0]);
+  formdata.append('file', file.target.files[0]);
   // axios在接收formdata类型参数时会强制删除content-type浏览器识别空设置为默认false
-  api.imgApi.uploadImg(formdata).then((res: any) => {
+  await api.imgApi.uploadImg(formdata).then((res: any) => {
     const {data} = res.data
     articleinfo.articleCover = data
+  },(e:any)=>{
+    ElNotification.error(e.toString())
   })
 }
 </script>

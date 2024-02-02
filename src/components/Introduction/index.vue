@@ -1,32 +1,63 @@
 <template>
-  <el-card v-if="data !== {}" class="introduction">
-    <div>
-      <ul class="introduction-top">
-        <li style="padding-top: 1rem">
-          <img :src="data.img" alt="头像"/>
-        </li>
-        <li>
-          <h2>{{ data.nickname }}</h2>
-          <hr/>
-        </li>
-        <li>
-          <p>{{ data.description }}</p>
-        </li>
-      </ul>
-      <ul class="introduction-footer">
-        <li>
-          <a :href="data.url">
-            <svg-icon name="github"/>
-          </a>
-        </li>
-        <ul>
-          <li v-for="(item,key) in data.childer" :key="key">
-            <span>{{ item.articleCount }}</span>
-            <p>{{ item.title }}</p>
-          </li>
-        </ul>
-      </ul>
-    </div>
+  <el-card class="introduction">
+    <el-skeleton animated :loading="Object.keys(data).length === 0">
+      <template #template>
+        <div style="display: flex;flex-direction: column;justify-content: flex-start;align-items: center;">
+          <ul style="padding-top: 1rem;gap: 1rem" class="introduction-top">
+            <li>
+              <el-skeleton-item variant="circle" style="width: 6.5rem;height: 6.5rem;position: relative;"/>
+            </li>
+            <li>
+              <el-skeleton-item variant="h1" style="height: 2.5rem;position: relative;"/>
+              <hr style="width: 5rem;height: .25rem;"/>
+            </li>
+            <li>
+              <el-skeleton-item variant="p" style="height: 1.25rem;width: 10rem;position: relative;"/>
+            </li>
+          </ul>
+          <ul class="introduction-footer">
+            <li>
+              <el-skeleton-item variant="image" style="width: 2.5rem;height: 2.5rem;position: relative;"/>
+            </li>
+            <ul style="gap:1rem">
+              <li v-for="index in 4" style="display: flex;flex-direction: column;align-items: center;gap: 1rem">
+                <el-skeleton-item variant="p" style="height: 2rem;width: 3rem;position: relative;"/>
+                <el-skeleton-item variant="p" style="height: 1rem;width: 1.5rem;position: relative;"/>
+              </li>
+            </ul>
+          </ul>
+        </div>
+      </template>
+      <template #default>
+        <div>
+          <ul class="introduction-top">
+            <li style="padding-top: 1rem">
+              <img :src="data.img" alt="头像"/>
+            </li>
+            <li>
+              <h2>{{ data.nickname }}</h2>
+              <hr/>
+            </li>
+            <li>
+              <p>{{ data.description }}</p>
+            </li>
+          </ul>
+          <ul class="introduction-footer">
+            <li>
+              <a :href="data.url">
+                <svg-icon name="github"/>
+              </a>
+            </li>
+            <ul>
+              <li v-for="(item,key) in data.childer" :key="key">
+                <span>{{ item.articleCount }}</span>
+                <p>{{ item.title }}</p>
+              </li>
+            </ul>
+          </ul>
+        </div>
+      </template>
+    </el-skeleton>
   </el-card>
 </template>
 <script lang="ts" setup>
@@ -36,7 +67,6 @@ import {IntroductionInterface} from "@/interface";
 defineProps<{ data: IntroductionInterface }>()
 </script>
 <style lang="scss" scoped>
-
 .introduction {
   height: 100%;
   width: calc(95% - 3%) !important;
@@ -107,6 +137,7 @@ defineProps<{ data: IntroductionInterface }>()
           img {
             height: 5rem;
             width: 5rem;
+            position: relative;
             outline: 5px white solid;
             border-radius: 50%;
             min-width: 100%;

@@ -84,6 +84,34 @@
         </el-form>
       </el-tab-pane>
 
+      <el-tab-pane label="超级管理员设置" name="admin">
+        <el-form :model="userConfigForm" label-position="left" label-width="120px" ref="userRef" :rules="userRule">
+          <el-row style="width: 600px">
+            <el-col :md="12">
+              <el-form-item label="游客头像" prop="avatar">
+                <label for="upload" class="ui-upload">
+                  <el-image style="width: 100px; height: 100px" :src="userConfigForm.avatar" fit="fill"/>
+                </label>
+                <input id="upload" type="file" name="file" multiple="multiple" @change="updateImg"
+                       style="display: none"/>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-form-item label="邮箱通知" prop="isEmailNotice">
+            <el-radio-group v-model="userConfigForm.isEmailNotice">
+              <el-radio :label="0">关闭</el-radio>
+              <el-radio :label="1">开启</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-button size="small" style="margin-left: 6.3rem" type="primary" @click="updateUserConfig">
+            保存
+          </el-button>
+        </el-form>
+      </el-tab-pane>
+
+      <el-tab-pane label="管理员路由设置" name="routers">
+
+      </el-tab-pane>
     </el-tabs>
   </el-card>
 </template>
@@ -138,7 +166,7 @@ onMounted(()=>{
 
 const getListByLabel = (pane: any) => {
   switch (pane.paneName) {
-    case 'info': getWebSiteConfig();break;
+    case 'info': getWebSiteInfoConfig();break;
     case 'user': getUserConfig();break;
   }
 }
@@ -159,7 +187,7 @@ const updateImg = (file: any) => {
 }
 
 const getWebSiteConfig = () => {
-  api.useAppApi.getWebSiteConfig().then((res: AxiosResponse) => {
+  api.useAppApi.getUseAppConfig().then((res: AxiosResponse) => {
     const {data} = res.data
     Object.assign(websiteConfigForm, data)
   })

@@ -7,7 +7,7 @@ import {ElMessage} from 'element-plus'
 function errorHandle(err: any) {
     // 判断服务器响应
     if (!err.status) {
-        switch (err.code) {
+        switch (err.data.code) {
             // 用户无权限访问接口
             case 401:
                 ElMessage.error('未授权，请先登录~')
@@ -22,13 +22,16 @@ function errorHandle(err: any) {
                 ElMessage.error('服务器异常，请稍后再试~')
                 break
         }
-    } else if (err.message.includes('timeout')) {
+    } else if (err.data.message.includes('timeout')) {
         ElMessage.error('连接超时~')
         return false
-    } else if (err.code === 'ECONNABORTED' || err.message === 'Network Error' || !window.navigator.onLine) {
+    } else if (err.data.code === 'ECONNABORTED' || err.data.message === 'Network Error' || !window.navigator.onLine) {
         ElMessage.error('网络已断开，请检查连接~')
         return false
-    } else {
+    } else if (err.data.message.includes('size exceeded')){
+        ElMessage.error('文件过大请重试一下吧~')
+        return false
+    } {
         // 放行
         return true
     }

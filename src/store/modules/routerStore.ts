@@ -23,8 +23,11 @@ const mutations = {
 }
 const actions: any = {
     // 根据得到的路由表获取异步路由
-    getMenuRoles({commit, state}: any, roles: any = ''): any {
-        let data = roles    //因为没有角色所有是get方法
+    getMenuRoles({commit, state}: any): any {
+        //因为没有角色所有是get方法
+        let data = {
+            userId: 1
+        };
         return new Promise((resolve, reject) => {
             menuApi.getMenuRoles(data).then((res: AxiosResponse) => {
                 let {data} = res.data
@@ -32,6 +35,7 @@ const actions: any = {
                 if (data.length < 0) {
                     reject('权限表为空!')
                 }
+                data = [data]
                 /*二级整合一级
                  * while函数：{} 用于广度搜索 先进先出，判断对象是否有子节点，有则将子节点加入data对象后删除并储存入dataList；
                  * data: [[]] 赋值 用作取值

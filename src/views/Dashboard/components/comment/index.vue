@@ -13,10 +13,12 @@
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <el-button :disabled="commentIds.length === 0" size="small" type="danger" @click="isDialogView = true;deleteOrPass = 0">
+      <el-button :disabled="commentIds.length === 0" size="small" type="danger"
+                 @click="isDialogView = true;deleteOrPass = 0">
         批量删除
       </el-button>
-      <el-button :disabled="commentIds.length === 0||currStatus!='审核中'" size="small" type="success" @click="isDialogView = true;deleteOrPass = 1">
+      <el-button :disabled="commentIds.length === 0||currStatus!='审核中'" size="small" type="success"
+                 @click="isDialogView = true;deleteOrPass = 1">
         批量通过
       </el-button>
       <el-input v-model="searchInput" placeholder="输入来源查找" @change="" @input="SearchInputEvnt"/>
@@ -83,7 +85,8 @@
       列操作
       <el-table-column align="center" label="操作" width="160">
         <template #default="scope">
-          <el-button v-if="scope.row.isReview == 0" slot="reference" size="small" type="success" @click="releaseComments(scope.row.id)">
+          <el-button v-if="scope.row.isReview == 0" slot="reference" size="small" type="success"
+                     @click="releaseComments(scope.row.id)">
             通过
           </el-button>
           <el-popconfirm style="margin-left: 10px" title="确定删除吗？" @confirm="deleteComments(scope.row.id)">
@@ -95,34 +98,32 @@
       </el-table-column>
     </el-table>
     <!-- 分页 -->
-    <Pagination :data="initData.comments" :ishide="false" next-svg="kaoyu" prev-svg="jitui" @pagination-results="paginationResultsEvnt" :page-size="10"/>
+    <Pagination :data="initData.comments" :ishide="false" next-svg="kaoyu" prev-svg="jitui"
+                @pagination-results="paginationResultsEvnt" :page-size="10"/>
     <!-- 批量删除对话框 -->
     <el-dialog v-model="isDialogView" width="30%">
       <template #header>
         <i class="el-icon-warning" style="color: #ff9900"/>提示
       </template>
-      <div style="font-size: 1rem">{{deleteOrPass == 0?'是否删除选中项？':'是否通过选中项？'}}</div>
+      <div style="font-size: 1rem">{{ deleteOrPass == 0 ? '是否删除选中项？' : '是否通过选中项？' }}</div>
       <template #footer>
         <el-button @click="isDialogView = false">取 消</el-button>
-        <el-button v-if="deleteOrPass == 0" type="primary" @click="deleteComments()"> 确 定</el-button>
-        <el-button v-else type="primary" @click="releaseComments()"> 确 定</el-button>
+        <el-button v-if="deleteOrPass == 0" type="primary" @click="deleteComments();isDialogView = false"> 确 定</el-button>
+        <el-button v-else type="primary" @click="releaseComments();isDialogView = false"> 确 定</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import {inject, onMounted, reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {Pagination} from "@/components";
 import {ElNotification} from "element-plus";
 
 onMounted(async () => {
-  await api.commentApi.getComments(null).then((res: AxiosResponse) => {
-    const {data} = res.data
-    initData.comments = data
-  })
+  await getCommentList()
 })
 
 // 初始化数据
@@ -142,7 +143,6 @@ const initData = reactive({
   isReview: false,
   loading: false,
 })
-const reloadV = inject<any>('reload');
 // 接收数据
 const data = ref<any[]>()
 // 批量选择id
@@ -156,26 +156,38 @@ const isDialogView = ref<boolean>(false)
 // 批量删除or通过
 const deleteOrPass = ref<number>(0)
 
+// 获取comment列表
+const getCommentList = async () => {
+  await api.commentApi.getComments(null).then((res: AxiosResponse) => {
+    const {data} = res.data
+    initData.comments = data
+  })
+}
+
 // 设置选择框可选择条件
-const checkSelectable = (row:any)=>{
-  if (currStatus.value == '审核中'){
-    return row.isReview != 1
+const checkSelectable = (row: { isReview: number }) => {
+  if (currStatus.value == '审核中') {
+    return row.isReview === 0
   }
-  if (currStatus.value == '正常'){
-    return row.isReview != 0
+  if (currStatus.value == '正常') {
+    return row.isReview === 1
   }
-  if (currStatus.value == '全部'){
+  if (currStatus.value == '全部') {
     return row.isReview === 3
   }
 }
 // 根据状态查看数据列表
 const viewStatus = (status: string) => {
-  if (status!='null'){
+  if (status != 'null') {
     switch (status) {
-      case '1'||1: currStatus.value = '正常';break;
-      case '0'||0: currStatus.value = '审核中';break;
+      case '1' || 1:
+        currStatus.value = '正常';
+        break;
+      case '0' || 0:
+        currStatus.value = '审核中';
+        break;
     }
-  }else {
+  } else {
     currStatus.value = '全部'
   }
   searchInput.value = ''
@@ -185,6 +197,7 @@ const viewStatus = (status: string) => {
   }
   listComments(status)
 }
+
 // 获取所有评论
 const listComments = (Parameters: any = null) => {
   api.commentApi.getCommentsByStatus(Parameters).then((res: AxiosResponse) => {
@@ -192,17 +205,23 @@ const listComments = (Parameters: any = null) => {
     initData.comments = data
   })
 }
+
 // 输入事件
 const SearchInputEvnt = () => {
   initData.loading = true
   if (searchInput.value.length !== 0) {
-    let arr = initData.comments.filter((item:any) => {
+    let arr = initData.comments.filter((item: any) => {
       switch (searchInput.value) {
-        case '文章': return item.type == 1;
-        case '留言': return item.type == 2;
-        case '关于我': return item.type == 3;
-        case '友链': return item.type == 4;
-        case '说说': return item.type == 5;
+        case '文章':
+          return item.type == 1;
+        case '留言':
+          return item.type == 2;
+        case '关于我':
+          return item.type == 3;
+        case '友链':
+          return item.type == 4;
+        case '说说':
+          return item.type == 5;
       }
     })
     data.value = arr
@@ -212,9 +231,9 @@ const SearchInputEvnt = () => {
   initData.loading = false
 }
 // 批量表单操作事件
-const selectionChange = (commentId:[]) => {
+const selectionChange = (commentId: []) => {
   let arr: any[] = []
-  commentId.forEach((item:{id:number}):void=>{
+  commentId.forEach((item: { id: number }): void => {
     arr.push(item.id)
   })
   commentIds.value = arr
@@ -223,60 +242,34 @@ const selectionChange = (commentId:[]) => {
 const releaseComments = (id?: number) => {
   let param: {}
   if (id == null) {
-    param = {data: commentIds.value}
+    param = {id: commentIds.value}
   } else {
-    param = {data: [id]}
+    param = {id: [id]}
   }
-  try {
-    api.commentApi.releaseComments(param).then((res:AxiosResponse)=>{
-      const {data} = res.data
-      if (!data){
-        throw new Error('删除失败')
-      }
-      ElNotification({
-        title: '通知',
-        message: '成功！',
-        type: 'success'
-      })
-      reloadV()
-    })
-  }catch (e:any) {
-    ElNotification({
-      title: '通知',
-      message: e,
-      type: 'error'
-    })
-  }
+  api.commentApi.releaseComments(param).then((res: AxiosResponse) => {
+    const {message} = res.data
+    ElNotification.success(message)
+    getCommentList()
+  }, (e: Error) => {
+    ElNotification.error(e.message)
+  })
 }
+
 // 删除评论
 const deleteComments = (id?: number) => {
   let param: {}
   if (id == null) {
-    param = {data: commentIds.value}
+    param = {id: commentIds.value}
   } else {
-    param = {data: [id]}
+    param = {id: [id]}
   }
-  try {
-    api.commentApi.deleteComments(param).then((res:AxiosResponse)=>{
-      const {data} = res.data
-      if (!data){
-        throw new Error('删除失败')
-      }
-      ElNotification({
-        title: '通知',
-        message: '成功！',
-        type: 'success'
-      })
-      reloadV()
-    })
-  }catch (e:any) {
-    ElNotification({
-      title: '通知',
-      message: e,
-      type: 'error'
-    })
-  }
-
+  api.commentApi.deleteComments(param).then((res: AxiosResponse) => {
+    const {message} = res.data
+    ElNotification.success(message)
+    getCommentList()
+  }, (e: Error) => {
+    ElNotification.error(e.message)
+  })
 }
 
 // 分页

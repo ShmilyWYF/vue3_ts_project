@@ -63,3 +63,22 @@
   @include appgl($degGL);
   @include app($degML);
 }
+
+// 通用骨架屏css
+@mixin skeleton(){
+  --el-skeleton-color: #313131;
+  --el-skeleton-to-color: #1a1a1a;
+  :deep(.el-skeleton__image svg) {
+    @include font_color('text-color-primary');
+    animation: circle infinite 2.75s linear;
+  }
+  // 转转转动画
+  @keyframes circle {
+    0% {
+      transform: rotate(0);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}

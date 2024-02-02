@@ -1,6 +1,6 @@
 export default {
     getMenuRoles: {
         method: 'get',
-        url: 'menu/get'
+        url: 'route/menu'
     },
 }

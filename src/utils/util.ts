@@ -30,3 +30,19 @@ export const deepCopy = (obj: any) => {
 
     return dp(obj);
 }
+
+// 首字母转大写
+export const  firstCharacterToUppercase = (str:string)=> {
+    return str.replace(/^(\w{1})/, (r) => r.toUpperCase())
+}
+// 转驼峰
+export function getKebabCase(str:string):string {
+    let temp = str.replace(/[A-Z]/g, function(i) {
+        return '_' + i.toLowerCase();
+    })
+    //如果首字母是大写，执行replace时会多一个_，需要去掉
+    if (temp.slice(0,1) === '_') {
+        temp = temp.slice(1);
+    }
+    return temp;
+}

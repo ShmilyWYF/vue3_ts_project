@@ -12,7 +12,6 @@ export interface UserAuthinterface {
     user_info_id: number,
     username: string,
     password: string,
-    login_type: number,
     ip_address: string,
     ip_source: string,
     create_time: Date,
@@ -27,10 +26,29 @@ export interface UserInfoInterface {
     avatar: string,
     intro: string,
     website: string,
+    type?: number,
     isSubscribe?: number,
     isDisable?: number,
-    createTime?: Date,
+    isDelete?: number,
+    createTime?: Date|null,
     updateTime?: Date|null,
+}
+
+interface userInfoVo {
+    id: number,
+    avatar: string,
+    email: string,
+    intro: string,
+    nickname: string,
+    website: string,
+    type: number,
+    last_login_time: Date,
+    isDisable: number,
+    isDelete: number,
+    isSubscribe: number,
+    createTime: Date,
+    updateTime: Date | null,
+    password: string,
 }
 
 export interface CommentMockinterface {
@@ -48,16 +66,26 @@ export interface CommentMockinterface {
     update_time: null,
 }
 
+export interface CommentModuleInterface {
+    commentData: CommentInterface,
+    isHaveMore: boolean,
+    type: number,
+    isCommentReview: number,
+    userinfo: UserInfoInterface|undefined,
+    commentsCall: Function,
+    indexCall: Function,
+}
+
 export interface CommentInterface {
-    id?: number | 0,
-    userId?: number | 0,
+    id?: number,
+    userId: number,
     nickname: string,
     avatar: string,
     webSite?: {} | any,
     commentContent: string,
     createTime: Date,
     updateTime?: Date,
-    replys?: [CommentInterface] | null,
+    replys: CommentInterface[],
 }
 
 export interface Tagsinterface {
@@ -119,26 +147,26 @@ export interface IntroductionInterface {
 
 export interface ArticleAsideinterface {
     introduction: IntroductionInterface,
-    commentsList: [CommentInterface],
-    websiteInformation: [{
+    commentsList: CommentInterface[],
+    websiteInformation: {
         title: string,
         value: number | string,
-    }],
+    }[],
     tags: Tagsinterface[],
     notice: string,
 }
 
 export interface FeatureDatainterface {
-    LIST: ArticleInterface[]
-    TOP: ArticleInterface | {}
+    Featured: ArticleInterface[]
+    Top: ArticleInterface
 }
 
 export interface WebSiteConfigInterface {
     webSiteLog: string,
     siteName: string,
     englishName: string,
-    multiLanguage: boolean,
-    isCommentReview: boolean,
+    multiLanguage: number,
+    commentReview: number,
     websiteCreateTime: Date,
     notice: string,
     beianNumber: string,

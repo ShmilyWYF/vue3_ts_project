@@ -2,7 +2,7 @@ import {WebSiteConfigInterface} from "@/interface";
 import Mock from "mockjs";
 
 // 网站配置
-export const websiteConfig:{data:WebSiteConfigInterface} = Mock.mock({
+export const websiteConfig:WebSiteConfigInterface = {
     webSiteLog: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
     siteName: '博客',
     englishName: 'blog',
@@ -12,7 +12,7 @@ export const websiteConfig:{data:WebSiteConfigInterface} = Mock.mock({
     notice: 'xx公告',
     beianNumber: '0000000000',
     qqLogin: 0,
-})
+}
 
 // 用户配置
 export const userConfig:{data:{avatar:string,isEmailNotice:0}} = Mock.mock({
@@ -42,27 +42,27 @@ export const themeConfig = {
 
 export default {
     themeConfig,
-    websiteConfig: websiteConfig.data,
+    websiteConfig: websiteConfig,
     userConfig: userConfig.data,
-    appLoading: false,
-    viewCount: 0,
-    articleCount: 0,
-    talkCount: 0,
-    categoryCount: 0,
-    tagCount: 0,
-    NPTimeout: 0,
-    loadingTimeout: 0,
-    aurora_bot_enable: false
+    // appLoading: false,
+    // viewCount: 0,
+    // articleCount: 0,
+    // talkCount: 0,
+    // categoryCount: 0,
+    // tagCount: 0,
+    // NPTimeout: 0,
+    // loadingTimeout: 0,
+    // aurora_bot_enable: false
 }
 
 
 export const upDateWebsiteConfig = (website:string):WebSiteConfigInterface =>{
-    websiteConfig.data = JSON.parse(website)
-    return websiteConfig.data;
+     Object.assign(websiteConfig,JSON.parse(website))
+    return websiteConfig;
 }
 
 export const upDateUserConfig = (website:string):WebSiteConfigInterface =>{
-    websiteConfig.data = JSON.parse(website)
-    return websiteConfig.data;
+    Object.assign(websiteConfig,JSON.parse(website))
+    return websiteConfig;
 }
 

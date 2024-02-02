@@ -9,7 +9,7 @@ export default {
     },
     getInfo: {
         method: 'post',
-        url: 'user/getInfo'
+        url: 'user/info'
     },
     registerUser:{
         method: 'post',
@@ -19,12 +19,28 @@ export default {
         method: 'post',
         url: 'user/restUser'
     },
-    getCaptchaByEmail: {
-        method: 'get',
-        url: 'user/emailCaptcha'
-    },
     updateUserinfo: {
         method: 'update',
         url: 'user/userinfo'
-    }
+    },
+    getAlluser: {
+        method: 'get',
+        url: 'user/info'
+    },
+    undisable: {
+        method: 'get',
+        url: '/user/undisable'
+    },
+    disable:{
+        method: 'get',
+        url: '/user/disable'
+    },
+    recovery:{
+        method: 'get',
+        url: '/user/recovery'
+    },
+    remove:{
+        method: 'get',
+        url: '/user/remove'
+    },
 }

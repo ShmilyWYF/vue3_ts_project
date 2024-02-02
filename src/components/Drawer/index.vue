@@ -20,9 +20,9 @@
                     <el-dropdown-menu>
                       <el-dropdown-item @click="UserDialogFormVisible = true">个人中心</el-dropdown-item>
                       <el-dropdown-item @click="userExit">退出</el-dropdown-item>
-                      <el-dropdown-item v-if="userinfo?.type === 1"
+                      <el-dropdown-item v-if="userinfo?.type === 1||userinfo?.type === 999"
                                         @click="switchPageEvnt">{{
-                          switchPage ? 'blog' : '后台管理'
+                          isloading ? '后台管理':'blog'
                         }}</el-dropdown-item>
                     </el-dropdown-menu>
                   </template>
@@ -39,13 +39,13 @@
       <Login @dialogCall="dialogcall"/>
     </el-dialog>
     <el-dialog v-model="UserDialogFormVisible" title="个人中心" class="personal-center-box">
-       <UserFrom :from-data="userinfo"/>
+       <UserFrom :from-data="userinfo" :is-edit="false"/>
     </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {computed, onMounted, ref, toRefs} from "vue";
+import {computed, onMounted, ref, toRefs, watch} from "vue";
 import {svg} from "@/icons";
 import {DrawerstringGraphics, DropDown, Login, UserFrom} from "@/components";
 import store from "@/store";
@@ -54,6 +54,7 @@ import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {useRouter} from "vue-router";
 import {ElMessage} from "element-plus";
+import {userInfoVo} from "@/interface";
 
 const props = defineProps({
   isSwitchBgButton: {
@@ -73,17 +74,17 @@ onMounted(()=>{
 })
 
 const router = useRouter()
+// 控制下拉模组展示界面
 const isloading = computed(()=>{
-  // let arr = ['home', 'articles', 'tags', 'message', 'about']
-  return excludeComponents(['home', 'articles', 'tags'])
+  return excludeComponents(['Dashboard'])
 })
 
 const excludeComponents = (arr:string[]) =>{
   let matcheds = router.currentRoute.value.matched
-  if (!arr.includes(String(matcheds[1].name))){
+  if (arr.includes(String(matcheds[0].name))){
     emit('IsSwitchBg',false)
   }
-  return arr.includes(String(matcheds[1].name))
+  return !arr.includes(String(matcheds[0].name))
 }
 
 const emit = defineEmits(['SwitchTheme', 'IsSwitchBg']);
@@ -192,63 +193,46 @@ const UserDialogFormVisible = ref<boolean>(false)
 // 控制状态栏组件
 const isLoginState = ref<any>(getCookie() ? true : JSON.parse(String(localStorage.getItem('isLoginState'))))
 // 储存用户信息 为0就是管理员
-interface userInfoVo {
-  id: number,
-  password: string,
-  nickname: string,
-  avatar: string,
-  createTime: Date,
-  email: string,
-  intro: string,
-  isDisable: number,
-  isSubscribe: number,
-  updateTime: Date | null,
-  website: string,
-  type: number,
-  last_login_time: Date,
-}
-const userinfo = ref<userInfoVo>(store.getters.userinfo)
-// blog/后台切换
-const switchPage = ref(JSON.parse(String(localStorage.getItem('IsSwitchPage'))))
+const userinfo = computed(()=>store.getters.userinfo)
+
 /**
  * @author WangYaFeng
  * @date 2023/10/31 3:05
  * @description login组件登陆回调事件，切换展示组件,对if组件状态进行本地缓存
- * @param token string类型，login组件登陆返回
  * @return null
  */
-const dialogcall = (token: string) => {
+const dialogcall = () => {
   dialogFormVisible.value = !dialogFormVisible.value
   isLoginState.value = !isLoginState.value
   localStorage.setItem('isLoginState', JSON.stringify(isLoginState.value))
-  api.userApi.getInfo(token).then((res: AxiosResponse) => {
-    const {data}:{data:userInfoVo} = res.data;
-    if (data.isDisable != 0){
-      ElMessage.error('账号已被禁用，请联系管理员')
+  api.userApi.getInfo().then((res: AxiosResponse) => {
+    const {data,code,message,type}:{data:userInfoVo,code:number,message:string,type:any} = res.data;
+    ElMessage({message: message, type: type})
+    if(code == 200){
+      store.commit('userStore/SET_USER_INFO', data)
     }
-    userinfo.value = data
-    store.commit('userStore/SET_USER_INFO', data)
-    ElMessage.success('欢迎回来~')
   })
 }
 
 // 退出当前账户
 const userExit = () => {
-  store.dispatch('userStore/logout', getCookie()).then(() => {
-    isLoginState.value = false
-    switchPage.value = false
+  store.dispatch('userStore/logout', getCookie()).then((message) => {
+    ElMessage.success(message)
     isLoginState.value = false
     localStorage.setItem('isLoginState', String(isLoginState.value))
-    localStorage.setItem('IsSwitchPage', String(switchPage.value))
     router.push({path: '/'})
+  },(error:Error)=>{
+    ElMessage.success(error.message)
   })
 }
 
+// 切换前后台
 const switchPageEvnt = () => {
-  switchPage.value = !switchPage.value;
-  switchPage.value ? router.push({path: '/Dashboard'}) : router.push({path: '/'})
-  // 缓存
-  localStorage.setItem('IsSwitchPage', String(switchPage.value))
+  if (isloading.value){
+    router.push({path: '/Dashboard'})
+  }else {
+    router.push({path: '/'})
+  }
 }
 </script>
 

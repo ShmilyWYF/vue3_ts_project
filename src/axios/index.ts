@@ -1,5 +1,6 @@
 import {list} from '@/axios/import'
 import HttpRequest from "@/axios/HttpRequest";
+import qs from 'qs'
 
 class RulesVariable {
 
@@ -11,7 +12,7 @@ class RulesVariable {
         this._isEnable = isEnable;
     }
 
-    private static _IS_AXIOS_BASE: boolean = import.meta.env.APP_IS_AUTO_AXIOS_BASE;
+    private static readonly _IS_AXIOS_BASE: boolean = import.meta.env.APP_IS_AUTO_AXIOS_BASE;
 
     public static get IS_AXIOS_BASE(): boolean {
         return this._IS_AXIOS_BASE;
@@ -27,11 +28,19 @@ class RulesVariable {
         return this._isEnable;
     }
 
+
     // 通用工具方法
-    protected apiTool(key: any): {} {
+    protected apiTool(key: any ): {} {
         return Object.keys(key).reduce((pre: any, cur: string) => {
+            // post-get-load兼容
+            const type = ['get', 'delete'].includes(key[cur].method) ? 'params' : 'data'
+            if (type === 'params'||key[cur].data instanceof FormData){
+                key[cur].paramsSerializer = (params:any) => {
+                    return qs.stringify(params, {arrayFormat: 'repeat'})
+                }
+            }
             pre[cur] = (data: {}) => { // 该参用于给生成的对象添加操作参数
-                return new HttpRequest(RulesVariable.BASE_API).createAxiosInstance({...key[cur], data})
+                return new HttpRequest(RulesVariable.BASE_API).createAxiosInstance({...key[cur], [type]: data})
             }
             return pre
         }, {})

@@ -5,15 +5,17 @@ const getters = {
     // 文章
     featureArticleData: (state: any) => state.articleStore.featureArticleData,
     articleList: (state: any) => state.articleStore.articleList,
-    articleTagActive: (state: any) => state.articleStore.articleTagActive,
-    articleTagList: (state: any) => state.articleStore.articleTagList,
-    articleCategorylist: (state: any) => state.articleStore.articleCategorylist,
-    acticleAsideList: (state: any) => state.articleStore.acticleAsideList,
     articleContext: (state: any) => state.articleStore.articleContext,
     allArticle: (state: any) => state.articleStore.allArticle,
     articleByStatusList: (state: any) => state.articleStore.articleByStatusList,
+    // 分类
+    categoryList: (state: any) => state.categoryStore.categoryList,
+    categoryActive: (state: any) => state.categoryStore.categoryActive,
+    // 标签
+    tagList: (state: any) => state.tagStore.tagList,
     // 主页=====>
     useState: (state: any) => state.useAppStore.useState,
+    asideList: (state: any) => state.useAppStore.asideList,
     // isMainBg:(state: any) => state.useAppStore.isMainBg,
     // 用户信息===>
     userinfo: (state: any) => state.userStore.userinfo,

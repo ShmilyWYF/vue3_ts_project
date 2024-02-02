@@ -1,71 +1,83 @@
 <template>
   <div :style="{'--use-height': h}" class="Article">
     <el-card body-style="padding: 0;height: 100%;" style="height: 100%">
-      <div :class="{'feature-article-horizontal':type ==='0','feature-article-Vertical':type === '1'}">
-        <div class="feature-thumbnail">
-          <img :src="data.articleCover"
-               alt="背景图片" class="ob-hz-thumbnail">
-          <span class="thumbnail-screen"
-                style="background: linear-gradient(130deg, rgb(36, 198, 220), rgb(84, 51, 255) 41.07%, rgb(255, 0, 153) 76.05%);"/>
-        </div>
-        <div class="feature-content">
-          <span>
-            <b>{{ data.categoryName }}</b>
-            <ul>
-              <li v-for="(item,key) in data.tags" :key="key">
-                <em># {{ item.tagName }}</em>
-              </li>
-            </ul>
-          </span>
-          <h1 class="article-title">
-            <router-link :to="/articles/+data.id">
-              <span>{{ data.articleTitle }}</span>
-            </router-link>
-          </h1>
-          <p>
-            {{ data.articleContent }}
-          </p>
-          <div class="article-footer">
-            <div class="items-center">
-              <img :src="data.author.avatar" alt="头像">
-              <span class="text-ob">
-                <strong class="text-ob-normal">
-                    {{ data.author.nickname }}
-                </strong>
-                <strong class="text-ob-normal" style="margin: 0 0 0 5px;">
-                  发布于 {{ timeZh(data.createTime) }}
-              </strong>
+      <el-skeleton :loading="loading" style="height: 100%;" animated>
+        <template #template>
+          <div :class="{'feature-article-horizontal':type ==='0','feature-article-Vertical':type === '1'}">
+            <el-skeleton-item variant="image" style="background: none" class="feature-thumbnail"/>
+            <el-skeleton class="feature-content" style="width: unset;z-index: 50" animated>
+              <template #template>
+                <div style="display: flex;gap: 1rem;margin-bottom: 1rem">
+                  <el-skeleton-item variant="h1" style="width: 20%"/>
+                  <el-skeleton-item variant="h1" style="width: 20%"/>
+                </div>
+                <el-skeleton :rows="3" style="width: 75%;" animated/>
+                <div class="article-footer">
+                  <div style="display: flex;align-items: center;flex: 1;gap: 1rem;">
+                    <el-skeleton-item variant="circle" style="width: 1.5rem;height: 1.5rem;"/>
+                    <el-skeleton-item variant="p" style="width: 50%"/>
+                  </div>
+                </div>
+              </template>
+            </el-skeleton>
+          </div>
+        </template>
+        <template #default>
+          <div :class="{'feature-article-horizontal':type ==='0','feature-article-Vertical':type === '1'}">
+            <div class="feature-thumbnail">
+              <img :src="data.articleCover"
+                   alt="背景图片">
+              <span class="thumbnail-screen"
+                    style="background: linear-gradient(130deg, rgb(36, 198, 220), rgb(84, 51, 255) 41.07%, rgb(255, 0, 153) 76.05%);"/>
+            </div>
+            <div class="feature-content">
+            <span>
+              <b>{{ data.categoryName }}</b>
+              <ul>
+                <li v-for="(item,key) in data.tags" :key="key">
+                  <em># {{ item.tagName }}</em>
+                </li>
+              </ul>
             </span>
+              <h1 class="article-title">
+                <router-link :to="/articles/+data.id">
+                  <span>{{ data.articleTitle }}</span>
+                </router-link>
+              </h1>
+              <p>
+                {{ data.articleContent }}
+              </p>
+              <div class="article-footer">
+                <div class="items-center">
+                  <img :src="data.author.avatar" alt="头像">
+                  <span class="text-ob">
+                  <strong class="text-ob-normal">
+                      {{ data.author.nickname }}
+                  </strong>
+                  <strong class="text-ob-normal" style="margin: 0 0 0 5px;">
+                    发布于 {{ timeZh(data.createTime) }}
+                  </strong>
+                </span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </template>
+      </el-skeleton>
     </el-card>
   </div>
 </template>
 <script lang="ts" setup>
 import {ArticleInterface} from "@/interface";
 import {timeZh} from "@/utils/timeZH";
-import {PropType} from "vue";
 
 const name: string = 'HorizontalArticle';
 
-defineProps({
-  data: {
-    type: Object as PropType<ArticleInterface> || {},
-    required: true
-  },
-  type: {
-    default: '0',
-    type: String,
-    required: true,
-  },
-  h: {
-    default: '100%',
-    type: String,
-  }
+const props = withDefaults(defineProps<{ data: ArticleInterface, type?: string, h?: string, loading?: boolean }>(), {
+  type: '0',
+  h: '100%',
+  loading: false
 })
-
 </script>
 <style lang="scss" scoped>
 .Article {
@@ -352,5 +364,9 @@ defineProps({
   .Article {
     height: var(--use-height);
   }
+}
+
+.el-skeleton {
+  @include skeleton();
 }
 </style>

@@ -1,22 +1,22 @@
 export default {
     // 添加标签
-    addOrEditTags: {
+    addTags: {
         method: 'post',
-        url: '/article/tags',
+        url: '/tag/add',
     },
-    // 查询所有标签
-    getTags: {
+    // 查询所有标签 带参数 参数相关
+    getTags:<any> {
         method: 'get',
-        url: '/article/tags',
+        url: '/tag/all',
     },
-    // 查询所有标签
-    getTagsWithCount: {
-        method: 'get',
-        url: '/article/getTagsWithCount',
+    // 更新标签
+    updateTags: {
+        method: 'put',
+        url: '/tag/update',
     },
-    // 添加标签
+    // 删除标签
     deleteTags: {
         method: 'delete',
-        url: '/article/tags',
+        url: '/tag/remove',
     },
 }

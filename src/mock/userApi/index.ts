@@ -1,4 +1,5 @@
 import {
+    deleteUser, disableUserById, getAlluser,
     getCaptchaByEmail,
     getUserinfo,
     registerUser,
@@ -65,6 +66,30 @@ const userApi: any = [
         status: true,
         condition: true
     },
+    {
+        url: 'user/alluser',
+        type: 'get',
+        template: getAlluser,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: 'user/deleteUser',
+        type: 'delete',
+        template: deleteUser,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: 'user/disableUserById',
+        type: 'get',
+        template: disableUserById,
+        code: Number(200),
+        status: true,
+        condition: true
+    }
 ]
 
 

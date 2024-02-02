@@ -1,17 +1,22 @@
 export default {
     // 添加标签
-    addOrEditCategorys: {
+    addCategorys:<any> {
         method: 'post',
-        url: '/article/category',
+        url: '/category/add',
     },
-    // 查询所有标签
-    getCategorys: {
+    // 获取类别列表
+    getCategorys:<any>{
         method: 'get',
-        url: '/article/category',
+        url: '/category/all'
+    },
+    updateCategorys:<any>{
+        method: 'put',
+        url: '/category/update',
     },
     // 添加标签
-    deleteCategorys: {
+    deleteCategorys:<any> {
         method: 'delete',
-        url: '/article/category',
+        url: '/category/remove',
     },
+
 }

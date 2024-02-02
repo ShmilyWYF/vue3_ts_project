@@ -148,7 +148,7 @@ export const allArticle: ArticleInterface[] = data.data.concat(
         "createTime": 1694627295,
         "updateTime": "2023-08-29T10:46:32"
     }
-    )
+)
 
 //  特辑和置顶
 export const FeatureArticle = () => {
@@ -201,11 +201,11 @@ export const ArticleListByCategory = (parameters: string) => {
 
 // 按标签列出的文章
 export const articleListByTags = (parameters: string) => {
-        let arr = allArticle.filter(item => {
-            let key = item.tags?.findIndex(value => value.tagName == parameters)
-            return key != -1;
-        })
-        return arr
+    let arr = allArticle.filter(item => {
+        let key = item.tags?.findIndex(value => value.tagName == parameters)
+        return key != -1;
+    })
+    return arr
 }
 
 // 获取文章旁白列表
@@ -228,7 +228,7 @@ export const ArticleAsideList = () => {
             url: 'https://github.com',
             childer: [
                 {
-                    articleCount: 1,
+                    articleCount: allArticle.length,
                     title: '文章'
                 },
                 {
@@ -236,11 +236,11 @@ export const ArticleAsideList = () => {
                     title: '说说'
                 },
                 {
-                    articleCount: '14',
+                    articleCount: articleCategoryList.length,
                     title: '分类'
                 },
                 {
-                    articleCount: '11',
+                    articleCount: articleListTag.length,
                     title: '标签'
                 }
             ]
@@ -311,6 +311,7 @@ export const AddArticle = (aritcleData: string) => {
             "intro": obj.author.intro,
             "website": obj.author.website,
             "createTime": obj.author.createTime,
+            "isDisable": 0,
         },
         "categoryName": obj.categoryName,
         "tags": tags.data.filter((item: { tagName: any; }) => {
@@ -325,20 +326,20 @@ export const AddArticle = (aritcleData: string) => {
 }
 
 // 更新文章
-export const updateArticleInfo = (aritcleData:string) =>{
-    const articleInfo:{id:number|string,tags:[]} |any = JSON.parse(aritcleData)
+export const updateArticleInfo = (aritcleData: string) => {
+    const articleInfo: { id: number | string, tags: [] } | any = JSON.parse(aritcleData)
     let index = allArticle.findIndex(value => value.id == articleInfo.id)
-    if (index != -1){
+    if (index != -1) {
         let tempTagsList: Tagsinterface[] = [];
-        articleInfo.tags?.forEach((item: string)=>{
+        articleInfo.tags?.forEach((item: string) => {
             // 校验是否存在 不存在则添加进列表
-            addOrEditTag(JSON.stringify({tagName:item}))
+            addOrEditTag(JSON.stringify({tagName: item}))
             tempTagsList.push(<Tagsinterface>tags.data.find(value => value.tagName == item))
         })
         allArticle[index] = articleInfo
         allArticle[index].tags = tempTagsList
         return allArticle
-    }else {
+    } else {
         return false;
     }
 }
@@ -379,7 +380,7 @@ export const updateArticleCategory = (obj: string) => {
     addOrEditCategory(JSON.stringify({categoryName: categoryName}));
     let result: any = null
     let key = allArticle.findIndex(value => value.id == id)
-    if (key != -1){
+    if (key != -1) {
         // 给文章添加标签
         let categoryKey = category.data.findIndex((item: { categoryName: string; }) => {
             return item.categoryName?.toLocaleLowerCase() === categoryName.toLocaleLowerCase()
@@ -387,7 +388,7 @@ export const updateArticleCategory = (obj: string) => {
         // @ts-ignore
         allArticle[key].categoryName = category.data[categoryKey].categoryName
         result = allArticle[key].categoryName
-    }else {
+    } else {
         return false
     }
     return result
@@ -464,7 +465,7 @@ export const deleteArticleTagById = (obj: any) => {
     let key = allArticle.findIndex(item => {
         return item.id == articleid
     })
-    if (key != 0){
+    if (key != 0) {
         let allArticles = allArticle[key].tags;
         let tagindex = allArticles!.findIndex(item => {
             return item.id == tagid
@@ -472,7 +473,7 @@ export const deleteArticleTagById = (obj: any) => {
         allArticle[key].tags!.splice(tagindex, 1)
         return allArticle[key].tags;
     }
-    return  false
+    return false
 }
 // 按状态获取文章列表
 export const getArticleListByStatus = (statusName: string) => {

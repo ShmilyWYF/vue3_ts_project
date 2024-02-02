@@ -1,10 +1,8 @@
 <template>
   <div id="feature">
-    <div v-if="loading">
-    </div>
-    <div v-else class="home-article">
-      <Article :data='FeatureData.TOP' h="28rem" type="0"/>
-      <slot name="FeatureList" :list="FeatureData.LIST" :loading="loading"/>
+    <div class="home-article">
+      <Article :data='FeatureData.Top' h="28rem" type="0" :loading="topLoading"/>
+      <slot name="FeatureList" :list="FeatureData.Featured"/>
     </div>
   </div>
 </template>
@@ -12,15 +10,15 @@
 <script lang="ts" setup>
 import {Article} from "@/components";
 import {FeatureDatainterface} from "@/interface";
+import {computed, toRefs} from "vue";
 
 const name = 'Feature'
 // vue3.3约束一个作用域插槽。
 // defineSlots<{featureList:(props: {list:ArticleInterface}) => ArticleInterface[]}>()
-const props = defineProps<{
-  FeatureData: FeatureDatainterface,
-  loading: boolean,
-}>()
+const props = defineProps<{ FeatureData: FeatureDatainterface, }>()
+const {FeatureData} = toRefs(props);
 
+const topLoading = computed<boolean>(() => Object.keys(FeatureData.value.Top).length === 0)
 </script>
 
 <style lang="scss">

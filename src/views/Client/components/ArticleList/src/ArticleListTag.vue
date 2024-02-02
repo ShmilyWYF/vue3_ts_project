@@ -1,32 +1,51 @@
 <template>
   <div id="ArticleListCategory" class="ArticleListCategory">
-      <el-tabs ref="tabRef" v-model="articleCategoryActive" @tab-click="getArticleListByCategory">
-
-        <el-tab-pane label="ALL" name="ALL">
-          <template #label>
-            <el-tag effect="dark" type="info">
-              <span class="tag-a tag-all">{{ $t('message.ALL') }}</span>
-            </el-tag>
-          </template>
-          <template v-for="(item,key) in data" :key="key">
-            <Article :data="item" type="1"/>
-          </template>
-        </el-tab-pane>
-
-        <el-tab-pane v-for="(item,key) in articleCategoryList" v-if="isArticleCategoryList" :key="key"
-                     :label="$t('message.'+item.categoryName)" :name="item.categoryName">
-          <template #label>
-            <el-tag effect="dark" type="info">
-              <span class="tag-a">{{ item.categoryName }}</span>
-              <span class="tag-span">{{ item.articleCount }}</span>
-            </el-tag>
-          </template>
-          <template #default>
+    <el-tabs ref="tabRef" v-model="articleCategoryActive" @tab-click="getArticleListByCategory">
+      <el-tab-pane label="ALL" name="ALL">
+        <template #label>
+          <el-tag effect="dark" type="info">
+            <span class="tag-a tag-all">{{ $t('message.ALL') }}</span>
+          </el-tag>
+        </template>
+        <template #default>
+          <el-skeleton :loading="data.length === 0">
+            <template #template>
+              <Article :data="{} as ArticleInterface" type="1" :loading="true"/>
+            </template>
+            <template #default>
+              <transition-group name="fade">
+                <template v-for="(item,key) in data" :key="key">
+                  <Article :data="item" type="1"/>
+                </template>
+              </transition-group>
+            </template>
+          </el-skeleton>
+        </template>
+      </el-tab-pane>
+      <el-tab-pane v-for="(item,key) in articleCategoryList" v-if="isArticleCategoryList" :key="key"
+                   :label="$t('message.'+item.categoryName)" :name="item.categoryName">
+        <template #label>
+          <el-tag effect="dark" type="info">
+            <span class="tag-a">{{ firstCharacterToUppercase(item.categoryName) }}</span>
+            <span class="tag-span">{{ item.articleCount }}</span>
+          </el-tag>
+        </template>
+        <template #default>
+          <transition-group name="fade">
             <Article v-for="(item,key) in data" :key="key" :data="item" type="1"/>
-          </template>
-        </el-tab-pane>
-      </el-tabs>
-    <Svg-Icon name="more" class="tabs-btn-svg" ref="btnRef" @click="btnClick" size="2" v-show="articleCategoryList.length > 8"/>
+          </transition-group>
+        </template>
+      </el-tab-pane>
+    </el-tabs>
+
+    <el-skeleton :loading="!isArticleCategoryList" animated class="tabs-skeleton">
+      <template #template>
+        <el-skeleton-item style="padding: 0.65rem 1rem;width: 3rem;margin: 0 1rem" v-for="index in 2"/>
+      </template>
+    </el-skeleton>
+
+    <Svg-Icon name="more" class="tabs-btn-svg" ref="btnRef" @click="btnClick" size="2"
+              v-show="articleCategoryList.length > 8"/>
     <el-pagination
         :current-page="currentPage"
         :next-icon="svg('kaoyu')"
@@ -41,40 +60,42 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, onMounted, ref} from 'vue'
+import {onMounted, ref} from 'vue'
 import {Article, SvgIcon} from "@/components";
 import store from "@/store";
 import {svg} from "@/icons";
 import {ArticleInterface, CategoryCountInterface} from "@/interface";
+import {firstCharacterToUppercase} from "@/utils/util";
 
-const tabRef = ref<{$el: HTMLDivElement} | any>()
+const tabRef = ref<{ $el: HTMLDivElement } | any>()
 const articleCategoryList = ref<CategoryCountInterface[]>([])
 // 控制渲染时机
 const isArticleCategoryList = ref<boolean>(false)
 const btnRef = ref<{ $el: HTMLButtonElement } | any>()
 const isBtnClick = ref<boolean>(false)
-const articleCategoryActive = computed(() => store.getters.articleTagActive)
+const articleCategoryActive = ref(store.getters.categoryActive ? store.getters.categoryActive : "ALL")
 
 const currentPage = ref<number>(1)
 const pageSize = ref<number>(12)
 // 初始化数据
-const data = ref<ArticleInterface[]>()
+const data = ref<ArticleInterface[]>([])
 const total = ref<ArticleInterface[]>([])
 
 onMounted(() => {
-  getArticleCategorylist();
+  getCategoryList();
   getArticleListByCategory();
 })
 
 /**
  * @author WangYaFeng
  * @date 2023/10/19 23:16
- * @description 获取文章标签列表
+ * @description 获取文章分类列表
  * @return null
  */
-const getArticleCategorylist = () => {
-  store.dispatch('articleStore/getArticleCategorylist').then((res: CategoryCountInterface[]) => {
+const getCategoryList = () => {
+  store.dispatch('categoryStore/getCategorylist').then((res: CategoryCountInterface[]) => {
         articleCategoryList.value = res
+        // 加载文章列表
         isArticleCategoryList.value = true
       }
   )
@@ -87,9 +108,15 @@ const getArticleCategorylist = () => {
  * @return null
  * @param pane
  */
-const getArticleListByCategory = async (pane?: any) => {
+const getArticleListByCategory = (pane: any = null) => {
   const label = pane?.paneName ? pane.paneName : (articleCategoryActive.value ? articleCategoryActive.value : 'ALL')
-  store.dispatch('articleStore/getArticleListByCategory', label).then((res: ArticleInterface[]) => {
+  store.dispatch('articleStore/getArticleListByCategory', firstCharacterToUppercase(label)).then((res: ArticleInterface[] | undefined) => {
+        if (res == undefined) {
+          data.value = [];
+          total.value = [];
+          return;
+        }
+        currentPage.value = 1;
         total.value = res
         data.value = total.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
       }
@@ -106,19 +133,20 @@ const getArticleListByCategory = async (pane?: any) => {
  */
 const getCurrentChange = (Pages: number) => {
   currentPage.value = Pages;
-  const {$el} = <{$el:HTMLDivElement}>tabRef.value;
+  const {$el} = <{ $el: HTMLDivElement }>tabRef.value;
   $el.scrollIntoView();
   data.value = total.value.slice((Pages - 1) * pageSize.value, Pages * pageSize.value)
 }
 
-const btnClick = () =>{
+// 展开按钮事件
+const btnClick = () => {
   const {$el} = btnRef.value
   let tab = <{ $el: HTMLElement }>tabRef.value
   let child = <HTMLElement>tab.$el.children[0].children[0].children[0].children[0];
-  if (!isBtnClick.value){
+  if (!isBtnClick.value) {
     $el.style.transform = 'rotate(-90deg)'
-    child.style.height = '6rem'
-  }else {
+    child.style.height = 'auto'
+  } else {
     $el.style.transform = 'rotate(0deg)'
     child.style.height = '3rem'
   }
@@ -127,6 +155,8 @@ const btnClick = () =>{
 
 </script>
 <style lang="scss" scoped>
+@import "@/style/fade.css";
+
 .ArticleListCategory {
   height: auto;
   position: relative;
@@ -143,6 +173,7 @@ const btnClick = () =>{
       border-bottom-right-radius: 0.5rem;
       @include background_color('background-color');
       @include box_shadow('box-card-shadow-tabs');
+
       .el-tabs__nav-wrap, .el-tabs__nav-scroll, .el-tabs__nav {
         width: 95%;
         gap: 1.25rem;
@@ -198,7 +229,7 @@ const btnClick = () =>{
           position: static !important;
         }
 
-        .el-tabs__nav-prev, .el-tabs__nav-next{
+        .el-tabs__nav-prev, .el-tabs__nav-next {
           display: none;
         }
       }
@@ -208,8 +239,9 @@ const btnClick = () =>{
         height: 3rem;
         flex-wrap: wrap
       }
-      @media screen and  (max-width: 1024px) {
-        .el-tabs__nav{
+
+      @media screen and (max-width: 1024px) {
+        .el-tabs__nav {
           flex-wrap: wrap;
           height: auto;
         }
@@ -288,6 +320,17 @@ const btnClick = () =>{
       background: $main-Np-gradient !important;
     }
   }
+}
+
+.tabs-skeleton {
+  width: initial;
+  position: absolute;
+  left: 7rem;
+  top: 7px;
+}
+
+.el-skeleton {
+  @include skeleton();
 }
 
 </style>

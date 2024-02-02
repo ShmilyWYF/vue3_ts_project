@@ -2,17 +2,17 @@ export default {
     // 保存消息
     saveComments: <any>{
         method: 'post',
-        url: '/comment/save',
+        url: '/comment/add',
     },
     // 按类型获取消息列表
     getCommentListByType: <any>{
         method: 'get',
-        url: '/comment/getCommentListByType',
+        url: '/comment/allByType',
     },
     // 按评论Id获取回复
     getRepliesByCommentId: <any>{
         method: 'get',
-        url: '/comment/getRepliesByCommentId',
+        url: '/comment/replies',
     },
     // 查询所有评论
     getComments: <any>{
@@ -27,11 +27,11 @@ export default {
     // 删除评论
     deleteComments: <any>{
         method: 'delete',
-        url: '/comment/delete',
+        url: '/comment/remove',
     },
     // 更新评论审核状态
     releaseComments:<any>{
-        method: 'update',
+        method: 'put',
         url: '/comment/update',
     },
 }

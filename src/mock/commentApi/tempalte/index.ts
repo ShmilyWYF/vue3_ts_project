@@ -2,21 +2,23 @@ import Mock from "mockjs";
 import {CommentMockinterface} from "@/interface";
 import {userinfo as allUserInfo} from "@/mock/userApi/tempalte/userTemplate";
 import {allArticle} from "@/mock/articleApi/tempalte";
+import store from "@/store";
 
 export const comments: { data: CommentMockinterface[] } = Mock.mock({
-    data: [{
-        id: 1853,
-        user_id: 1,
-        topic_id: 41,
-        comment_content: '第一套评论消息',
-        reply_user_id: 1,
-        parent_id: null,
-        type: 1,
-        is_delete: 0,
-        is_review: 1,
-        create_time: new Date(),
-        update_time: null,
-    },
+    data: [
+        {
+            id: 1853,
+            user_id: 1,
+            topic_id: 41,
+            comment_content: '第一套评论消息',
+            reply_user_id: 1,
+            parent_id: null,
+            type: 1,
+            is_delete: 0,
+            is_review: 1,
+            create_time: new Date(),
+            update_time: null,
+        },
         {
             id: 181,
             user_id: 1,
@@ -272,7 +274,7 @@ export const saveComments = (obj: string) => {
         comment_content: commentContent,
         create_time: new Date,
         is_delete: 0,
-        is_review: 0,
+        is_review: store.getters.useState.isCommentReview,
         parent_id: parentId,
         reply_user_id: replyUserId,
         replys: null,
@@ -317,21 +319,21 @@ export const getCommentAll = (obj: string) => {
     let arr: CommentMockinterface[] = []
     let result: any[] = []
     // 参数不为空
-    if (objs !== null){
-        if(typeof objs == 'string'||typeof objs == 'number'){
+    if (objs !== null) {
+        if (typeof objs == 'string' || typeof objs == 'number') {
             arr = comments.data.filter((item: CommentMockinterface) => {
                 return item.is_review == obj
             })
-            arr.forEach(item=>{
+            arr.forEach(item => {
                 let userinfo = allUserInfo.find(value => value.id === item.user_id);
                 let replyUserinfo = allUserInfo.find(value => value.id === item.reply_user_id);
                 let articleinfo = allArticle.find(value => value.id = item.topic_id)
-                let data ={
+                let data = {
                     id: item.id,
                     avatar: userinfo?.avatar,
                     nickname: userinfo?.nickname,
                     replyNickname: replyUserinfo?.nickname,
-                    articleTitle: articleinfo?articleinfo?.articleTitle:'无',
+                    articleTitle: articleinfo ? articleinfo?.articleTitle : '无',
                     commentContent: item.comment_content,
                     createTime: item.create_time,
                     isReview: item.is_review,
@@ -390,24 +392,24 @@ export const getCommentAll = (obj: string) => {
         }
     } else {
         // 获取所有
-            arr = comments.data
-            arr.forEach(item=>{
-                let userinfo = allUserInfo.find(value => value.id === item.user_id);
-                let replyUserinfo = allUserInfo.find(value => value.id === item.reply_user_id);
-                let articleinfo = allArticle.find(value => value.id == item.topic_id)
-                let data ={
-                    id: item.id,
-                    avatar: userinfo?.avatar,
-                    nickname: userinfo?.nickname,
-                    replyNickname: replyUserinfo?.nickname,
-                    articleTitle: articleinfo?articleinfo?.articleTitle:'无',
-                    commentContent: item.comment_content,
-                    createTime: item.create_time,
-                    isReview: item.is_review,
-                    type: item.type,
-                }
-                result.push(data)
-            })
+        arr = comments.data
+        arr.forEach(item => {
+            let userinfo = allUserInfo.find(value => value.id === item.user_id);
+            let replyUserinfo = allUserInfo.find(value => value.id === item.reply_user_id);
+            let articleinfo = allArticle.find(value => value.id == item.topic_id)
+            let data = {
+                id: item.id,
+                avatar: userinfo?.avatar,
+                nickname: userinfo?.nickname,
+                replyNickname: replyUserinfo?.nickname,
+                articleTitle: articleinfo ? articleinfo?.articleTitle : '无',
+                commentContent: item.comment_content,
+                createTime: item.create_time,
+                isReview: item.is_review,
+                type: item.type,
+            }
+            result.push(data)
+        })
     }
     return result
 }
@@ -421,39 +423,39 @@ export const getRepliesByCommentId = (commentId: number) => {
     return data[key]
 }
 
-export const getAllCommentData = (obj:string) =>{
+export const getAllCommentData = (obj: string) => {
     return getCommentAll(obj);
 }
 
 // 删除
-export const deleteCommentById = (obj:string) =>{
+export const deleteCommentById = (obj: string) => {
     const {data} = JSON.parse(obj);
-    data.forEach((id:number|string)=>{
-        let key = comments.data.findIndex(res=>{
+    data.forEach((id: number | string) => {
+        let key = comments.data.findIndex(res => {
             return res.id == id
         })
-        let keys = commentData.findIndex(res=>{
+        let keys = commentData.findIndex(res => {
             return res.id == id
         })
-        if (key != -1){
-            comments.data.splice(key,1)
-            commentData.splice(keys,1)
+        if (key != -1) {
+            comments.data.splice(key, 1)
+            commentData.splice(keys, 1)
         }
     })
     return true;
 }
 
 // 更新
-export const releaseCommentById = (obj:string) =>{
+export const releaseCommentById = (obj: string) => {
     const {data} = JSON.parse(obj);
-    data.forEach((id:number|string)=>{
-        let key = comments.data.findIndex(res=>{
+    data.forEach((id: number | string) => {
+        let key = comments.data.findIndex(res => {
             return res.id == id
         })
-        let keys = commentData.findIndex(res=>{
+        let keys = commentData.findIndex(res => {
             return res.id == id
         })
-        if (key != -1){
+        if (key != -1) {
             comments.data[key].is_review = 1
             commentData[keys].isReview = 1
         }

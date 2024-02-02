@@ -33,7 +33,7 @@ export default defineConfig(({command, mode}) => {
             // 反向代理
             proxy: {
                 '/api': {
-                    target: 'http://localhost:5016',
+                    target: 'http://localhost:8080',
                     changeOrigin: true,
                     rewrite: (path) => path.replace(/^\/api/, ""),
                     selfHandleResponse: true,

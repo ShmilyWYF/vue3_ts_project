@@ -1,6 +1,6 @@
 <template>
   <div class="commentForm-box">
-    <el-avatar :size="50" src="https://static.linhaojun.top/aurora/config/2af2e2db20740e712f0a011a6f8c9af5.jpg"/>
+    <el-avatar :size="50" :src="avatar"/>
     <div class="comment">
       <textarea v-model="commentContent" cols="30" placeholder="Add comment..." rows="5"/>
       <div style="text-align: right">
@@ -14,12 +14,24 @@
 </template>
 
 <script lang="ts" setup>
-import {ref} from "vue";
+import {inject, ref} from "vue";
 import {ElNotification} from "element-plus";
-import store from "@/store";
 import api from "@/axios";
-import {AxiosResponse} from "axios";
 import {useRoute} from "vue-router";
+import {UserInfoInterface} from "@/interface";
+
+withDefaults(defineProps<{avatar?:string}>(),{
+  avatar: 'src/assets/commentDefaultAvater.png'
+})
+
+// 评论类型
+const commentType = inject<number>('commentType')
+// 评论审核
+const commentReview = inject<number>('commentReview')
+// 回复框 展示用户头像
+const userinfo:UserInfoInterface|undefined = inject<any>('userinfo')
+// 获取父组件save回调函数
+const saveCommentEvnt: any = inject('saveComment')
 
 // 评论上下文
 const commentContent = ref<string>('')
@@ -29,8 +41,8 @@ const router = useRoute();
 const id = router.path.split('/')[2]
 
 // 保存评论事件
-const saveComment = () => {
-  if (!store.getters.userinfo||store.getters.userinfo == '') {
+const saveComment = async () => {
+  if (userinfo === undefined) {
     ElNotification({
       title: 'Warning',
       message: '请登陆后评论',
@@ -48,58 +60,24 @@ const saveComment = () => {
   }
   const params: any = {
     commentContent: commentContent.value,
-    type: store.getters.commentType,
-    userId: store.getters.userinfo.id,
+    type: commentType,
+    userId: userinfo.id,
     topicId: id
   }
-  // 保存评论
-  try {
-    api.commentApi.saveComments(params).then((res: AxiosResponse) => {
-      const {data} = res.data
-      loadCommentData()
-      // 获取配置 是否开启审核
-      let isCommentReview = store.getters.useState.isCommentReview
-      if (isCommentReview) {
-        ElNotification({
-          title: 'Warning',
-          message: '评论成功,正在审核中',
-          type: 'warning'
-        })
-      } else {
-        ElNotification({
-          title: 'Success',
-          message: '回复成功',
-          type: 'success'
-        })
-      }
-      commentContent.value = ''
-    })
-  } catch (e: any) {
-    ElNotification({
-      title: '错误',
-      message: e,
-      type: 'error'
-    })
+  //  提交保存
+  await saveCommentEvnt(params)
+  // 获取配置 是否开启审核
+  if (commentReview) {
+    ElNotification.warning("评论成功,正在审核中");
+  } else {
+    ElNotification.success("回复成功");
   }
+  commentContent.value = ''
+  loadCommentData()
 }
 
-const loadCommentData = async () => {
-  switch (store.getters.commentType) {
-    case 1:
-      emit('callObjectType', 'articleFetchComment')
-      break
-    case 2: // 当前页为留言板留言板调用事件
-      emit('callObjectType', 'messageFetchComment')
-      break
-    case 3: // 当前页为关于板留言板调用事件
-      emit('callObjectType', 'aboutFetchComment')
-      break
-    case 4: // 当前页为友链留言板调用事件
-      emit('callObjectType', 'friendLinkFetchComment')
-      break
-    case 5: // 当前页为留言板留言板调用事件
-      emit('callObjectType', 'talkFetchComment')
-  }
+const loadCommentData = () => {
+      emit('callObjectType', 'comment')
 }
 
 </script>

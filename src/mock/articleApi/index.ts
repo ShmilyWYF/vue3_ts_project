@@ -22,9 +22,9 @@ import {
 
 const articleApi = [
     {
-        url: '/article/featureArticle',
+        url: '/article/getFeatureArticle',
         type: 'get',
-        template: FeatureArticle(),
+        template: FeatureArticle,
         code: Number(200),
         status: true,
         condition: true

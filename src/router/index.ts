@@ -51,7 +51,7 @@ const constantRoute: Array<RouteRecordRaw> = [
             {
                 path: '/about',
                 name: 'about',
-                component: () => import('@/components/TagList/index.vue'),
+                component: () => import('@/components/About/index.vue'),
                 props: true,
                 meta: {
                     require: true,
@@ -62,7 +62,7 @@ const constantRoute: Array<RouteRecordRaw> = [
             {
                 path: '/message',
                 name: 'Message',
-                component: () => import('@/components/TagList/index.vue'),
+                component: () => import('@/components/Message/index.vue'),
                 props: true,
                 meta: {
                     require: true,
@@ -153,6 +153,15 @@ export const asyncRouterMap: any[] = [
                 meta: {
                     require: true,
                     title: '评论管理'
+                },
+            },
+            {
+                path: '/Dashboard/user',
+                name: 'User',
+                component: () => import('@/views/Dashboard/components/user/index.vue'),
+                meta: {
+                    require: true,
+                    title: '用户管理',
                 },
             },
             {

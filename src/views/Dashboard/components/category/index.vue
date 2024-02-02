@@ -1,7 +1,7 @@
 <template>
   <div class="categorys-List-box">
     <div class="option-box">
-      <el-button size="small" type="primary" @click="openModel(null)">新增</el-button>
+      <el-button size="small" type="primary" @click="openModel()">新增</el-button>
       <el-button :disabled="categoryIds.length === 0" size="small" type="danger" @click="isDelete = true">
         批量删除
       </el-button>
@@ -10,7 +10,7 @@
     <!-- 表格展示 -->
     <el-table v-loading="loading" :data="data" border @selection-change="selectionChange">
       <!-- 表格列 -->
-      <el-table-column type="selection" width="55"/>
+      <el-table-column type="selection" width="55" :selectable="checkSelectable"/>
       <!-- 标签名 -->
       <el-table-column align="center" label="分类名" prop="categoryName">
         <template #default="slotProp">
@@ -32,7 +32,7 @@
       <el-table-column align="center" label="操作" width="200">
         <template #default="slotProp">
           <el-button size="large" type="primary" @click="openModel(slotProp.row)">编辑</el-button>
-          <el-popconfirm style="margin-left: 1rem" title="确定删除吗？" @confirm="deleteTag(slotProp.row.id)">
+          <el-popconfirm style="margin-left: 1rem" title="确定删除吗？" @confirm="deleteTag(slotProp.row)">
             <template #reference>
               <el-button size="large" type="danger">删除</el-button>
             </template>
@@ -51,7 +51,7 @@
       <div style="font-size: 1rem">是否删除选中项？</div>
       <template #footer>
         <el-button @click="isDelete = false">取 消</el-button>
-        <el-button type="primary" @click="deleteTag(null)"> 确 定</el-button>
+        <el-button type="primary" @click="deleteTag({id:null})"> 确 定</el-button>
       </template>
     </el-dialog>
     <!-- 编辑对话框 -->
@@ -71,14 +71,12 @@
 </template>
 
 <script lang="ts" setup>
-import {inject, onBeforeMount, reactive, ref} from "vue";
+import {onBeforeMount, reactive, ref} from "vue";
 import {ElMessage} from "element-plus";
 import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {CategoryInterface} from "@/interface";
 import {Pagination} from "@/components";
-
-const reloadV = inject<any>('reload');
 
 const isDelete = ref<boolean>(false)
 
@@ -106,11 +104,16 @@ onBeforeMount(() => {
   listCategory()
 })
 
+// 设置选择框可选择条件
+const checkSelectable = (row: { articleCount: number }) => {
+  return row.articleCount <= 0
+}
+
 // 分页结果
 const paginationResultsEvnt = (result: any) => {
   data.value = result
 }
-// 获取标签s列表
+// 获取标签列表
 const listCategory = () => {
   api.categoryApi.getCategorys().then((res: AxiosResponse) => {
     const {data} = res.data
@@ -137,15 +140,14 @@ const SearchInputEvnt = () => {
 }
 
 // 编辑和新增共享
-const openModel = (category: string | null) => {
+const openModel = (category: any = null) => {
   if (category != null) {
-    isAddOrEdit.value = true
+    isAddOrEdit.value = false
     categoryForm.id = JSON.parse(JSON.stringify(category)).id
     categoryForm.categoryName = JSON.parse(JSON.stringify(category)).categoryName
   } else {
-    categoryForm.id = null
+    isAddOrEdit.value = true
     categoryForm.categoryName = ''
-    isAddOrEdit.value = false
   }
   isViewAddOrEdit.value = true
 }
@@ -157,14 +159,16 @@ const addOrEditTag = async () => {
     return false
   }
   try {
-    await api.categoryApi.addOrEditCategorys(categoryForm).then((res: AxiosResponse) => {
-      const {data} = res.data
-      if (!data) {
-        throw new Error(categoryForm.id !== '' ? '更新失败' : '添加失败')
-      }
-      ElMessage.success(categoryForm.id !== '' ? '更新成功' : '添加成功')
-      categorys.value = data
-    })
+    if (isAddOrEdit.value) {
+      await api.categoryApi.addCategorys(categoryForm).then(({data}: AxiosResponse) => {
+        ElMessage({message: data.message, type: data.type})
+      })
+    } else {
+      await api.categoryApi.updateCategorys(categoryForm).then(({data}: AxiosResponse) => {
+        ElMessage({message: data.message, type: data.type})
+      })
+    }
+    listCategory();
   } catch (error: any) {
     ElMessage.error(error)
   }
@@ -181,27 +185,24 @@ const selectionChange = (categorys: []) => {
   categoryIds.value = arr
 }
 
-const deleteTag = async (id: number | null) => {
+const deleteTag = async (row: { id: number | null, articleCount?: number }) => {
+  const id = row.id;
   let param: {};
   if (id == null) {
-    param = {data: categoryIds.value}
+    param = {id: categoryIds.value}
   } else {
-    param = {data: [id]}
+    param = {id: [id]}
+    if (row.articleCount! > 0) {
+      ElMessage.warning("存在文章绑定，解绑后再试~")
+      return
+    }
   }
-  try {
-    await api.categoryApi.deleteCategorys(param).then((res: AxiosResponse) => {
-      const {data} = res.data
-      if (!data) {
-        throw new Error('删除失败')
-      }
-      ElMessage.success('删除成功')
-    })
-  } catch (e: any) {
-    ElMessage.error(e)
-  } finally {
-    listCategory()
-    isDelete.value = false
-  }
+  await api.categoryApi.deleteCategorys(param).then((res: AxiosResponse) => {
+    const {message, type} = res.data
+    ElMessage({message: message, type: type})
+  })
+  listCategory()
+  isDelete.value = false
 }
 </script>
 

@@ -37,7 +37,7 @@ const emit = defineEmits(['markTocEvnt', 'saveCache', 'fullScreen', 'unMarkbefor
 const props: any = defineProps({
   editMode: {
     type: Boolean,
-    required: true,
+    required: false,
     default: false
   },
   content: {

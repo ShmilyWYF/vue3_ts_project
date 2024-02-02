@@ -1,13 +1,12 @@
 <template>
   <el-pagination
-      v-model:page-size="pageSize"
+      v-model:page-size="pageNum"
       :current-page="currentPage"
       :next-icon="svg(<string>nextSvg)"
-      :page-size="pageSize"
+      :page-size="pageNum"
       :page-sizes="[10, 20, 30, 40]"
       :prev-icon="svg(<string>prevSvg)"
       :total="total!==undefined?total.length:0"
-      hide-on-single-page
       layout="sizes,prev, pager, next"
       @size-change="updatePageSize"
       @current-change="getCurrentChange"
@@ -47,6 +46,7 @@ watch(() => props.data, () => {
 // 初始化数据
 const currentPage = ref<number>(1)
 const total = ref(data)
+const pageNum = ref(pageSize?.value);
 
 
 onMounted(() => {
@@ -62,7 +62,7 @@ onMounted(() => {
  */
 const getCurrentChange = (Pages: number) => {
   currentPage.value = Pages;
-  emit("paginationResults", total.value !== undefined ? total.value.slice((Pages - 1) * pageSize.value, Pages * pageSize.value) : []);
+  emit("paginationResults", total.value !== undefined ? total.value.slice((Pages - 1) * pageNum.value, Pages * pageNum.value) : []);
 }
 
 const updatePageSize = (pageSize: number) => {

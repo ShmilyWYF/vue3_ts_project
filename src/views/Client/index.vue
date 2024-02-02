@@ -2,12 +2,12 @@
   <div id="client">
     <el-row :gutter="0" justify="center">
       <el-col :lg="{span: 20}" :md="{span: 22}" :xs="{span: 24}">
-        <Feature v-slot:FeatureList="slotProp" :FeatureData="featureData" :loading="loading">
-          <FeatureList :list="slotProp.list" :location="slotProp.loading"/>
+        <Feature v-slot:FeatureList="slotProp" :FeatureData="featureData">
+          <FeatureList :list="slotProp.list"/>
         </Feature>
         <ArticleMain :gutter="32">
           <template #header>
-            <sidebar :show-context="false" h="auto" icon="moon" title="文章列表"/>
+            <sidebar :show-context="false" h="auto" icon="moon" title="文章列表" style="margin-top: 1.5rem;"/>
           </template>
           <template #default>
             <Article-List-Tag/>
@@ -22,22 +22,19 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, reactive, ref} from "vue";
+import {computed, onMounted, reactive, ref} from "vue";
 import {Feature, FeatureList} from '@/views/Client/components/Feature'
-import {ArticleAside, ArticleListTag} from "@/views/Client/components/ArticleList";
+import {ArticleListTag,ArticleAside} from "@/views/Client/components/ArticleList";
 import store from "@/store";
 import {ArticleMain, Sidebar} from "@/components";
-import {FeatureDatainterface} from "@/interface";
+import {ArticleInterface, FeatureDatainterface} from "@/interface";
 
 const name = 'Client'
 
-const loading = ref<boolean>(true)
 const featureData = reactive<FeatureDatainterface>({
-  LIST: [],
-  TOP: {}
+  Top: {} as ArticleInterface,
+  Featured: [{},{}] as ArticleInterface[]
 })
-
-localStorage.setItem('IsSwitchPage', JSON.stringify(false))
 
 onMounted(() => {
   getArticle()
@@ -45,9 +42,8 @@ onMounted(() => {
 
 const getArticle = () => {
   store.dispatch('articleStore/getFeatureArticle').then((res: FeatureDatainterface) => {
-    featureData.TOP = res.TOP
-    featureData.LIST = res.LIST
-    loading.value = false
+    featureData.Top = res.Top
+    featureData.Featured = res.Featured
   })
 }
 

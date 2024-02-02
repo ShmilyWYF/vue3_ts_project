@@ -15,26 +15,24 @@
       <transition-group name="fade">
         <slot :commentReplyData="commentData" name="childComment"/>
       </transition-group>
-      <CommentReplyForm v-if="commentData.replys" v-show="initData.show" :index="index" :initialContent="initData.replyContent" :parentId="commentData.id" :replyUserId="commentData.userId" @cancel-reply="cancelReply"/>
+      <CommentReplyForm v-if="commentData.replys" v-show="initData.show" :index="index" :initialContent="initData.replyContent" :parentId="commentData.id!" :replyUserId="commentData.userId" @cancel-reply="cancelReply"/>
     </div>
   </div>
-  <CommentReplyForm v-if="!commentData.replys" v-show="initData.show" :index="index" :initialContent="initData.replyContent" :parentId="commentData.id" :replyUserId="commentData.userId" @cancel-reply="cancelReply"/>
+  <CommentReplyForm v-if="!commentData.replys" v-show="initData.show" :index="index" :initialContent="initData.replyContent" :parentId="commentData.id!" :replyUserId="commentData.userId" @cancel-reply="cancelReply"/>
 </div>
 </template>
 
 <script lang="ts" setup>
 import {reactive, toRefs} from 'vue'
-import {formatTime} from "@/utils/timeZH";
 import {CommentInterface, initDataInterface} from "@/interface";
-import CommentReplyForm from "@/components/Comments/CommentReplyForm/index.vue";
-
-const props = defineProps<{ commentData: CommentInterface, index?: number | string }>()
+import {CommentReplyForm} from "@/components/CommentModule";
+const props = defineProps<{ commentData: CommentInterface, index: number}>()
 const {commentData, index} = toRefs(props)
 
 // 初始化数据
 const initData = reactive<initDataInterface>({
   replyContent: 'add reply...',
-  time: formatTime(commentData.value.createTime),
+  time: commentData.value.createTime,
   show: false
 })
 

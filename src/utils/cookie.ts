@@ -1,11 +1,30 @@
 import cookies from "js-cookie";
 
-export const setCookie = (token: string) => {
-    cookies.set('token', token, {expires: 7})
+
+const expirationTime = new Date();
+const hours = 12;
+const minutes = 60;
+expirationTime.setTime(expirationTime.getTime() +  minutes * 60 * 1000 * hours);
+
+export const setCookie = (value: string) => {
+    cookies.set('token', value, {expires: expirationTime})
 }
-export const getCookie = (tokenKey: string = 'token') => {
-    return cookies.get(tokenKey)
+
+export const getCookie = (key: string = 'token') => {
+    return cookies.get(key)
 }
+
 export const removeCookie = (tokenKey: string = 'token') => {
-    return cookies.remove(tokenKey)
+    cookies.remove(tokenKey)
 }
+
+
+export const setStorageKeyCookie = (value: string = 'vuex') => {
+
+    cookies.set('storage', value, {expires: expirationTime})
+}
+
+export const removeStorageKeyCookie = (key: string = 'storage') => {
+    cookies.remove(key)
+}
+

@@ -1,34 +1,35 @@
 <template>
   <el-card>
-    <el-form v-if="isEdit" :model="userData" ref="fromRef" :rules="rules">
+    <el-form v-if="isEditR" :model="userData" ref="fromRef" :rules="rules">
       <el-form-item label="头像" prop="avatar">
         <label for="upload" class="ui-upload">
           <el-image style="width: 100px; height: 100px" :src="userData.avatar" fit="fill"/>
         </label>
         <input id="upload" type="file" name="file" multiple="multiple" @change="updateImg"
-               style="display: none" :disabled="!isEdit"/>
+               style="display: none" :disabled="!isEditR"/>
       </el-form-item>
       <el-form-item label="昵称" prop="nickname">
-        <el-input v-model="userData.nickname" :disabled="!isEdit"/>
+        <el-input v-model="userData.nickname" :disabled="!isEditR"/>
       </el-form-item>
       <el-form-item label="密码" prop="password">
         <el-input v-model="userData.password"/>
       </el-form-item>
       <el-form-item label="邮箱" prop="email" :disabled="true">
-        <el-input v-model="userData.email" :disabled="!isEdit"/>
+        <el-input v-model="userData.email" :disabled="!isEditR"/>
       </el-form-item>
       <el-form-item label="个人网址" prop="website">
-        <el-input v-model="userData.website" :disabled="!isEdit"/>
+        <el-input v-model="userData.website" :disabled="!isEditR"/>
       </el-form-item>
       <el-form-item label="简介" prop="intro">
         <el-input v-model="userData.intro" type="textarea"/>
       </el-form-item>
       <el-form-item label="是否订阅" prop="isSubscribe">
-        <el-radio-group v-model="userData.isSubscribe" :disabled="!isEdit">
+        <el-radio-group v-model="userData.isSubscribe" :disabled="!isEditR">
           <el-radio :label="0">否</el-radio>
           <el-radio :label="1">是</el-radio>
         </el-radio-group>
       </el-form-item>
+      <slot name="content" :row="userData"/>
     </el-form>
     <div v-else class="card-View-box">
       <div class="header-box">
@@ -46,37 +47,38 @@
         <p>{{ userData.intro }}</p>
       </div>
     </div>
-    <el-button v-show="!isEdit" type="primary" @click="isEdit = true">编辑用户信息</el-button>
-    <el-button v-show="isEdit" type="success" @click="updateUserInfo">保存</el-button>
-    <el-button v-show="isEdit" type="warning" @click="isEdit = !isEdit">取消编辑</el-button>
+    <div class="btn-box">
+      <div v-if="isEdit===false">
+        <el-button v-if="!isEditR" type="primary" @click="isEditR = true">编辑用户信息</el-button>
+        <div v-else>
+          <el-button type="success" @click="updateUserInfo">保存</el-button>
+          <el-button type="warning" @click="isEditR = !isEditR">取消编辑</el-button>
+        </div>
+      </div>
+      <div v-else>
+          <el-button type="success" @click="updateUserInfo">添加用户</el-button>
+      </div>
+    </div>
   </el-card>
 </template>
 
 <script setup lang="ts">
-import {reactive, ref, toRefs} from "vue";
+import {inject, reactive, ref, toRefs} from "vue";
 import {ElMessage, FormRules} from "element-plus";
 import {nameRule, pwdRule, UrlRule} from "@/utils/validate";
 import api from "@/axios";
-import {AxiosResponse} from "axios";
+import axios, {AxiosResponse} from "axios";
+import {userInfoVo} from "@/interface";
+import store from "@/store";
 
-interface userInfoVo {
-  id: number,
-  password: string,
-  nickname: string,
-  avatar: string,
-  createTime: Date,
-  email: string,
-  intro: string,
-  isDisable: number,
-  isSubscribe: number,
-  updateTime: Date | null,
-  website: string,
-  type: number,
-  last_login_time: Date,
-}
+const reloadV: any = inject('reload')
 
-const props = defineProps<{ fromData: userInfoVo }>()
-let { fromData } = toRefs(props);
+const props = withDefaults(defineProps<{ fromData: userInfoVo ,isEdit:boolean}>(),{
+  isEdit: false
+})
+
+const emit = defineEmits(['updateCall'])
+let { fromData,isEdit } = toRefs(props);
 const fromRef = ref<HTMLElement | any>()
 const rules = reactive<FormRules>({
   avatar: {required: true, message: '必填项', trigger: 'change'},
@@ -87,31 +89,17 @@ const rules = reactive<FormRules>({
   website: {required: false, validator: UrlRule},
 })
 
-const userData = reactive<userInfoVo>({
-      avatar: fromData.value.avatar,
-      email: fromData.value.email,
-      id: fromData.value.id,
-      intro: fromData.value.intro,
-      isDisable: fromData.value.isDisable,
-      isSubscribe: fromData.value.isSubscribe,
-      last_login_time: fromData.value.last_login_time,
-      nickname: fromData.value.nickname,
-      password: fromData.value.password,
-      type: fromData.value.type,
-      createTime: fromData.value.createTime,
-      updateTime: fromData.value.updateTime,
-      website: fromData.value.website
-})
+const userData = ref<userInfoVo>(fromData.value)
+// 深拷贝
+const isEditR = ref(JSON.parse(JSON.stringify(isEdit.value)))
 
-const isEdit = ref<boolean>(false)
-
-const updateImg = (file: any) => {
+const updateImg = async (file: any) => {
   let formdata = new FormData();
-  formdata.append('image', file.target.files[0]);
+  formdata.append('file', file.target.files[0]);
   // axios在接收formdata类型参数时会强制删除content-type浏览器识别空设置为默认false
   api.imgApi.uploadImg(formdata).then((res: any) => {
     const {data} = res.data
-    userData.avatar = data
+    userData.value.avatar = data
   })
 }
 
@@ -119,17 +107,18 @@ const updateUserInfo = () =>{
   fromRef.value.validate(async (bl: boolean) => {
     if (bl) {
       try {
-        await api.userApi.updateUserinfo(userData).then((res: AxiosResponse) => {
-          const {data} = res.data
-          if (data.code != 200) {
-            throw new Error(data.messages)
+        await api.userApi.updateUserinfo(userData.value).then((res: AxiosResponse) => {
+          const {code,message} = res.data
+          if (code !== 200) {
+            throw new Error(message)
           }
-          ElMessage.success(data.messages)
+          ElMessage.success(message)
         })
       } catch (e: any) {
         ElMessage.error(e)
       } finally {
-        isEdit.value = false
+        isEditR.value = false
+        reloadV()
       }
     } else {
       ElMessage.warning("请输入~")
@@ -208,5 +197,11 @@ const updateUserInfo = () =>{
       font-weight: 600;
     }
   }
+}
+
+.btn-box{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 </style>

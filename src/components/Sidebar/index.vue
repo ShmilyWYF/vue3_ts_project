@@ -97,6 +97,7 @@ onMounted(()=>{
     grid-template-rows: minmax(2.5rem, 0fr);
     @include background_color('background-color');
     @include box_shadow('box-card-shadow-sidebar-card');
+    @include font_color('text-color');
 
     :deep(.el-card__header) {
       height: 100%;

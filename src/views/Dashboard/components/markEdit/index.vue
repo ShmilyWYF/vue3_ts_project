@@ -6,45 +6,48 @@
 
 <script lang="ts" setup>
 import {Mark} from "@/components";
-import store from "@/store";
 import {ref, toRefs} from "vue";
 import {useRoute} from 'vue-router';
-import {ElNotification} from "element-plus";
+import {ElMessage, ElNotification} from "element-plus";
 import router from "@/router";
+import api from "@/axios";
+import {AxiosResponse} from "axios";
+import {getKebabCase} from "@/utils/util";
 
 const route = useRoute()
 const props = defineProps(['LayoutMain'])
 const {LayoutMain} = toRefs(props)
 
-const id = ref(route.query?.id)
+const id = ref<string|any>(route.query?.id)
 const articleContent = ref<string>()
 const isLoading = ref<boolean>(false)
 
 // 获取文章上下文
-store.dispatch('articleStore/getArticleContentById', id.value).then(res => {
-  articleContent.value = res
+api.articleApi.getArticleContentById({id:id.value}).then((res: AxiosResponse) => {
+  const {data,code,message,type} = res.data
+  ElMessage({message:message,type:type})
+  if(code != 200){
+    return
+  }
+  articleContent.value = data
   isLoading.value = true
 })
 
+
 // 保存文章
-const saveArticleCache = (centent: string) => {
-  try {
-    store.dispatch('articleStore/updateArticleContextById', {id: id.value, articleContent: centent}).then(() => {
-      ElNotification({
-        title: '通知',
-        message: '文章保存成功~',
-        type: 'success'
-      })
-    }).catch((e:any)=>{
-      throw new Error(e)
-    })
-  }catch (e) {
+const saveArticleCache = async (centent: string) => {
+  const param = {
+    "id": parseInt(id.value),
+    "field": getKebabCase("article_content"),
+    "value": String(centent)
+  }
+  await api.articleApi.updateArticleByField(param).then(({data}:AxiosResponse) => {
     ElNotification({
       title: '通知',
-      message: '更新文章出错'+e,
-      type: 'error'
+      message: data.message,
+      type: data.type
     })
-  }
+  })
 }
 
 // 解决层级问题
