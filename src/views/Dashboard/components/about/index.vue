@@ -1,76 +1,43 @@
 <template>
-  <el-card class="main-card">
-    <div class="title">{{ this.$route.name }}</div>
-    <mavon-editor
-        ref="md"
-        v-model="aboutContent"
-        style="height: calc(100vh - 250px); margin-top: 2.25rem"
-        @imgAdd="uploadImg"/>
-    <el-button class="edit-btn" size="small" type="danger" @click="updateAbout"> 修改</el-button>
-  </el-card>
+  <div class="about-box">
+    <Mark :content="aboutContent" @save-cache="updateAbout" :edit-mode="true" :is-exit-btn="false"/>
+  </div>
 </template>
 
-<script>
-import * as imageConversion from 'image-conversion'
+<script setup lang="ts">
+import {onBeforeMount, ref} from "vue";
+import api from "@/axios";
+import {AxiosResponse} from "axios";
+import {Mark} from "@/components";
+import {ElNotification} from "element-plus";
 
-export default {
-  created() {
-    // this.getAbout()
-  },
-  data: function () {
-    return {
-      aboutContent: ''
-    }
-  },
-  methods: {
-    getAbout() {
-      this.axios.get('/api/about').then(({data}) => {
-        this.aboutContent = data.data.content
-      })
-    },
-    uploadImg(pos, file) {
-      var formdata = new FormData()
-      if (file.size / 1024 < this.config.UPLOAD_SIZE) {
-        formdata.append('file', file)
-        this.axios.post('/api/admin/articles/images', formdata).then(({data}) => {
-          this.$refs.md.$img2Url(pos, data.data)
-        })
-      } else {
-        // 压缩到200KB,这里的200就是要压缩的大小,可自定义
-        imageConversion.compressAccurately(file, this.config.UPLOAD_SIZE).then((res) => {
-          formdata.append('file', new window.File([res], file.name, {type: file.type}))
-          this.axios.post('/api/admin/articles/images', formdata).then(({data}) => {
-            this.$refs.md.$img2Url(pos, data.data)
-          })
-        })
-      }
-    },
-    updateAbout() {
-      this.axios
-          .put('/api/admin/about', {
-            content: this.aboutContent
-          })
-          .then(({data}) => {
-            if (data.flag) {
-              this.$notify.success({
-                title: '成功',
-                message: data.message
-              })
-            } else {
-              this.$notify.error({
-                title: '失败',
-                message: data.message
-              })
-            }
-          })
-    }
-  }
+const aboutContent = ref<string>('')
+
+onBeforeMount(()=>{
+  getAbout()
+})
+
+const getAbout = () => {
+  api.aboutApi.getAbout().then(({data}:AxiosResponse) => {
+    aboutContent.value = data.data
+  })
+}
+
+const updateAbout = () => {
+  api.aboutApi.updateAbout().then(({data}:AxiosResponse) => {
+    ElNotification({
+      type: data.type,
+      message: data.message,
+      title: '通知'
+    })
+  })
 }
 </script>
 
-<style scoped>
-.edit-btn {
-  float: right;
-  margin: 1rem 0;
+<style scoped lang="scss">
+.about-box {
+  padding: 1rem;
+  height: 0 !important;
+  flex: 1;
 }
 </style>

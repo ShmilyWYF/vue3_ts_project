@@ -3,9 +3,9 @@
     <span>
       {{ title }}
     </span>
-    <transition name="floatA">
-      <div class="tag-list-box" v-if="isShowTagList">
-        <el-skeleton animated :loading="tagList.length === 0">
+    <transition name="floatA"  v-if="isShowTagList">
+      <div class="tag-list-box">
+        <el-skeleton animated :loading="!isShowTagList">
           <template #template>
             <div style="display: flex;gap: 1rem">
               <el-skeleton-item variant="button" v-for="index in 5" :key="index"/>
@@ -28,11 +28,13 @@
     </transition>
     <transition-group name="floatB">
       <div v-if="!isShowTagList" class="tag-list-article-box">
-        <Article v-for="(item,key) in articleList" :key="key" :data="item" type="1" h="25rem"/>
+        <ArticleCard v-for="(item,key) in articleList" :key="key" :data="item" type="1" h="25rem"/>
       </div>
     </transition-group>
     <br/>
-    <Comment :type="2"/>
+    <transition name="floatC" v-if="isShowTagList">
+      <Comment :type="2"/>
+    </transition>
   </div>
 </template>
 
@@ -41,14 +43,14 @@ import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {onMounted, ref, watch} from "vue";
 import {useRouter} from "vue-router";
-import {Article, Comment} from "@/components";
+import {ArticleCard, Comment} from "@/components";
 import {close, start} from "@/utils/nporgress";
 import {ElMessage} from "element-plus";
 import {ArticleInterface} from "@/interface";
 
 const tagList = ref<[{ id: number, tagName: string, articleCount: number, }]>([] as any)
 const currId = ref<number>(parseInt(String(localStorage.getItem('currTagId'))));
-const isShowTagList = ref<boolean>(true)
+const isShowTagList = ref<boolean>(false)
 const articleList = ref<ArticleInterface[]>()
 // 评论组件加载
 const isCommentLoading = ref<boolean>(false)
@@ -75,7 +77,7 @@ const setCurrentTagId = (value: number) => {
 // 无参数 获取标签列表 有参数 按参数标签名获取文章列表
 const getData = async () => {
   const query = router.currentRoute.value.query;
-  if (!query.hasOwnProperty('tagName') || isNaN(currId.value)) {
+  if (isNaN(currId.value)||!query.hasOwnProperty('tagName')) {
     // 有tagName参数但没有tagId 返回标签列表
     await router.replace({path: '/tags'})
     title.value = 'Tags'
@@ -210,15 +212,15 @@ const tagNameParsing = (value: string) => {
   @include skeleton();
 }
 
-.floatA-enter-active, .floatA-leave-active,.floatB-enter-active, .floatB-leave-active, {
+.floatA-enter-active, .floatA-leave-active,.floatB-enter-active, .floatB-leave-active,.floatC-enter-active, .floatC-leave-active, {
   transition: opacity 1.5s;
 }
 
-.floatA-enter, .floatA-leave-to ,.floatB-enter, .floatB-leave-to {
+.floatA-enter, .floatA-leave-to ,.floatB-enter, .floatB-leave-to,.floatC-enter, .floatC-leave-to {
   opacity: 0;
 }
 
-.floatA-leave-active ,.floatB-leave-active {
+.floatA-leave-active ,.floatB-leave-active,.floatC-leave-active {
   animation: axisLeave 1.5s;
 }
 
@@ -230,6 +232,9 @@ const tagNameParsing = (value: string) => {
   animation: axisEnterB 1.5s;
 }
 
+.floatC-enter-active {
+  animation: axisEnterB 2s;
+}
 
 @keyframes axisEnterA {
   0% {
@@ -249,7 +254,7 @@ const tagNameParsing = (value: string) => {
   }
   100% {
     opacity: 1;
-    transform: translateY(-50%);
+    transform: translateY(0%);
   }
 }
 

@@ -1,16 +1,16 @@
 <template>
   <div id="feature">
     <div class="home-article">
-      <Article :data='FeatureData.Top' h="28rem" type="0" :loading="topLoading"/>
+      <ArticleCard :data='FeatureData.Top' h="28rem" type="0" :loading="topLoading"/>
       <slot name="FeatureList" :list="FeatureData.Featured"/>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {Article} from "@/components";
 import {FeatureDatainterface} from "@/interface";
 import {computed, toRefs} from "vue";
+import {ArticleCard} from "@/components";
 
 const name = 'Feature'
 // vue3.3约束一个作用域插槽。

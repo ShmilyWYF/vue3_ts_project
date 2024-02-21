@@ -6,17 +6,17 @@ export default {
     },
     // 更新app配置
     updateWebSiteConfig: {
-        method: 'update',
-        url: 'useApp/websiteConfig'
-    },
-    // 获取用户配置
-    getUserConfig: {
-        method: 'get',
-        url: 'useApp/userConfig'
+        method: 'put',
+        url: 'useApp/webSiteConfig'
     },
     updateUserConfig: {
-        method: 'update',
-        url: 'useApp/userConfig'
+        method: 'put',
+        url: 'useApp/userSiteConfig'
+    },
+    // 更新app配置
+    updateThemeSiteConfig: {
+        method: 'put',
+        url: 'useApp/themeSiteConfig'
     },
     // 所有aside数据集合
     getAsideConfig: {

@@ -28,7 +28,7 @@ const constantRoute: Array<RouteRecordRaw> = [
             {
                 path: '/articles/:id',
                 name: 'articles',
-                component: () => import('@/components/Articles/index.vue'),
+                component: () => import('@/views/Client/components/Articles/index.vue'),
                 // 开启组件props
                 props: true,
                 meta: {
@@ -40,7 +40,7 @@ const constantRoute: Array<RouteRecordRaw> = [
             {
                 path: '/tags',
                 name: 'tags',
-                component: () => import('@/components/TagList/index.vue'),
+                component: () => import('@/views/Client/components/TagList/index.vue'),
                 props: true,
                 meta: {
                     require: true,
@@ -51,7 +51,7 @@ const constantRoute: Array<RouteRecordRaw> = [
             {
                 path: '/about',
                 name: 'about',
-                component: () => import('@/components/About/index.vue'),
+                component: () => import('@/views/Client/components/About/index.vue'),
                 props: true,
                 meta: {
                     require: true,
@@ -62,7 +62,7 @@ const constantRoute: Array<RouteRecordRaw> = [
             {
                 path: '/message',
                 name: 'Message',
-                component: () => import('@/components/Message/index.vue'),
+                component: () => import('@/views/Client/components/Message/index.vue'),
                 props: true,
                 meta: {
                     require: true,
@@ -165,12 +165,12 @@ export const asyncRouterMap: any[] = [
                 },
             },
             {
-                path: '/Dashboard/website',
-                name: 'website',
-                component: () => import('@/views/Dashboard/components/website/index.vue'),
+                path: '/Dashboard/message',
+                name: 'message',
+                component: () => import('@/views/Dashboard/components/message/index.vue'),
                 meta: {
                     require: true,
-                    title: '网站设置'
+                    title: '留言'
                 },
             },
             {
@@ -180,6 +180,15 @@ export const asyncRouterMap: any[] = [
                 meta: {
                     require: true,
                     title: '关于'
+                },
+            },
+            {
+                path: '/Dashboard/website',
+                name: 'website',
+                component: () => import('@/views/Dashboard/components/website/index.vue'),
+                meta: {
+                    require: true,
+                    title: '网站设置'
                 },
             },
         ]

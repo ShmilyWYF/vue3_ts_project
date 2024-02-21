@@ -10,12 +10,12 @@
         <template #default>
           <el-skeleton :loading="data.length === 0">
             <template #template>
-              <Article :data="{} as ArticleInterface" type="1" :loading="true"/>
+              <ArticleCard :data="{} as ArticleInterface" type="1" :loading="true"/>
             </template>
             <template #default>
               <transition-group name="fade">
                 <template v-for="(item,key) in data" :key="key">
-                  <Article :data="item" type="1"/>
+                  <ArticleCard :data="item" type="1"/>
                 </template>
               </transition-group>
             </template>
@@ -32,7 +32,7 @@
         </template>
         <template #default>
           <transition-group name="fade">
-            <Article v-for="(item,key) in data" :key="key" :data="item" type="1"/>
+            <ArticleCard v-for="(item,key) in data" :key="key" :data="item" type="1"/>
           </transition-group>
         </template>
       </el-tab-pane>
@@ -61,7 +61,7 @@
 
 <script lang="ts" setup>
 import {onMounted, ref} from 'vue'
-import {Article, SvgIcon} from "@/components";
+import {SvgIcon,ArticleCard} from "@/components";
 import store from "@/store";
 import {svg} from "@/icons";
 import {ArticleInterface, CategoryCountInterface} from "@/interface";

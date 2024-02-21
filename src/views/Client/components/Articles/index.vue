@@ -43,7 +43,7 @@
     </template>
     <template #default>
       <Mark :key="content.id" ref="markRef" :content="content.articleContent" @markTocEvnt="markTocEvnt"/>
-      <Comment :type="1" :id="id"/>
+      <Comment :type="1" :id="id" ref="commentsRef"/>
     </template>
     <template #aside>
       <ArticleToc :top-distance="25" :to-ref="commentsRef" v-show="ArticleTocLoad"/>

@@ -77,7 +77,6 @@ import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {Tagsinterface} from "@/interface";
 import {Pagination} from "@/components";
-import qs from "qs";
 
 const isDelete = ref<boolean>(false)
 

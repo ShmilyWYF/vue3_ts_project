@@ -259,7 +259,7 @@ export const ArticleAsideList = () => {
         ],
         // 标签
         tags: tagCount(),
-        notice: websiteConfig.notice,
+        // notice: websiteConfig.notice,
     }
 }
 

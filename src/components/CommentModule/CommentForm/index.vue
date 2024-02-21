@@ -16,11 +16,10 @@
 <script lang="ts" setup>
 import {inject, ref} from "vue";
 import {ElNotification} from "element-plus";
-import api from "@/axios";
 import {useRoute} from "vue-router";
 import {UserInfoInterface} from "@/interface";
 
-withDefaults(defineProps<{avatar?:string}>(),{
+withDefaults(defineProps<{ avatar?: string }>(), {
   avatar: 'src/assets/commentDefaultAvater.png'
 })
 
@@ -29,7 +28,7 @@ const commentType = inject<number>('commentType')
 // 评论审核
 const commentReview = inject<number>('commentReview')
 // 回复框 展示用户头像
-const userinfo:UserInfoInterface|undefined = inject<any>('userinfo')
+const userinfo: UserInfoInterface | undefined = inject<any>('userinfo')
 // 获取父组件save回调函数
 const saveCommentEvnt: any = inject('saveComment')
 
@@ -65,19 +64,20 @@ const saveComment = async () => {
     topicId: id
   }
   //  提交保存
-  await saveCommentEvnt(params)
-  // 获取配置 是否开启审核
-  if (commentReview) {
-    ElNotification.warning("评论成功,正在审核中");
-  } else {
-    ElNotification.success("回复成功");
-  }
+  await saveCommentEvnt(params).then(()=>{
+    // 获取配置 是否开启审核
+    if (commentReview) {
+      ElNotification.warning("评论成功,正在审核中");
+    } else {
+      ElNotification.success("回复成功");
+    }
+  })
   commentContent.value = ''
   loadCommentData()
 }
 
 const loadCommentData = () => {
-      emit('callObjectType', 'comment')
+  emit('callObjectType', 'comment')
 }
 
 </script>
@@ -88,8 +88,8 @@ const loadCommentData = () => {
   flex: 1;
   gap: .5rem;
   width: inherit;
+
   .el-avatar {
-    width: auto;
     flex-shrink: 0;
   }
 
@@ -146,8 +146,9 @@ const loadCommentData = () => {
     }
   }
 }
-@media screen and (min-width: 1024px){
-  .commentForm-box{
+
+@media screen and (min-width: 1024px) {
+  .commentForm-box {
     width: calc(100% - 4rem);
     padding: 1rem 2rem 0;
   }

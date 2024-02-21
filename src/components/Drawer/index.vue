@@ -47,7 +47,8 @@
 <script lang="ts" setup>
 import {computed, onMounted, ref, toRefs, watch} from "vue";
 import {svg} from "@/icons";
-import {DrawerstringGraphics, DropDown, Login, UserFrom} from "@/components";
+import {Login, UserFrom} from "@/components";
+import {DrawerstringGraphics, DropDown} from "./index"
 import store from "@/store";
 import {getCookie} from "@/utils/cookie";
 import api from "@/axios";
@@ -191,7 +192,8 @@ const dialogFormVisible = ref<boolean>(false)
 // 用户个人中心对话弹窗
 const UserDialogFormVisible = ref<boolean>(false)
 // 控制状态栏组件
-const isLoginState = ref<any>(getCookie() ? true : JSON.parse(String(localStorage.getItem('isLoginState'))))
+// const isLoginState = ref<any>(getCookie() ? true : JSON.parse(String(localStorage.getItem('isLoginState'))))
+const isLoginState = ref<any>(getCookie())
 // 储存用户信息 为0就是管理员
 const userinfo = computed(()=>store.getters.userinfo)
 
@@ -204,7 +206,7 @@ const userinfo = computed(()=>store.getters.userinfo)
 const dialogcall = () => {
   dialogFormVisible.value = !dialogFormVisible.value
   isLoginState.value = !isLoginState.value
-  localStorage.setItem('isLoginState', JSON.stringify(isLoginState.value))
+  // localStorage.setItem('isLoginState', JSON.stringify(isLoginState.value))
   api.userApi.getInfo().then((res: AxiosResponse) => {
     const {data,code,message,type}:{data:userInfoVo,code:number,message:string,type:any} = res.data;
     ElMessage({message: message, type: type})

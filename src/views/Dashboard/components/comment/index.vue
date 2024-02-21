@@ -8,8 +8,8 @@
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="viewStatus('null')">全部</el-dropdown-item>
-            <el-dropdown-item @click="viewStatus('1')">正常</el-dropdown-item>
-            <el-dropdown-item @click="viewStatus('0')">审核中</el-dropdown-item>
+            <el-dropdown-item @click="viewStatus('0')">正常</el-dropdown-item>
+            <el-dropdown-item @click="viewStatus('1')">审核中</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -68,8 +68,8 @@
       <!-- 状态 -->
       <el-table-column align="center" label="状态" prop="isReview" width="80">
         <template #default="scope">
-          <el-tag v-if="scope.row.isReview == 0" type="warning">审核中</el-tag>
-          <el-tag v-if="scope.row.isReview == 1" type="success">正常</el-tag>
+          <el-tag v-if="scope.row.isReview == 1" type="warning">审核中</el-tag>
+          <el-tag v-if="scope.row.isReview == 0" type="success">正常</el-tag>
         </template>
       </el-table-column>
       <!-- 来源 -->
@@ -85,7 +85,7 @@
       列操作
       <el-table-column align="center" label="操作" width="160">
         <template #default="scope">
-          <el-button v-if="scope.row.isReview == 0" slot="reference" size="small" type="success"
+          <el-button v-if="scope.row.isReview == 1" slot="reference" size="small" type="success"
                      @click="releaseComments(scope.row.id)">
             通过
           </el-button>
@@ -121,6 +121,7 @@ import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {Pagination} from "@/components";
 import {ElNotification} from "element-plus";
+import {CommentInterface} from "@/interface";
 
 onMounted(async () => {
   await getCommentList()
@@ -128,23 +129,13 @@ onMounted(async () => {
 
 // 初始化数据
 const initData = reactive({
-  comments: [{
-    id: '',
-    avatar: '',
-    nickname: '',
-    replyNickname: '',
-    articleTitle: '',
-    commentContent: '',
-    createTime: '',
-    isReview: '',
-    type: '',
-  }],
+  comments: [] as CommentInterface[],
   count: 0,
   isReview: false,
-  loading: false,
+  loading: true,
 })
 // 接收数据
-const data = ref<any[]>()
+const data = ref<CommentInterface[]>()
 // 批量选择id
 const commentIds = ref<any[]>([])
 // 搜索框双向绑定
@@ -158,19 +149,20 @@ const deleteOrPass = ref<number>(0)
 
 // 获取comment列表
 const getCommentList = async () => {
-  await api.commentApi.getComments(null).then((res: AxiosResponse) => {
+  await api.commentApi.getComments().then((res: AxiosResponse) => {
     const {data} = res.data
     initData.comments = data
   })
+  initData.loading = false
 }
 
 // 设置选择框可选择条件
 const checkSelectable = (row: { isReview: number }) => {
   if (currStatus.value == '审核中') {
-    return row.isReview === 0
+    return row.isReview === 1
   }
   if (currStatus.value == '正常') {
-    return row.isReview === 1
+    return row.isReview === 0
   }
   if (currStatus.value == '全部') {
     return row.isReview === 3
@@ -180,10 +172,10 @@ const checkSelectable = (row: { isReview: number }) => {
 const viewStatus = (status: string) => {
   if (status != 'null') {
     switch (status) {
-      case '1' || 1:
+      case '0' || 0:
         currStatus.value = '正常';
         break;
-      case '0' || 0:
+      case '1' || 1:
         currStatus.value = '审核中';
         break;
     }
@@ -214,14 +206,16 @@ const SearchInputEvnt = () => {
       switch (searchInput.value) {
         case '文章':
           return item.type == 1;
-        case '留言':
+        case '标签':
           return item.type == 2;
-        case '关于我':
+        case '关于':
           return item.type == 3;
-        case '友链':
+        case '留言':
           return item.type == 4;
-        case '说说':
+        case '友链':
           return item.type == 5;
+        case '说说':
+          return item.type == 6;
       }
     })
     data.value = arr

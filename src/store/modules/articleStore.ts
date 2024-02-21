@@ -36,13 +36,13 @@ const actions: any = {
             if (state.featureArticleData) {
                 resolve(state.featureArticleData)
             } else {
-            articleApi.getFeatureArticle().then((res: AxiosResponse) => {
-                const {data} = res.data
-                commit('SET_FEATURE_ARTICLE_DATA', data)
-                resolve(data)
-            }, (error: any): void => {
-                reject(error)
-            })
+                articleApi.getFeatureArticle().then((res: AxiosResponse) => {
+                    const {data} = res.data
+                    commit('SET_FEATURE_ARTICLE_DATA', data)
+                    resolve(data)
+                }, (error: any): void => {
+                    reject(error)
+                })
             }
         })
     },
@@ -71,17 +71,17 @@ const actions: any = {
     // 根据id获得文章
     getArticleById({commit, state}: any, id: { id: number }) {
         return new Promise((resolve, reject) => {
-            if(state.articleContext?.hasOwnProperty(id)){
-                    resolve(state.articleContext[id.id])
-            }else {
-            articleApi.getArticleById(id).then((res: AxiosResponse) => {
-                const {data} = res.data
-                const mergeObject = {...{[data.id]: data,}, ...state.articleContext}
-                commit('SET_ARTICLE_CONTEXT', mergeObject)
-                resolve(data)
-            }, (error: any) => {
-                reject(error)
-            })
+            if (state.articleContext?.hasOwnProperty(id)) {
+                resolve(state.articleContext[id.id])
+            } else {
+                articleApi.getArticleById(id).then((res: AxiosResponse) => {
+                    const {data} = res.data
+                    const mergeObject = {...{[data.id]: data,}, ...state.articleContext}
+                    commit('SET_ARTICLE_CONTEXT', mergeObject)
+                    resolve(data)
+                }, (error: any) => {
+                    reject(error)
+                })
             }
         })
     },

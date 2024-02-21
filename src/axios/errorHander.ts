@@ -22,6 +22,9 @@ function errorHandle(err: any) {
                 ElMessage.error('服务器异常，请稍后再试~')
                 break
         }
+    } else if (err.data.hasOwnProperty('status')&&err.data.status === 404){
+        ElMessage.error('接口不存在或远端服务器停止运行~')
+        return false
     } else if (err.data.message.includes('timeout')) {
         ElMessage.error('连接超时~')
         return false

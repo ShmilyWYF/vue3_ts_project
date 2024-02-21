@@ -12,14 +12,13 @@
       </div>
     </el-card>
     <template v-for="(item,key) in list" :key="key">
-      <Article :data="item" type="1" :loading="Object.keys(item).length === 0"/>
+      <ArticleCard :data="item" type="1" :loading="Object.keys(item).length === 0"/>
     </template>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {Article} from "@/components";
-import SvgIcon from "@/components/SvgIcon/index.vue";
+import {SvgIcon,ArticleCard} from "@/components";
 import {ArticleInterface} from "@/interface";
 
 const name = 'FeatureList'

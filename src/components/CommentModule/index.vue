@@ -11,7 +11,7 @@
 
 <script lang="ts" setup>
 import {Sidebar} from "@/components";
-import {CommentForm, CommentList} from "@/components/CommentModule";
+import {CommentForm, CommentList} from "./index";
 
 import {provide, ref, toRefs} from "vue";
 import {UserInfoInterface} from "@/interface";
@@ -25,10 +25,10 @@ const props = defineProps<{
   commentsCall: Function,
   indexCall: Function,
   formAvatar?: string,
+  save: Function
 }>()
-const {type, isCommentReview, userinfo} = toRefs(props);
+const {type, isCommentReview, userinfo,save} = toRefs(props);
 
-const emit = defineEmits(['save'])
 
 // 评论类型
 provide('commentType', type.value)
@@ -37,8 +37,8 @@ provide('commentReview', isCommentReview.value)
 // 获取用户信息
 provide('userinfo', userinfo.value)
 // 保存评论事件
-provide('saveComment', (params:{type: number, replyUserId?: number, parentId?: number, commentContent: string, userId: number,topicId?:number }) => {
-  emit('save',params)
+provide('saveComment', async (params: { type: number, replyUserId?: number, parentId?: number, commentContent: string, userId: number, topicId?: number }) => {
+  return save.value(params)
 })
 
 const sidebarCommentRef = ref<HTMLElement>()

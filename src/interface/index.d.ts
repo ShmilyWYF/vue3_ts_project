@@ -161,9 +161,9 @@ export interface FeatureDatainterface {
     Top: ArticleInterface
 }
 
-export interface WebSiteConfigInterface {
+export interface WebFromInterface {
     webSiteLog: string,
-    siteName: string,
+    webSiteName: string,
     englishName: string,
     multiLanguage: number,
     commentReview: number,
@@ -171,4 +171,14 @@ export interface WebSiteConfigInterface {
     notice: string,
     beianNumber: string,
     qqLogin: 0,
+}
+
+export interface UserFromInterface {
+    avatar: string,
+    isEmailNotice: number,
+}
+export interface WebSiteConfigInterface {
+    websiteConfig: WebFromInterface,
+    userConfig: UserFromInterface
+    themeConfig: {}
 }

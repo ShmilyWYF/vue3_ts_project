@@ -1,9 +1,16 @@
 <template>
   <div :class="isVertical?'verticalClass':'horizontalClass'" class="common-layout">
     <el-container :direction="isVertical?'horizontal':'vertical'">
-      <el-header class="el-header">
-        <el-card body-style="height: 100%;background:#00000000;">
-          <nav-menu :mode="!isVertical?'horizontal':'vertical'"/>
+      <el-header class="el-header" :style="{'--height':height?'100vh':'10vh'}">
+        <el-card body-style="background:#00000000;">
+          <div class="nav">
+            <span>
+              <el-link type="info" href="/">Star(￣o￣) . z Z</el-link>
+            </span>
+            <nav-menu :mode="!isVertical?'horizontal':'vertical'" style=""/>
+          </div>
+          <span class="tag" v-if="!isVertical">{{ blogName }}</span>
+          <svg-icon name="arrows" class="arrow" v-if="!isVertical" @click="mainRef.$el.scrollIntoView();"/>
         </el-card>
       </el-header>
       <el-main id="layoutMain" ref="mainRef" class="el-main">
@@ -19,13 +26,21 @@
 </template>
 <script lang="ts" setup>
 import {FooterTag, Main, NavMenu} from "@/layout/component";
-import {ref} from "vue";
+import {computed, ref} from "vue";
+import {useRouter} from "vue-router";
+import store from "@/store";
+import {SvgIcon} from "@/components";
 
 const mainRef = ref()
 const props = defineProps(['isVertical'])
+const height = computed(() => useRouter().currentRoute.value.path === '/home')
+const blogName = ref<string>(store.getters.useState.websiteConfig.englishName)
+
 </script>
 
 <style lang="scss" scoped>
+@import "@/style/arrows";
+
 .common-layout {
   background: var(--body-Background);
 }
@@ -38,7 +53,6 @@ const props = defineProps(['isVertical'])
     align-items: center;
   }
 }
-
 
 .verticalClass {
   height: 100%;
@@ -102,30 +116,93 @@ const props = defineProps(['isVertical'])
     }
   }
 }
-
+@include arrows();
 .horizontalClass {
   $PADDING-LEFT-AND-RIGHT: 2.5%;
 
   .el-header {
-    height: calc(10vh - 1%);
+    //height: calc(10vh - 1%);
+    height: var(--height);
     width: 100%;
-    padding: 1rem $PADDING-LEFT-AND-RIGHT;
-    opacity: 0.5;
+    //padding: 1rem $PADDING-LEFT-AND-RIGHT;
+    padding: 0;
+    //opacity: 0.5;
     position: relative;
+    overflow: hidden;
+    opacity: 0.7;
     z-index: 15;
+    background: url('/src/assets/index_bunner.jpg') no-repeat fixed;
+    background-size: cover;
+
+    &:after {
+      pointer-events: none;
+      content: '';
+      position: absolute;
+      z-index: 35;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      @include background_color('article-cover-cred');
+    }
 
     .el-card.is-always-shadow {
       box-shadow: var(--box-card-shadow-header);
     }
 
     .el-card {
-      padding: 10px;
+      //padding: 10px;
       background: #00000000;
       border-color: #00000000;
       opacity: 0.9;
       --el-card-border-radius: 12px;
-      height: calc(100% - 40px);
-      width: 90%;float: right;
+      //height: calc(100% - 40px);
+      //width: 90%;
+      width: 100%;
+      //float: right;
+      position: relative;
+      z-index: 40;
+
+      :deep(.el-card__body) {
+        height: calc(100vh - 40px) !important;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem 3rem;
+
+        .nav {
+          display: flex;
+          align-items: center;
+          width: 100%;
+
+          span {
+            flex: 1;
+
+            .el-link {
+              font-weight: 800;
+              color: aqua;
+            }
+          }
+
+          .nav-menu {
+            flex: 1;
+            justify-content: flex-end;
+          }
+
+        }
+
+        .tag {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          font-weight: 800;
+        }
+
+        @include arrows();
+        .arrow {
+          animation: arrows 1.5s infinite;
+        }
+      }
     }
   }
 
@@ -136,6 +213,20 @@ const props = defineProps(['isVertical'])
     position: relative;
     z-index: 10;
     overflow: initial;
+    top: 3.5rem;
+
+    &:after {
+      pointer-events: none;
+      content: "";
+      position: absolute;
+      z-index: 35;
+      left: 0;
+      top: -3.5rem;
+      height: 2.5%;
+      width: 100%;
+      @include background_color('article-cover-cred-reverse');
+    }
+
 
     .el-affix {
       height: 1%;

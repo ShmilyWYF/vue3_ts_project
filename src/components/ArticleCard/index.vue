@@ -109,7 +109,7 @@ const props = withDefaults(defineProps<{ data: ArticleInterface, type?: string, 
       .feature-thumbnail {
         img {
           height: 100%;
-          width: 120%;
+          width: 122.5%;
         }
 
         &:after {

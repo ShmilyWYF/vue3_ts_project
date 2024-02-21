@@ -2,9 +2,10 @@
   <el-menu
       :class="[mode==='horizontal'?'menu-horizontal':'menu-vertical']"
       :default-active="activeIndex"
+      class="nav-menu"
       :mode="mode"
       router="router"
-      style="height: 100%;gap: .75rem;"
+      style="height: auto;gap: .75rem;"
   >
     <template v-for="(item,keys) in routers" :key="keys">
       <template v-for="(children,key) in item.children" :key="key">
@@ -44,7 +45,9 @@ const props = defineProps({
 const {mode} = toRefs(props)
 console.log("当前模式", mode?.value)
 
-const activeIndex = ref('/home')
+const activeIndex =  computed(() => {
+  return useRoute().path;
+})
 // 公共路由部分
 const routers: any = computed(() => {
   return [useRoute().matched[0]]

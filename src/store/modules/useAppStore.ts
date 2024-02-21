@@ -1,6 +1,7 @@
 import api from '@/axios'
 import {AxiosResponse} from "axios";
 import {getCookie, setStorageKeyCookie} from "@/utils/cookie";
+import store, {resetStore} from "@/store";
 
 const {useAppApi} = api
 
@@ -68,13 +69,20 @@ const actions: any = {
                 // 接口异常采用默认主题方案
                 commit('SET_USE_APP_STATE', useAPPState.useState)
                 reject(error)
-            }).finally(()=>{
+            }).finally(async ()=>{
                 // 网站缓存设置过期时间  方案采用cookie保存localStorage Key
                 if (getCookie('storage') === undefined) {
                     // 清空旧localStorage
-                    localStorage.setItem('vuex', '')
+                    // resetStore()
                     // 设置新的storage时间
                     setStorageKeyCookie()
+                }
+                // 检查用户cookie是否过期 过期清除登陆信息
+                if (getCookie('token') === undefined){
+                    // 删除用户缓存
+                    store.commit('userStore/SET_USER_INFO', '')
+                    // 删除token缓存
+                    store.commit('userStore/SET_USER_TOKEN', '')
                 }
             })
         })

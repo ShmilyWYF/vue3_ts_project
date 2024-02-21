@@ -16,7 +16,7 @@
       @imgAdd="imgAdd"
       @save="cacheDrafts"
       >
-    <template #left-toolbar-after>
+    <template #left-toolbar-after v-if="isExitBtn&&editMode">
       <!--自定义退出按钮-->
         <el-button type="primary" aria-hidden="true" color="op-icon fa" title="退出编辑" @click="emit('exitEvnt')" style="padding: .3rem;margin: 0;height: inherit;border: none">
             <svg-icon name="exit" color="#c62459" size="1.15"/>
@@ -43,6 +43,10 @@ const props: any = defineProps({
   content: {
     type: String,
     default: '',
+  },
+  isExitBtn:{
+    type: Boolean,
+    default: true
   }
 })
 const {editMode, content} = toRefs(props);

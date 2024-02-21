@@ -10,14 +10,14 @@
             <input id="upload" type="file" name="file" multiple="multiple" @change="updateImg"
                    style="display: none"/>
           </el-form-item>
-          <el-form-item label="网站名称" prop="siteName">
-            <el-input v-model="websiteConfigForm.siteName" size="small" style="width: 400px"/>
+          <el-form-item label="网站名称" prop="webSiteName">
+            <el-input v-model="websiteConfigForm.webSiteName" size="small" style="width: 400px"/>
           </el-form-item>
           <el-form-item label="网站英文名称" prop="englishName">
             <el-input v-model="websiteConfigForm.englishName" size="small" style="width: 400px"/>
           </el-form-item>
-          <el-form-item label="评论需要审核" prop="isCommentReview">
-            <el-radio-group v-model="websiteConfigForm.isCommentReview">
+          <el-form-item label="评论需要审核" prop="commentReview">
+            <el-radio-group v-model="websiteConfigForm.commentReview">
               <el-radio :label="0">关闭</el-radio>
               <el-radio :label="1">开启</el-radio>
             </el-radio-group>
@@ -34,7 +34,7 @@
                 placeholder="选择日期"
                 style="width: 400px"
                 type="date"
-                value-format="yyyy-MM-dd"/>
+                value-format="YYYY-MM-DD"/>
           </el-form-item>
           <el-form-item label="网站公告" prop="notice">
             <el-input
@@ -54,18 +54,18 @@
             <el-input v-model="websiteConfigForm.beianNumber" size="small" style="width: 400px"/>
           </el-form-item>
           <el-button size="small" style="margin-left: 6.3rem" type="primary" @click="updateWebsiteConfig">
-            修改
+            保存
           </el-button>
         </el-form>
       </el-tab-pane>
 
       <el-tab-pane label="用户设置" name="user">
-        <el-form :model="userConfigForm" label-position="left" label-width="120px" ref="userRef" :rules="userRule">
+        <el-form :model="usersiteConfigForm" label-position="left" label-width="120px" ref="userRef" :rules="userRule">
           <el-row style="width: 600px">
             <el-col :md="12">
               <el-form-item label="游客头像" prop="avatar">
                 <label for="upload" class="ui-upload">
-                  <el-image style="width: 100px; height: 100px" :src="userConfigForm.avatar" fit="fill"/>
+                  <el-image style="width: 100px; height: 100px" :src="usersiteConfigForm.avatar" fit="fill"/>
                 </label>
                 <input id="upload" type="file" name="file" multiple="multiple" @change="updateImg"
                        style="display: none"/>
@@ -73,7 +73,7 @@
             </el-col>
           </el-row>
           <el-form-item label="邮箱通知" prop="isEmailNotice">
-            <el-radio-group v-model="userConfigForm.isEmailNotice">
+            <el-radio-group v-model="usersiteConfigForm.isEmailNotice">
               <el-radio :label="0">关闭</el-radio>
               <el-radio :label="1">开启</el-radio>
             </el-radio-group>
@@ -84,33 +84,8 @@
         </el-form>
       </el-tab-pane>
 
-      <el-tab-pane label="超级管理员设置" name="admin">
-        <el-form :model="userConfigForm" label-position="left" label-width="120px" ref="userRef" :rules="userRule">
-          <el-row style="width: 600px">
-            <el-col :md="12">
-              <el-form-item label="游客头像" prop="avatar">
-                <label for="upload" class="ui-upload">
-                  <el-image style="width: 100px; height: 100px" :src="userConfigForm.avatar" fit="fill"/>
-                </label>
-                <input id="upload" type="file" name="file" multiple="multiple" @change="updateImg"
-                       style="display: none"/>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-form-item label="邮箱通知" prop="isEmailNotice">
-            <el-radio-group v-model="userConfigForm.isEmailNotice">
-              <el-radio :label="0">关闭</el-radio>
-              <el-radio :label="1">开启</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-button size="small" style="margin-left: 6.3rem" type="primary" @click="updateUserConfig">
-            保存
-          </el-button>
-        </el-form>
-      </el-tab-pane>
-
-      <el-tab-pane label="管理员路由设置" name="routers">
-
+      <el-tab-pane label="权限管理" name="routers">
+        <shiro/>
       </el-tab-pane>
     </el-tabs>
   </el-card>
@@ -121,34 +96,24 @@ import { onMounted, reactive, ref} from "vue";
 import api from "@/axios";
 import {ElNotification, FormRules} from "element-plus";
 import {AxiosResponse} from "axios";
+import {UserFromInterface, WebFromInterface, WebSiteConfigInterface} from "@/interface";
+import {shiro} from "@/views/Dashboard/components";
 
-const websiteActive = ref('info')
+const websiteActive = ref<string>('info')
 const websiteRef = ref<HTMLElement | any>()
 const userRef = ref<HTMLElement | any>()
+const initData = reactive<WebSiteConfigInterface>({} as WebSiteConfigInterface)
 
-const websiteConfigForm = reactive({
-  webSiteLog: '',
-  siteName: '',
-  englishName: '',
-  multiLanguage: 0,
-  isCommentReview: 0,
-  websiteCreateTime: '',
-  notice: '',
-  beianNumber: '',
-  qqLogin: '',
-})
+const websiteConfigForm = reactive<WebFromInterface>({} as WebFromInterface)
 
-const userConfigForm = reactive({
-  avatar: 'https://static.linhaojun.top/aurora/avatar/52a81cd2772167b645569342e81ce312.jpg',
-  isEmailNotice: 0,
-})
+const usersiteConfigForm = reactive<UserFromInterface>({} as UserFromInterface)
 
 const webSiteRule = reactive<FormRules>({
   webSiteLog: {required: true, message: '请上传图片', trigger: 'change'},
-  siteName: {required: true, message: '请设置网站名称', trigger: 'blur'},
+  webSiteName: {required: true, message: '请设置网站名称', trigger: 'blur'},
   englishName: {required: true, message: '请设置网站英文名称', trigger: 'blur'},
   multiLanguage: {required: true, message: '请选择是否开启多语言', trigger: 'blur'},
-  isCommentReview: {required: true, message: '请选择是否开启评论审核', trigger: 'blur'},
+  commentReview: {required: true, message: '请选择是否开启评论审核', trigger: 'blur'},
   websiteCreateTime: {required: true, message: '请选择网站创建时间', trigger: 'blur'},
   notice: {required: true, message: '网站公告不能为空', trigger: 'blur'},
   beianNumber: {required: true, message: '备案号不能为空', trigger: 'blur'},
@@ -160,20 +125,32 @@ const userRule = reactive<FormRules>({
   isEmailNotice: {required: true, message: '请选择是否开启电子邮件通知', trigger: 'blur'},
 })
 
-onMounted(()=>{
+onMounted(async ()=>{
+  await getWebSiteConfig();
   getListByLabel({paneName: websiteActive.value})
 })
 
+const getWebSiteConfig = async () => {
+  await api.useAppApi.getUseAppConfig().then((res: AxiosResponse) => {
+    const {data} = <{data:WebSiteConfigInterface}>res.data
+    Object.assign(initData,data)
+  })
+}
+
 const getListByLabel = (pane: any) => {
-  switch (pane.paneName) {
-    case 'info': getWebSiteInfoConfig();break;
-    case 'user': getUserConfig();break;
+  if(pane){
+    switch (pane.paneName) {
+      case 'info': Object.assign(websiteConfigForm,initData.websiteConfig);break;
+      case 'user': Object.assign(usersiteConfigForm,initData.userConfig);break;
+    }
+  }else {
+    websiteActive.value = 'info'
   }
 }
 
 const updateImg = (file: any) => {
   let formdata = new FormData();
-  formdata.append('image', file.target.files[0]);
+  formdata.append('file', file.target.files[0]);
   // axios在接收formdata类型参数时会强制删除content-type浏览器识别空设置为默认false
   api.imgApi.uploadImg(formdata).then((res: any) => {
     const {data} = res.data
@@ -181,22 +158,10 @@ const updateImg = (file: any) => {
       websiteConfigForm.webSiteLog = data
     }
     if (websiteActive.value == 'user'){
-      userConfigForm.avatar = data
+      usersiteConfigForm.avatar = data
     }
-  })
-}
-
-const getWebSiteConfig = () => {
-  api.useAppApi.getUseAppConfig().then((res: AxiosResponse) => {
-    const {data} = res.data
-    Object.assign(websiteConfigForm, data)
-  })
-}
-
-const getUserConfig = () =>{
-  api.useAppApi.getUserConfig().then((res: AxiosResponse) => {
-    const {data} = res.data
-    Object.assign(userConfigForm, data)
+  },(e:any)=>{
+    ElNotification.error(e.toString())
   })
 }
 
@@ -204,23 +169,10 @@ const getUserConfig = () =>{
 const updateWebsiteConfig = () => {
   websiteRef.value.validate((is: boolean) => {
     if (is) {
-      api.useAppApi.updateWebSiteConfig(websiteConfigForm).then((res: AxiosResponse) => {
-        const {data} = res.data
-        if (!data) {
-          throw new Error('更新出现错误')
-        }
-        Object.assign(websiteConfigForm, data)
-        ElNotification({
-          title: '通知',
-          message: '更新完成',
-          type: 'success'
-        })
-      }, (error: string) => {
-        ElNotification({
-          title: '通知',
-          message: error,
-          type: 'warning'
-        })
+      api.useAppApi.updateWebSiteConfig(websiteConfigForm).then(({data:{message}}: AxiosResponse) => {
+        ElNotification.success(message)
+      }, (error: Error) => {
+        ElNotification.error(error.message)
       })
     } else {
       ElNotification({
@@ -236,23 +188,10 @@ const updateWebsiteConfig = () => {
 const updateUserConfig = () => {
   userRef.value.validate((is: boolean) => {
     if (is) {
-      api.useAppApi.updateUserConfig(userConfigForm).then((res: AxiosResponse) => {
-        const {data} = res.data
-        if (!data) {
-          throw new Error('更新出现错误')
-        }
-        Object.assign(userConfigForm, data)
-        ElNotification({
-          title: '通知',
-          message: '更新完成',
-          type: 'success'
-        })
-      }, (error: string) => {
-        ElNotification({
-          title: '通知',
-          message: error,
-          type: 'warning'
-        })
+      api.useAppApi.updateUserConfig(usersiteConfigForm).then(({data:{message}}: AxiosResponse) => {
+        ElNotification.success(message)
+      }, (error: Error) => {
+        ElNotification.error(error.message)
       })
     } else {
       ElNotification({

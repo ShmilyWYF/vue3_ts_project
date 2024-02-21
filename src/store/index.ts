@@ -13,8 +13,15 @@ const modules = Object.keys(modulesFiles).reduce((prev: any, curr: any) => {
     return prev
 }, {})
 
-export default createStore({
+const store = createStore({
     modules,
     plugins: [createPersistedState()],
     getters
 })
+
+// 重置store
+export function resetStore() {
+    store.replaceState(createStore(modules).state)
+}
+
+export default store;
