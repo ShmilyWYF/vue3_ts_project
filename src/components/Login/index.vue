@@ -115,7 +115,7 @@ const login = () => {
       const user = {username: loginForm.username, password: loginForm.password}
       store.dispatch('userStore/login', user).then((): void => {
         emit('dialogCall')
-      }, ((e:Error) => {
+      }, ((e: Error) => {
         ElMessage.error(e.message)
       }))
     } else {
@@ -139,7 +139,7 @@ const send = () => {
     "subject": "注册密码"
   }
   api.mailApi.getCaptchaByEmail(email).then((res: AxiosResponse) => {
-    const {code,message} = res.data
+    const {code, message} = res.data
     if (code != 200) {
       throw new Error(message)
     }
@@ -173,24 +173,17 @@ const registerOrRestPwd = () => {
       }
       try {
         if (isRegister.value == 2) {
-          api.userApi.registerUser(registerinfo).then((res: AxiosResponse) => {
-                const {code,messages} = res.data
-                if (code != 200) {
-                  throw new Error(messages)
-                }
-                ElMessage.success(messages)
+          api.userApi.registerUser(registerinfo).then(({data: {message}}: AxiosResponse) => {
+                ElMessage.success(message)
                 isToLoginOrCancel.value = true;
-              }
+              }, ((e: Error) => {
+                ElMessage.error(e.message)
+              })
           )
         }
         if (isRegister.value == 3) {
-          api.userApi.restUser(registerinfo).then((res: AxiosResponse) => {
-            const {code,messages} = res.data
-                if (code != 200) {
-                  throw new Error(messages)
-                }
-                // 做个弹窗 提示信息传入
-                ElMessage.success(messages)
+          api.userApi.restUser(registerinfo).then(({data:{message}}: AxiosResponse) => {
+                ElMessage.success(message)
               }
           )
         }

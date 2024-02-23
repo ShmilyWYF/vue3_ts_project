@@ -55,6 +55,7 @@ const svgMousedown = (evnt: MouseEvent) => {
   // 给主容器添加鼠标松开事件
   DOMRange.value.addEventListener('mouseup', svgMouseup)
 }
+
 const svgMousemove = (evnt: MouseEvent) => {
   if (!isMousePress.value) return
   const {pageY} = evnt;
@@ -68,6 +69,7 @@ const svgMousemove = (evnt: MouseEvent) => {
   // 触发面板
   emit('drawerPanelEvnt', endPoint.value > elHeight.value+10);
 }
+
 const svgMouseup = (event: any) => {
   isMousePress.value = false
 }

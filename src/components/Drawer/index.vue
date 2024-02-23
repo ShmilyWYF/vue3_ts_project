@@ -1,102 +1,78 @@
 <template>
   <div id="drawer" ref="drawer">
-    <el-drawer v-model="drawerPanel" :with-header="false" class="el-drawer-box" direction="ttb" @close="closeDrawer">
+    <el-drawer v-model="drawerPanel" :lock-scroll="false" :with-header="false" class="el-drawer-box" direction="ttb"
+               @close="closeDrawer">
       <template #default>
-        <drop-down>
-          <template #default>
-            <el-switch v-model="action" :active-action-icon="svg('sun')" :inactive-action-icon="svg('moon')"
-                       @change="switchEvnt"/>
-            <el-button v-if="isloading" :icon="svg('background')" :loading="isLoading" circle type="info"
+        <ul>
+          <li>
+            <lang-drop-down/>
+          </li>
+          <li>
+            <el-switch v-model="themeAction" :active-value="'light'" :inactive-value="'dark'"
+                       :active-action-icon="svg('sun')" :inactive-action-icon="svg('moon')" @change="switchThemeEvnt"/>
+          </li>
+          <li>
+            <div v-if="ShowComponent">search</div>
+          </li>
+          <li>
+            <el-button v-if="ShowComponent" :icon="svg('background')" :loading="isBgLoading" circle type="info"
                        @click="switchBackgroundButton"/>
-            <div v-if="isloading">search</div>
-            <el-button v-if="!isLoginState" text @click="dialogFormVisible = true">
-              登陆
-            </el-button>
-            <span v-else>
-               <el-dropdown>
-                 <el-avatar :size="35"
-                            src="https://static.linhaojun.top/aurora/avatar/52a81cd2772167b645569342e81ce312.jpg"/>
-                  <template #dropdown>
-                    <el-dropdown-menu>
-                      <el-dropdown-item @click="UserDialogFormVisible = true">个人中心</el-dropdown-item>
-                      <el-dropdown-item @click="userExit">退出</el-dropdown-item>
-                      <el-dropdown-item v-if="userinfo?.type === 1||userinfo?.type === 999"
-                                        @click="switchPageEvnt">{{
-                          isloading ? '后台管理':'blog'
-                        }}</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
-            </span>
-          </template>
-        </drop-down>
+          </li>
+          <li>
+            <LoginDrop :status="ShowComponent"/>
+          </li>
+        </ul>
       </template>
     </el-drawer>
+
     <el-affix target=".main">
-      <DrawerstringGraphics ref="sliders" :DOMRange="drawer" @drawerPanelEvnt="drawerPanelEvnt" @animationEvents="closeDrawer"/>
+      <DrawerstringGraphics ref="sliders" :DOMRange="drawer" @drawerPanelEvnt="drawerPanelEvnt"
+                            @animationEvents="closeDrawer"/>
     </el-affix>
-    <el-dialog v-model="dialogFormVisible" title="登陆" class="login-box">
-      <Login @dialogCall="dialogcall"/>
-    </el-dialog>
-    <el-dialog v-model="UserDialogFormVisible" title="个人中心" class="personal-center-box">
-       <UserFrom :from-data="userinfo" :is-edit="false"/>
-    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {computed, onMounted, ref, toRefs, watch} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {svg} from "@/icons";
-import {Login, UserFrom} from "@/components";
-import {DrawerstringGraphics, DropDown} from "./index"
+import {DrawerstringGraphics, LangDropDown, LoginDrop} from "./index"
 import store from "@/store";
-import {getCookie} from "@/utils/cookie";
-import api from "@/axios";
-import {AxiosResponse} from "axios";
 import {useRouter} from "vue-router";
-import {ElMessage} from "element-plus";
-import {userInfoVo} from "@/interface";
 
-const props = defineProps({
-  isSwitchBgButton: {
-    type: <any>Boolean,
-    required: true,
-    default: false,
-  },
-  container: {
-    type: <any>null,
-    required: true,
-  }
-})
-const {isSwitchBgButton, container} = toRefs(props)
-
-onMounted(()=>{
-   excludeComponents(['home', 'articles', 'tags'])
+onMounted(() => {
+  excludeComponents(['home', 'articles', 'tags'])
+  switchThemeEvnt(themeAction.value)
 })
 
-const router = useRouter()
-// 控制下拉模组展示界面
-const isloading = computed(()=>{
-  return excludeComponents(['Dashboard'])
-})
-
-const excludeComponents = (arr:string[]) =>{
-  let matcheds = router.currentRoute.value.matched
-  if (arr.includes(String(matcheds[0].name))){
-    emit('IsSwitchBg',false)
-  }
-  return !arr.includes(String(matcheds[0].name))
-}
-
-const emit = defineEmits(['SwitchTheme', 'IsSwitchBg']);
-
-// 控制抽屉是否打开
+// 主题switch默认
+const themeAction = ref(String(localStorage.getItem('theme')) || 'dark')
+// 组件容器ref
+const drawer = ref<HTMLDivElement>()
+// 滑块ref
+const sliders = ref<HTMLDivElement>()
+// 控制抽屉模组是否打开
 const drawerPanel = ref<boolean>(false)
-// 开关默认状态
-const action = ref(JSON.parse(String(localStorage.getItem('isbg'))) || false)
-emit('SwitchTheme', action.value)
-const drawer = ref<any>()
-const sliders = ref<any>();
+// 背景板
+const bgPlate = ref<any>(JSON.parse(String(localStorage.getItem('bgPlate'))) || false)
+// 切换背景按钮加载状态
+const isBgLoading = ref<boolean>(false)
+// 路由实例
+const router = useRouter()
+
+
+/**
+ * @author WangYaFeng
+ * @date 2023/10/28 2:17
+ * @description switch开关事件,控制主题
+ * @return null
+ * @param args 布尔类型，
+ */
+const switchThemeEvnt = (args: string) => {
+  localStorage.setItem('theme', args)
+  const theme = {'theme': args}
+  document.documentElement.setAttribute("data-theme", theme.theme);
+  store.dispatch('useAppStore/themeConfig', theme);
+}
 
 /**
  * @author WangYaFeng
@@ -116,7 +92,7 @@ const drawerPanelEvnt = (even: boolean) => {
  * @return null
  */
 const closeDrawer = () => {
-  const {endPoint, slider,elHeight}: any = sliders.value
+  const {endPoint, slider, elHeight}: any = sliders.value
   // 获取css表
   /**
    * @author WangYaFeng
@@ -125,15 +101,15 @@ const closeDrawer = () => {
    * @param null
    * @return null
    */
-  // Object.keys(styleSheets).forEach((res:any)=>{
-  //   let arr = styleSheets[res].cssRules;
-  //   Object.keys(arr).forEach((item:any)=>{
-  //     let text = styleSheets[res].cssRules[item].cssText;
-  //     if(text.includes('#drawer')){
-  //       key = res;
-  //     }
-  //   })
-  // })
+      // Object.keys(styleSheets).forEach((res:any)=>{
+      //   let arr = styleSheets[res].cssRules;
+      //   Object.keys(arr).forEach((item:any)=>{
+      //     let text = styleSheets[res].cssRules[item].cssText;
+      //     if(text.includes('#drawer')){
+      //       key = res;
+      //     }
+      //   })
+      // })
   const styleSheet = document.styleSheets[0];
   // css表注入动画
   // styleSheet.insertRule(`@keyframes shake {from{ transform: translateY(${endPoint}%) } to { transform: translateY(-50%); }`, 0);
@@ -150,17 +126,19 @@ const closeDrawer = () => {
   })
 }
 
-/**
- * @author WangYaFeng
- * @date 2023/10/28 2:17
- * @description switch开关事件，用于控制主题
- * @return null
- * @param args 布尔类型，
- */
-const switchEvnt = (args: boolean) => {
-  localStorage.setItem('isbg', String(args))
-  emit('SwitchTheme', args);
-};
+
+// 组件是否在后台显示
+const ShowComponent = computed(() => {
+  return excludeComponents(['Dashboard'])
+})
+const excludeComponents = (arr: string[]) => {
+  let matcheds = router.currentRoute.value.matched
+  if (arr.includes(String(matcheds[0].name))) {
+    let el = <HTMLElement>document.getElementById('mainbg');
+    el.style.display = `none`
+  }
+  return !arr.includes(String(matcheds[0].name))
+}
 
 /**
  * @author WangYaFeng
@@ -169,67 +147,17 @@ const switchEvnt = (args: boolean) => {
  * @return null
  */
 const switchBackgroundButton = () => {
-  isLoading.value = true
+  isBgLoading.value = true
   setTimeout(() => {
-    emit('IsSwitchBg', !isSwitchBgButton.value);
-    isLoading.value = false
+    bgPlate.value = !bgPlate.value
+    isBgLoading.value = false
+    let el = <HTMLElement>document.getElementById('mainbg');
+    el.style.display = bgPlate.value ? `none` : `block`
   }, 1000)
   // 本地缓存
-  localStorage.setItem('IsSwitchBg', String(!isSwitchBgButton.value))
+  localStorage.setItem('bgPlate', String(bgPlate.value))
 }
 
-// 切换背景按钮加载状态
-const isLoading = ref<boolean>(false)
-
-// 登陆对话弹窗
-const dialogFormVisible = ref<boolean>(false)
-// 用户个人中心对话弹窗
-const UserDialogFormVisible = ref<boolean>(false)
-// 控制状态栏组件
-// const isLoginState = ref<any>(getCookie() ? true : JSON.parse(String(localStorage.getItem('isLoginState'))))
-const isLoginState = ref<any>(getCookie())
-// 储存用户信息 为0就是管理员
-const userinfo = computed(()=>store.getters.userinfo)
-
-/**
- * @author WangYaFeng
- * @date 2023/10/31 3:05
- * @description login组件登陆回调事件，切换展示组件,对if组件状态进行本地缓存
- * @return null
- */
-const dialogcall = () => {
-  dialogFormVisible.value = !dialogFormVisible.value
-  isLoginState.value = !isLoginState.value
-  // localStorage.setItem('isLoginState', JSON.stringify(isLoginState.value))
-  api.userApi.getInfo().then((res: AxiosResponse) => {
-    const {data,code,message,type}:{data:userInfoVo,code:number,message:string,type:any} = res.data;
-    ElMessage({message: message, type: type})
-    if(code == 200){
-      store.commit('userStore/SET_USER_INFO', data)
-    }
-  })
-}
-
-// 退出当前账户
-const userExit = () => {
-  store.dispatch('userStore/logout', getCookie()).then((message) => {
-    ElMessage.success(message)
-    isLoginState.value = false
-    localStorage.setItem('isLoginState', String(isLoginState.value))
-    router.push({path: '/'})
-  },(error:Error)=>{
-    ElMessage.success(error.message)
-  })
-}
-
-// 切换前后台
-const switchPageEvnt = () => {
-  if (isloading.value){
-    router.push({path: '/Dashboard'})
-  }else {
-    router.push({path: '/'})
-  }
-}
 </script>
 
 <style lang="scss" scoped>
@@ -246,28 +174,29 @@ const switchPageEvnt = () => {
   z-index: 50;
 
   :deep(.el-overlay) {
-    margin: 0 auto;
     background: #00000000 !important;
 
+    .el-drawer.ttb {
+      left: unset;
+      right: 2.25rem;
+    }
+
     .el-drawer-box {
-      width: fit-content !important;
-      height: 6rem !important;
       opacity: 0.9;
       border: 0 solid;
-      position: relative !important;
+      width: fit-content !important;
+      height: 5rem !important;
       border-bottom-left-radius: 1rem;
       border-bottom-right-radius: 1rem;
-      float: right;
-      margin-right: 2.5%;
+      background-color: $background-color-drawer;
 
-      .el-drawer__body {
+      ul {
         display: flex;
+        flex-direction: row;
         position: relative;
-        justify-content: flex-start;
-        z-index: 10 !important;
-        align-items: center;
         gap: 1rem;
-        background-color: $background-color-drawer;
+        align-items: center;
+        justify-content: center;
 
         .el-switch {
           .el-switch__core {
@@ -290,31 +219,11 @@ const switchPageEvnt = () => {
             }
           }
         }
+
       }
+
     }
 
-    .personal-center-box {
-      width: 25rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      @include font_color('text-color');
-      @include background_color('background-primary');
-
-      .el-dialog__header{
-        .el-dialog__title{
-          color: inherit;
-        }
-      }
-      .el-dialog__body{
-        width: calc(100% - 40px);
-      }
-    }
-
-    .login-box {
-      width: 25rem;
-      border-radius: 1rem;
-    }
   }
 }
 </style>

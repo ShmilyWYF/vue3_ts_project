@@ -15,13 +15,14 @@
       </el-header>
       <el-main id="layoutMain" ref="mainRef" class="el-main">
         <el-card body-style="height:100%">
-          <Main :container-main="mainRef" :is-vertical="isVertical"/>
+          <Main :is-vertical="isVertical"/>
         </el-card>
       </el-main>
       <el-footer class="el-footer">
         <footer-tag/>
       </el-footer>
-      <Tool/>
+      <drawer ref="drawerRef"/>
+      <tool/>
     </el-container>
   </div>
 </template>
@@ -30,13 +31,11 @@ import {FooterTag, Main, NavMenu} from "@/layout/component";
 import {computed, ref} from "vue";
 import {useRouter} from "vue-router";
 import store from "@/store";
-import {SvgIcon} from "@/components";
-import {Tool} from '@/components'
+import {Drawer, SvgIcon,Tool} from "@/components";
 const mainRef = ref()
 const props = defineProps(['isVertical'])
 const height = computed(() => useRouter().currentRoute.value.path === '/home')
 const blogName = ref<string>(store.getters.useState.websiteConfig.englishName)
-
 </script>
 
 <style lang="scss" scoped>
@@ -117,6 +116,7 @@ const blogName = ref<string>(store.getters.useState.websiteConfig.englishName)
     }
   }
 }
+
 @include arrows();
 .horizontalClass {
   $PADDING-LEFT-AND-RIGHT: 2.5%;

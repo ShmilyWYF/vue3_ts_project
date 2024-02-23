@@ -8,7 +8,6 @@
       </el-dropdown-menu>
     </template>
   </el-dropdown>
-  <slot name="default"/>
 </template>
 
 <script lang="ts" setup>
