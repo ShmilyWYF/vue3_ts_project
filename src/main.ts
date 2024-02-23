@@ -11,8 +11,7 @@ import 'virtual:svg-icons-register'
 // import echarts from 'echarts'
 import mockXHR from "@/mock";
 // CSS初始化方案
-import '@/style/reset.css'
-import {getCookie, setStorageKeyCookie} from "@/utils/cookie"; // global css 保持一致性
+import '@/style/reset.css' // global css 保持一致性
 
 const app = createApp(App)
 if (import.meta.env.APP_NODE_ENV === 'development') {

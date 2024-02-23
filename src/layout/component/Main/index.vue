@@ -2,7 +2,7 @@
   <div ref="mainRef" class="main">
     <Breadcrumb/>
     <router-view v-if="isRouterAlive" class="view"/>
-    <el-backtop v-if="!isVertical" :bottom="100" :right="200"/>
+<!--    <el-backtop v-if="!isVertical" :bottom="100" :right="200"/>-->
     <Drawer :container="containerMain" :is-switch-bg-button="isSwitch" @switch-theme="switchTheme"
             @is-Switch-Bg="isSwitchBgEvent"/>
     <App-Banner :style="isVertical?{height: '55%'}:''"/>
@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import {AppBanner, Breadcrumb} from "@/components";
-import {Drawer} from "@/layout/component";
+import {Drawer} from "@/components"
 import store from "@/store";
 import {nextTick, provide, readonly, ref, toRefs} from "vue";
 

@@ -1,8 +1,8 @@
 <template>
-  <div ref="slider" class="drawerstring-Graphics" @mousedown="boxMousedown" @mousemove="svgMousemove">
-    <div class="drawerstring"/>
-    <div class="drawerbutton">
-      <svg-icon href="#" name="circle" @mousedown="svgMousedown"/>
+  <div class="drawerstring-Graphics" @mousedown="boxMousedown" @mousemove="svgMousemove">
+    <div class="drawerstring" ref="slider"/>
+    <div class="drawerbutton" @mousedown="svgMousedown">
+      <svg-icon href="#" name="circle"/>
     </div>
   </div>
 </template>
@@ -20,9 +20,11 @@ const emit = defineEmits(['drawerPanelEvnt'])
 const {DOMRange}: any = toRefs(props)
 
 onMounted(() => {
-  slider.value.style.transform = `translateY(${-50}%)`
+  slider.value.style.height = `${elHeight.value}%`
 });
 
+// 初始化高度
+const elHeight = ref<number>(50);
 // 储存开始地址
 const startPoint = ref<number>(0)
 // 储存结束地址
@@ -36,7 +38,8 @@ const slider = ref<any>();
 defineExpose({
   endPoint,
   slider,
-  isMousePress
+  isMousePress,
+  elHeight
 })
 
 // 滑轮组区域鼠标单击触发drawer关闭回调事件
@@ -46,18 +49,24 @@ const boxMousedown = (e: any) => {
 
 const svgMousedown = (evnt: MouseEvent) => {
   isMousePress.value = true;
-  const {clientY} = evnt;
-  startPoint.value = clientY / clientHeight.value;
+  const {pageY} = evnt;
+  // startPoint.value = offsetY / clientHeight.value;
+  startPoint.value = pageY / clientHeight.value;
   // 给主容器添加鼠标松开事件
   DOMRange.value.addEventListener('mouseup', svgMouseup)
 }
 const svgMousemove = (evnt: MouseEvent) => {
   if (!isMousePress.value) return
-  const {clientY} = evnt;
-  endPoint.value = Number((((clientY / clientHeight.value) - startPoint.value) * 100 - 50).toFixed(2))
-  if (endPoint.value < -50) return;
-  slider.value.style.transform = `translateY(${endPoint.value}%)`
-  emit('drawerPanelEvnt', endPoint.value > -47);
+  const {pageY} = evnt;
+  // 滑动距离
+  endPoint.value = Number((((pageY / clientHeight.value) - startPoint.value) * 100 + elHeight.value).toFixed(2))
+  // console.log('起点百分比值：'+startPoint.value,'终点百分比值：'+(pageY / clientHeight.value))
+  // console.log("差值"+((pageY / clientHeight.value)-startPoint.value))
+  // console.log("最终结果:"+endPoint.value,)
+  if (endPoint.value < elHeight.value) return;
+  slider.value.style.height = `${endPoint.value}%`
+  // 触发面板
+  emit('drawerPanelEvnt', endPoint.value > elHeight.value+10);
 }
 const svgMouseup = (event: any) => {
   isMousePress.value = false
@@ -79,24 +88,24 @@ document.addEventListener('mouseup', (e) => {
 </script>
 <style lang="scss" scoped>
 .drawerstring-Graphics {
-  width: 2.5%;
-  height: 50%;
+  height: 20rem;
+  width: 3rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: absolute;
   right: 0;
   z-index: 999;
+  transform: translateY(-3.5rem);
 
   .drawerstring {
     position: relative;
     width: 4.25%;
-    height: 70%;
     background: rgb(51, 51, 51);
   }
 
   .drawerbutton {
-    height: 30%;
+    flex: .1;
     position: relative;
     z-index: 2001;
 

@@ -21,6 +21,7 @@
       <el-footer class="el-footer">
         <footer-tag/>
       </el-footer>
+      <Tool/>
     </el-container>
   </div>
 </template>
@@ -30,7 +31,7 @@ import {computed, ref} from "vue";
 import {useRouter} from "vue-router";
 import store from "@/store";
 import {SvgIcon} from "@/components";
-
+import {Tool} from '@/components'
 const mainRef = ref()
 const props = defineProps(['isVertical'])
 const height = computed(() => useRouter().currentRoute.value.path === '/home')
@@ -211,7 +212,7 @@ const blogName = ref<string>(store.getters.useState.websiteConfig.englishName)
     padding: 0 $PADDING-LEFT-AND-RIGHT;
     min-height: calc(100vh - 20vh);
     position: relative;
-    z-index: 10;
+    z-index: 15;
     overflow: initial;
     top: 3.5rem;
 
@@ -219,7 +220,7 @@ const blogName = ref<string>(store.getters.useState.websiteConfig.englishName)
       pointer-events: none;
       content: "";
       position: absolute;
-      z-index: 35;
+      z-index: 5;
       left: 0;
       top: -3.5rem;
       height: 2.5%;

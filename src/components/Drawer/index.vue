@@ -33,7 +33,7 @@
       </template>
     </el-drawer>
     <el-affix target=".main">
-      <DrawerstringGraphics ref="sliders" :DOMRange="drawer" @drawerPanelEvnt="drawerPanelEvnt"/>
+      <DrawerstringGraphics ref="sliders" :DOMRange="drawer" @drawerPanelEvnt="drawerPanelEvnt" @animationEvents="closeDrawer"/>
     </el-affix>
     <el-dialog v-model="dialogFormVisible" title="登陆" class="login-box">
       <Login @dialogCall="dialogcall"/>
@@ -107,9 +107,6 @@ const sliders = ref<any>();
  */
 const drawerPanelEvnt = (even: boolean) => {
   drawerPanel.value = even
-  // 解决与导航栏叠层层级问题
-  drawer.value.style.zIndex = 20;
-  container.value.$el.style.zIndex = '15'
 }
 
 /**
@@ -119,7 +116,7 @@ const drawerPanelEvnt = (even: boolean) => {
  * @return null
  */
 const closeDrawer = () => {
-  const {endPoint, slider}: any = sliders.value
+  const {endPoint, slider,elHeight}: any = sliders.value
   // 获取css表
   /**
    * @author WangYaFeng
@@ -139,21 +136,18 @@ const closeDrawer = () => {
   // })
   const styleSheet = document.styleSheets[0];
   // css表注入动画
-  styleSheet.insertRule(`@keyframes shake {from{ transform: translateY(${endPoint}%) } to { transform: translateY(-50%); }`, 0);
-
+  // styleSheet.insertRule(`@keyframes shake {from{ transform: translateY(${endPoint}%) } to { transform: translateY(-50%); }`, 0);
+  styleSheet.insertRule(`@keyframes shake {from{ height: ${endPoint}% } to { height: ${elHeight}% }`, 0);
   // 挂载动画
   slider.style.animation = `shake 200ms linear`;
   // 添加延时
   setTimeout(() => {
-    slider.style.transform = "translateY(-50%)"
+    slider.style.height = `${elHeight}%`
   }, 190)
   // 卸载动画
   slider.addEventListener('animationend', () => {
     slider.style.animation = '';
   })
-  // 解决与导航栏叠层层级问题
-  drawer.value.style.zIndex = 0;
-  container.value.$el.style.zIndex = '10'
 }
 
 /**
@@ -246,17 +240,14 @@ const switchPageEvnt = () => {
 }
 
 #drawer {
-  position: fixed;
+  position: absolute;
   top: 0;
   right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 10;
+  z-index: 50;
 
   :deep(.el-overlay) {
     margin: 0 auto;
     background: #00000000 !important;
-    z-index: 10 !important;
 
     .el-drawer-box {
       width: fit-content !important;
