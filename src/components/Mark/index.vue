@@ -1,7 +1,7 @@
 <template>
   <mavon-editor
       ref="markdownRef"
-      v-model="articleContext"
+      v-model="reactiveData.content"
       :codeStyle="codeStyle"
       :defaultOpen="editMode?'edit':'preview'"
       :editable="editMode"
@@ -29,38 +29,32 @@ import {mavonEditor} from 'mavon-Editor'
 import 'mavon-editor/dist/css/index.css'
 // import markdownItMermaid from '@liradb2000/markdown-it-mermaid'
 // mavonEditor.getMarkdownIt(markdownItMermaid)
-import {nextTick, onUnmounted, ref, toRefs} from "vue";
+import {computed, nextTick, onUnmounted, reactive, ref, toRefs, watch} from "vue";
 import api from "@/axios";
 import SvgIcon from "@/components/SvgIcon/index.vue";
 
-const emit = defineEmits(['markTocEvnt', 'saveCache', 'fullScreen', 'unMarkbefor','exitEvnt'])
-const props: any = defineProps({
-  editMode: {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  content: {
-    type: String,
-    default: '',
-  },
-  isExitBtn:{
-    type: Boolean,
-    default: true
-  }
+const emit = defineEmits(['markTocEvnt', 'saveCache', 'fullScreen', 'unMarkbefor','exitEvnt','update:modelValue'])
+const props: any = withDefaults(defineProps<{editMode?:boolean,isExitBtn?:boolean,modelValue:string}>(),{
+  editMode: false,
+  isExitBtn: true,
+  modelValue: ''
 })
-const {editMode, content} = toRefs(props);
+const {editMode,modelValue} = toRefs(props);
 
-//prop为只读属性,需要深拷贝
-const deepValue = JSON.stringify(content.value)
-const articleContext = ref(JSON.parse(deepValue))
+const reactiveData = reactive({
+  content: modelValue.value
+})
+
+watch(()=>modelValue.value,(value) => {
+  console.log(value,"执行")
+  reactiveData.content = value
+})
 
 // 获取编辑器Vue实例子
 const markdownRef = ref<any>({})
 
 // 配色方案
 const codeStyle = ref<string>('code-github')
-
 
 nextTick(() => {
   document.documentElement.scrollIntoView({behavior: "smooth"})
@@ -107,7 +101,7 @@ const imgAdd = (index: any, file: any) => {
 
 //在页面销毁之前先销保存内容
 onUnmounted(() => {
-  emit('unMarkbefor', articleContext.value)
+  emit('unMarkbefor', reactiveData.content)
 })
 </script>
 

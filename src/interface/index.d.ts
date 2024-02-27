@@ -34,7 +34,7 @@ export interface UserInfoInterface {
     updateTime?: Date|null,
 }
 
-interface userInfoVo {
+interface userInfointerface {
     id: number,
     avatar: string,
     email: string,

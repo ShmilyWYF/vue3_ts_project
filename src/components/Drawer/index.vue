@@ -45,7 +45,7 @@ onMounted(() => {
 })
 
 // 主题switch默认
-const themeAction = ref(String(localStorage.getItem('theme')) || 'dark')
+const themeAction = ref(localStorage.getItem('theme') || 'dark')
 // 组件容器ref
 const drawer = ref<HTMLDivElement>()
 // 滑块ref

@@ -223,7 +223,7 @@ const blogName = ref<string>(store.getters.useState.websiteConfig.englishName)
       z-index: 5;
       left: 0;
       top: -3.5rem;
-      height: 2.5%;
+      height: 5rem;
       width: 100%;
       @include background_color('article-cover-cred-reverse');
     }

@@ -1,4 +1,4 @@
-import {UserAuthinterface, UserInfoInterface, userInfoVo} from "@/interface";
+import {UserAuthinterface, UserInfoInterface, userInfointerface} from "@/interface";
 
 const hasEmailBindCaptcha = {
     email: '',
@@ -88,11 +88,11 @@ export const userinfo = <UserInfoInterface[]>[
 ]
 
 export const getAlluser = (obj: string) => {
-    let arr: userInfoVo[] = []
+    let arr: userInfointerface[] = []
     userAuth.forEach((item) => {
         let index = userinfo.findIndex(value => value.id === item.user_info_id);
         if (index != -1 && userinfo[index].isDelete != 1&& userAuth[index].login_type != 999) {
-            arr.unshift(<userInfoVo>{
+            arr.unshift(<userInfointerface>{
                 avatar: userinfo[index].avatar,
                 createTime: userinfo[index].createTime,
                 email: userinfo[index].email,
@@ -148,7 +148,7 @@ export const getUserinfo = (token: string) => {
     if (token == hasEmailBindCaptcha.token){
         let auth = userAuth.find(value => value.username == hasEmailBindCaptcha.email);
         let info = userinfo.find(value => value.id == auth?.user_info_id);
-        return <userInfoVo>{
+        return <userInfointerface>{
             avatar: info?.avatar,
             createTime: info?.createTime,
             email: info?.email,
@@ -258,7 +258,7 @@ export const restUser = (registerinfo: string) => {
 }
 
 export const UpdateUserinfo = (user: string) => {
-    let parse = <userInfoVo>JSON.parse(user);
+    let parse = <userInfointerface>JSON.parse(user);
     const index = userAuth.findIndex(value => value.id = parse.id);
     if (index != -1) {
         userAuth[index].password = parse.password;

@@ -42,7 +42,7 @@
       </div>
     </template>
     <template #default>
-      <Mark :key="content.id" ref="markRef" :content="content.articleContent" @markTocEvnt="markTocEvnt"/>
+      <Mark :key="content.id" ref="markRef" v-model="content.articleContent" @markTocEvnt="markTocEvnt"/>
       <Comment :type="1" :id="id" ref="commentsRef"/>
     </template>
     <template #aside>
@@ -78,8 +78,8 @@ const HTMLContent = (content: any): string => {
 const commentsRef = ref<any>()
 
 onBeforeMount(async () => {
-  store.dispatch('articleStore/getArticleById', {id: id?.value}).then((res: ArticleInterface) => {
-    Object.assign(content, res)
+  store.dispatch('articleStore/getArticleById', {id: id?.value}).then((data: ArticleInterface) => {
+    Object.assign(content, data)
     isLoading.value = true
   })
 })

@@ -183,6 +183,15 @@ export const asyncRouterMap: any[] = [
                 },
             },
             {
+                path: '/Dashboard/mail',
+                name: 'mail',
+                component: () => import('@/views/Dashboard/components/mail/index.vue'),
+                meta: {
+                    require: true,
+                    title: '邮件系统'
+                },
+            },
+            {
                 path: '/Dashboard/website',
                 name: 'website',
                 component: () => import('@/views/Dashboard/components/website/index.vue'),

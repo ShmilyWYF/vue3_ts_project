@@ -20,7 +20,7 @@ export default {
         url: 'user/restUser'
     },
     updateUserinfo: {
-        method: 'update',
+        method: 'put',
         url: 'user/userinfo'
     },
     getAlluser: {

@@ -1,6 +1,6 @@
 <template>
   <div class="about-box">
-    <Mark :content="aboutContent" @save-cache="updateAbout" :edit-mode="true" :is-exit-btn="false"/>
+    <Mark v-model="aboutContent" @save-cache="addAbout" :edit-mode="true" :is-exit-btn="false"/>
   </div>
 </template>
 
@@ -18,13 +18,17 @@ onBeforeMount(()=>{
 })
 
 const getAbout = () => {
-  api.aboutApi.getAbout().then(({data}:AxiosResponse) => {
-    aboutContent.value = data.data
+  api.aboutApi.getAbout().then((res:AxiosResponse) => {
+    const {data} = res.data
+    aboutContent.value = data.content
   })
 }
 
-const updateAbout = () => {
-  api.aboutApi.updateAbout().then(({data}:AxiosResponse) => {
+const addAbout = (content:string) => {
+  let param = {
+    content: content
+  }
+  api.aboutApi.addAbout(param).then(({data}:AxiosResponse) => {
     ElNotification({
       type: data.type,
       message: data.message,

@@ -1,35 +1,36 @@
 <template>
   <el-card>
-    <el-form v-if="isEditR" :model="userData" ref="fromRef" :rules="rules">
+    <el-form v-if="!isEdit" :model="userData" ref="fromRef" :rules="rules">
       <el-form-item label="头像" prop="avatar">
         <label for="upload" class="ui-upload">
           <el-image style="width: 100px; height: 100px" :src="userData.avatar" fit="fill"/>
         </label>
         <input id="upload" type="file" name="file" multiple="multiple" @change="updateImg"
-               style="display: none" :disabled="!isEditR"/>
+               style="display: none"/>
       </el-form-item>
       <el-form-item label="昵称" prop="nickname">
-        <el-input v-model="userData.nickname" :disabled="!isEditR"/>
+        <el-input v-model="userData.nickname" />
       </el-form-item>
       <el-form-item label="密码" prop="password">
         <el-input v-model="userData.password"/>
       </el-form-item>
       <el-form-item label="邮箱" prop="email" :disabled="true">
-        <el-input v-model="userData.email" :disabled="!isEditR"/>
+        <el-input v-model="userData.email"/>
       </el-form-item>
       <el-form-item label="个人网址" prop="website">
-        <el-input v-model="userData.website" :disabled="!isEditR"/>
+        <el-input v-model="userData.website"/>
       </el-form-item>
       <el-form-item label="简介" prop="intro">
         <el-input v-model="userData.intro" type="textarea"/>
       </el-form-item>
       <el-form-item label="是否订阅" prop="isSubscribe">
-        <el-radio-group v-model="userData.isSubscribe" :disabled="!isEditR">
+        <el-radio-group v-model="userData.isSubscribe">
           <el-radio :label="0">否</el-radio>
           <el-radio :label="1">是</el-radio>
         </el-radio-group>
       </el-form-item>
       <slot name="content" :row="userData"/>
+      <el-button v-if="isEdit == isEditBtn" type="success" @click="updateUserInfo">添加用户</el-button>
     </el-form>
     <div v-else class="card-View-box">
       <div class="header-box">
@@ -46,18 +47,11 @@
         <span>简介：</span>
         <p>{{ userData.intro }}</p>
       </div>
+      <el-button v-if="!isEditBtn" type="primary" @click="isEditBtn = true;emit('updateEditOrAdd',false)">编辑用户信息</el-button>
     </div>
-    <div class="btn-box">
-      <div v-if="isEdit===false">
-        <el-button v-if="!isEditR" type="primary" @click="isEditR = true">编辑用户信息</el-button>
-        <div v-else>
-          <el-button type="success" @click="updateUserInfo">保存</el-button>
-          <el-button type="warning" @click="isEditR = !isEditR">取消编辑</el-button>
-        </div>
-      </div>
-      <div v-else>
-          <el-button type="success" @click="updateUserInfo">添加用户</el-button>
-      </div>
+    <div class="btn-box" v-if="isEditBtn">
+      <el-button type="success" @click="updateUserInfo">保存</el-button>
+      <el-button type="warning" @click="isEditBtn = false;emit('updateEditOrAdd',true)">取消编辑</el-button>
     </div>
   </el-card>
 </template>
@@ -68,16 +62,14 @@ import {ElMessage, FormRules} from "element-plus";
 import {nameRule, pwdRule, UrlRule} from "@/utils/validate";
 import api from "@/axios";
 import axios, {AxiosResponse} from "axios";
-import {userInfoVo} from "@/interface";
+import {userInfointerface} from "@/interface";
 import store from "@/store";
 
 const reloadV: any = inject('reload')
 
-const props = withDefaults(defineProps<{ fromData: userInfoVo ,isEdit:boolean}>(),{
-  isEdit: false
-})
+const props = defineProps<{ fromData: userInfointerface ,isEdit:boolean}>()
 
-const emit = defineEmits(['updateCall'])
+const emit = defineEmits(['updateCall','updateEditOrAdd'])
 let { fromData,isEdit } = toRefs(props);
 const fromRef = ref<HTMLElement | any>()
 const rules = reactive<FormRules>({
@@ -89,9 +81,9 @@ const rules = reactive<FormRules>({
   website: {required: false, validator: UrlRule},
 })
 
-const userData = ref<userInfoVo>(fromData.value)
-// 深拷贝
-const isEditR = ref(JSON.parse(JSON.stringify(isEdit.value)))
+const userData = ref<userInfointerface>(fromData.value)
+
+const isEditBtn = ref(false)
 
 const updateImg = async (file: any) => {
   let formdata = new FormData();
@@ -117,7 +109,6 @@ const updateUserInfo = () =>{
       } catch (e: any) {
         ElMessage.error(e)
       } finally {
-        isEditR.value = false
         reloadV()
       }
     } else {

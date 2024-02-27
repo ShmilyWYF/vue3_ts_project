@@ -36,6 +36,10 @@ defineProps({
 }
 
 #toc {
+
+  height: 25rem;
+  overflow: auto;
+
   .toc-list {
     @include background_color('background-primary');
     border-radius: .75rem;
