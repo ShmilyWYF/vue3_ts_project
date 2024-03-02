@@ -30,7 +30,7 @@
         </el-radio-group>
       </el-form-item>
       <slot name="content" :row="userData"/>
-      <el-button v-if="isEdit == isEditBtn" type="success" @click="updateUserInfo">添加用户</el-button>
+      <el-button v-once v-show="isEdit == isEditBtn" type="success" @click="updateUserInfo">添加用户</el-button>
     </el-form>
     <div v-else class="card-View-box">
       <div class="header-box">
@@ -47,9 +47,9 @@
         <span>简介：</span>
         <p>{{ userData.intro }}</p>
       </div>
-      <el-button v-if="!isEditBtn" type="primary" @click="isEditBtn = true;emit('updateEditOrAdd',false)">编辑用户信息</el-button>
+      <el-button v-once v-show="!isEditBtn" type="primary" @click="isEditBtn = true;emit('updateEditOrAdd',false)">编辑用户信息</el-button>
     </div>
-    <div class="btn-box" v-if="isEditBtn">
+    <div class="btn-box" v-once v-show="isEditBtn">
       <el-button type="success" @click="updateUserInfo">保存</el-button>
       <el-button type="warning" @click="isEditBtn = false;emit('updateEditOrAdd',true)">取消编辑</el-button>
     </div>

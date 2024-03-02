@@ -10,8 +10,8 @@
       </template>
       <template v-show="showContext" #default>
         <ul :class="{'sidebar-ul':defaultClass}" :style="data != ''?{display: ulDisplay }:{display: 'none'}">
-          <li v-for="(item,key) in data" :key="key" :style="ulLiStyle" :class="ulLiClass">
-            <slot :item="item" name="content" :afterRender="afterRender"/>
+          <li v-for="(item,key) in data" :key="item.id||key" :style="ulLiStyle" :class="ulLiClass">
+            <slot :item="item" :$index="item.id||key" name="content" :afterRender="afterRender"/>
           </li>
         </ul>
         <slot name="defulet" :afterRender="afterRender"/>

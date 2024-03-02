@@ -36,7 +36,7 @@ class HttpRequest {
                 accept: HttpRequest.accept,
                 context: HttpRequest.context,
             },
-            timeout: 5000
+            timeout: 30000
         }
     }
 

@@ -1,34 +1,33 @@
 // 深拷贝
-export const deepCopy = (obj: any) => {
-    // hash表，记录所有的对象的引用关系
-    let map = new WeakMap();
+/**
+ * 深拷贝通用方法
+ * @param obj   需要拷贝的对象
+ * @param has
+ * @returns {any|RegExp|Date}
+ */
+export const deepClone = (obj:any, has = new WeakMap()): any | RegExp | Date => {
+    // 类型检查
+    if (obj == null) return obj;
+    if (obj instanceof Date) return obj;
+    if (obj instanceof RegExp) return obj;
+    if (!(typeof obj == "object")) return obj;
 
-    function dp(obj: any) {
-        let result: any = null;
-        let keys = Object.keys(obj);
-        let key = null,
-            temp = null,
-            existobj = null;
-        existobj = map.get(obj);
-        //如果这个对象已经被记录则直接返回
-        if (existobj) {
-            return existobj;
+    // 构造对象
+    const newObj = new obj.constructor;
+
+    // 防止自引用导致的死循环
+    if (has.get(obj)) return has.get(obj);
+    has.set(obj, newObj);
+
+    // 循环遍历属性及方法
+    for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            newObj[key] = deepClone(obj[key]);
         }
-        result = {}
-        map.set(obj, result);
-        for (let i = 0, len = keys.length; i < len; i++) {
-            key = keys[i];
-            temp = obj[key];
-            if (temp && typeof temp === 'object') {
-                result[key] = dp(temp);
-            } else {
-                result[key] = temp;
-            }
-        }
-        return result;
     }
 
-    return dp(obj);
+    // 返回对象
+    return newObj;
 }
 
 // 首字母转大写

@@ -54,9 +54,7 @@ class MockHandler extends MockResponse {
      * @private
      */
     private init(mock: any): void {
-        mock(RegUrl(this.getUrl), this.getType, (option: { body: string | undefined }) => {
-            return this.response(option?.body)
-        });
+        mock(RegUrl(this.getUrl), this.getType,this.response());
     }
 
 }

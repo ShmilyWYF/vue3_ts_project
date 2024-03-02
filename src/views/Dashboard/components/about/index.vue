@@ -20,7 +20,7 @@ onBeforeMount(()=>{
 const getAbout = () => {
   api.aboutApi.getAbout().then((res:AxiosResponse) => {
     const {data} = res.data
-    aboutContent.value = data.content
+    aboutContent.value = data
   })
 }
 
