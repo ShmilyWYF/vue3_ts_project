@@ -23,4 +23,9 @@ export default {
         method: 'get',
         url: '/useApp/aside'
     },
+    // 获取月访问集合
+    getMonthVisits:{
+        method: 'get',
+        url: '/useApp/monthVisits'
+    },
 }
