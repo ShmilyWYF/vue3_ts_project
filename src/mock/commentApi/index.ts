@@ -18,7 +18,7 @@ export default [
         condition: true
     },
     {
-        url: '/comment/getCommentListByType',
+        url: '/comment/allByType',
         type: 'get',
         template: getCommentListByType,
         code: Number(200),
@@ -26,7 +26,7 @@ export default [
         condition: true
     },
     {
-        url: '/comment/getRepliesByCommentId',
+        url: '/comment/replies',
         type: 'get',
         template: getRepliesByCommentId,
         code: Number(200),
@@ -50,7 +50,7 @@ export default [
         condition: true
     },
     {
-        url: '/comment/delete',
+        url: '/comment/remove',
         type: 'delete',
         template: deleteCommentById,
         code: Number(200),
@@ -59,7 +59,7 @@ export default [
     },
     {
         url: '/comment/update',
-        type: 'update',
+        type: 'put',
         template: releaseCommentById,
         code: Number(200),
         status: true,

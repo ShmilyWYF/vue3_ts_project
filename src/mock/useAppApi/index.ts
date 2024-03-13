@@ -1,60 +1,61 @@
-import template, {
-    upDateUserConfig,
-    upDateWebsiteConfig,
-    userConfig,
-    websiteConfig
+import {
+    aside, MonthVisits,
+    updatethemeConfig,
+    updateUserConfig,
+    updateWebSiteConfig,
+    webSiteConfig,
 } from '@/mock/useAppApi/tempalte/Template'
 
 
-const menuApi = [
+const useApp = [
     {
-        url: 'useApp/UseAppConfig',
+        url: 'useApp/webSiteConfig',
         type: 'get',
-        template,
+        template: webSiteConfig,
         code: Number(200),
         status: true,
         condition: true
     },
     {
-        url: 'useApp/websiteConfig',
+        url: 'useApp/webSiteConfig',
+        type: 'put',
+        template: updateWebSiteConfig,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: 'useApp/userSiteConfig',
+        type: 'put',
+        template: updateUserConfig,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: 'useApp/themeSiteConfig',
+        type: 'put',
+        template: updatethemeConfig,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: 'useApp/aside',
         type: 'get',
-        template: websiteConfig,
+        template: aside,
         code: Number(200),
         status: true,
         condition: true
     },
     {
-        url: 'useApp/websiteConfig',
-        type: 'update',
-        template: upDateWebsiteConfig,
-        code: Number(200),
-        status: true,
-        condition: true
-    },
-    {
-        url: 'useApp/userConfig',
+        url: 'config/monthVisits',
         type: 'get',
-        template: userConfig,
-        code: Number(200),
-        status: true,
-        condition: true
-    },
-    {
-        url: 'useApp/userConfig',
-        type: 'update',
-        template: upDateUserConfig,
-        code: Number(200),
-        status: true,
-        condition: true
-    },
-    {
-        url: 'config/images',
-        type: 'update',
-        template,
+        template: MonthVisits,
         code: Number(200),
         status: true,
         condition: true
     },
 ]
 
-export default menuApi
+export default useApp

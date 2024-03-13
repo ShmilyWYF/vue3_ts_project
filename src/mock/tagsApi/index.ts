@@ -1,16 +1,8 @@
-import {addOrEditTag, deleteTags, tagCount, tags} from "@/mock/tagsApi/tempalte";
+import {addOrEditTag, deleteTags, tagCount, tags, updateTagById} from "@/mock/tagsApi/tempalte";
 
 export default [
     {
-        url: '/article/tags',
-        type: 'get',
-        template: tags.data,
-        code: Number(200),
-        status: true,
-        condition: true
-    },
-    {
-        url: '/article/tags',
+        url: '/tag/add',
         type: 'post',
         template: addOrEditTag,
         code: Number(200),
@@ -18,15 +10,23 @@ export default [
         condition: true
     },
     {
-        url: '/article/getTagsWithCount',
+        url: '/tag/all',
         type: 'get',
-        template: tagCount(),
+        template: tags.data,
         code: Number(200),
         status: true,
         condition: true
     },
     {
-        url: '/article/tags',
+        url: '/tag/update',
+        type: 'put',
+        template: updateTagById,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/tag/delete',
         type: 'delete',
         template: deleteTags,
         code: Number(200),

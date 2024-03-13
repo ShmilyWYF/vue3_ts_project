@@ -205,8 +205,7 @@ export const comments: { data: CommentMockinterface[] } = Mock.mock({
 })
 
 // 根据类型和文章id和类型获取当前文章所有评论
-export const getCommentListByType = (params: string) => {
-    const {type, topicId, current, size} = JSON.parse(params)
+export const getCommentListByType = ({current,type,size,topicId}: {current:number,type:number,size:number,topicId:number}) => {
     let arr: CommentMockinterface[] = comments.data.filter((item: CommentMockinterface) => {
         return item.type == type && item.topic_id == topicId
     })
@@ -257,7 +256,7 @@ export const getCommentListByType = (params: string) => {
         }
     })
     let count = result.length
-    return {list: result.splice((current - 1) * size, size * current), count: count}
+    return {commentList: result.splice((current - 1) * size, size * current), count: count}
 }
 
 export const saveComments = (obj: string) => {

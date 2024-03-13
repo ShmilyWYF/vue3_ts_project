@@ -110,6 +110,13 @@ export const addOrEditTag = (obj: string) => {
     return tags.data
 }
 
+export const updateTagById = (obj:string) => {
+    const {id,tagName} = JSON.parse(obj)
+    let index = tags.data.findIndex(value => value.id == id);
+    tags.data[index].tagName = tagName
+    return {'message':'ok','code':200};
+}
+
 export const deleteTags = (obj: string)=>{
     const {data} = JSON.parse(obj)
     data.forEach((itemid:number)=>{

@@ -1,8 +1,7 @@
 import Mock from "mockjs";
 import {ArticleInterface, CategoryInterface, Tagsinterface} from "@/interface";
-import {addOrEditTag, tagCount, tags} from "@/mock/tagsApi/tempalte";
-import {addOrEditCategory, category, categoryCount} from "@/mock/categoryApi/tempalte";
-import {websiteConfig} from "@/mock/useAppApi/tempalte/Template";
+import {addOrEditTag, tags} from "@/mock/tagsApi/tempalte";
+import {category, categoryCount} from "@/mock/categoryApi/tempalte";
 
 // 定义随机占位符
 Mock.Random.extend({
@@ -150,8 +149,8 @@ export const allArticle: ArticleInterface[] = data.data.concat(
     }
 )
 
-//  特辑和置顶
-export const FeatureArticle = () => {
+//获得专辑文章列表
+export const getFeatureArticle = () => {
     const {TOP} = Mock.mock({
         'TOP': getLatestItem(true)[getLatestItem.length - 1],
     })
@@ -159,130 +158,78 @@ export const FeatureArticle = () => {
         'LIST': getLatestItem(false).slice(-2)
     })
     return {
-        TOP: TOP,
-        LIST: LIST
+        Top: TOP,
+        Featured: LIST
     }
 }
 
-// 获取所有置顶项，对其进行排序，返回时间最新项
-const getLatestItem = (type: boolean): ArticleInterface[] => {
-    // 获取长度
-    let arr = allArticle.filter(res => {
-        if (res.status !== 3 && res.isDelete !== 1) {
-            return type ? res.isTop == 1 : res.isFeatured == 1
-        }
-    }).sort((a: any, b: any) => {
-        return a.createTime - b.createTime
-    })
-    return arr
-}
-
-// 获取status！=3 带有统计的tags
-export const articleListTag: Tagsinterface[] = tags.data
-// 获取status！=3 带有统计的tags
-export const articleCategoryList: CategoryInterface[] = categoryCount()
-
-// 按分类获取文章列表
-export const ArticleListByCategory = (parameters: string) => {
-    if (parameters === 'ALL') {
-        let arr = allArticle.filter(res => {
-            return res.status != 3 && res.isDelete != 1
-        })
-        return arr
-    } else {
-        let arr = allArticle.filter(res => {
-            if (res.status != 3 && res.isDelete != 1) {
-                return res.categoryName == parameters
-            }
-        })
-        return arr
+// 按状态获取文章列表
+export const getArticleListByStatus = (statusName: string) => {
+    switch (statusName) {
+        case 'All':
+            return allArticle;
+        case 'Public':
+            return allArticle.filter(iten => iten.status == 1);
+        case 'Private':
+            return allArticle.filter(iten => iten.status == 2);
+        case 'Draft':
+            return allArticle.filter(iten => iten.status == 3);
+        case 'RecycleBin':
+            return allArticle.filter(iten => iten.isDelete == 1);
     }
 }
 
-// 按标签列出的文章
-export const articleListByTags = (parameters: string) => {
+//按标签id获得文章列表
+export const getArticleListByTagsId = (obj:{tag:number}) => {
     let arr = allArticle.filter(item => {
-        let key = item.tags?.findIndex(value => value.tagName == parameters)
+        let key = item.tags?.findIndex(value => value.id == obj.tag)
         return key != -1;
     })
     return arr
 }
 
-// 获取文章旁白列表
-export const ArticleAsideList = () => {
-    const {commentsList} = Mock.mock({
-        'commentsList|16': [
-            {
-                avatar: 'https://static.linhaojun.top/aurora/avatar/52a81cd2772167b645569342e81ce312.jpg',
-                nickname: '@cname',
-                createTime: '@date',
-                commentContent: '@string("upper","10","35")',
+// 根据类别名获取文章列表
+export const getArticleListByCategory = (parameters:{category:string}) => {
+    if (!parameters) {
+        let arr = allArticle.filter(res => {
+            return res.status != 3 && res.isDelete != 1
+        })
+        return arr
+    } else {
+        let arr = allArticle.filter(item => {
+            if (item.status != 3 && item.isDelete != 1) {
+                return item.categoryName.toLocaleUpperCase() == parameters.category.toLocaleUpperCase()
             }
-        ]
-    })
-    return {
-        introduction: {
-            img: 'src/assets/default-cover.jpg',
-            nickname: '三个字',
-            description: '一个疯狂的字符串',
-            url: 'https://github.com',
-            childer: [
-                {
-                    articleCount: allArticle.length,
-                    title: '文章'
-                },
-                {
-                    articleCount: '2',
-                    title: '说说'
-                },
-                {
-                    articleCount: articleCategoryList.length,
-                    title: '分类'
-                },
-                {
-                    articleCount: articleListTag.length,
-                    title: '标签'
-                }
-            ]
-        },
-        commentsList,
-        // 时间戳
-        websiteInformation: [
-            {
-                title: '运行时间',
-                value: 1661999406,
-            },
-            {
-                title: '访问数量',
-                value: '19989'
-            },
-        ],
-        // 标签
-        tags: tagCount(),
-        // notice: websiteConfig.notice,
+        })
+        return arr
     }
 }
 
+// 按字段更新文章属性
+export const updateArticleByField = (field: string) => {
+
+}
 
 // 根据id获取文章
-export const ArticleById = (id: string): ArticleInterface => {
-    let arr: ArticleInterface = allArticle.filter(res => {
-        if (res.status != 3) {
-            return res.id == parseInt(id)
+export const ArticleById = ({id}:{id:number|string}): ArticleInterface => {
+    let arr: ArticleInterface | undefined = allArticle.find((value) => {
+        if (value.status != 3) {
+            return value.id == id
         }
-    })[0]
-    return arr
+    })
+    return arr ? arr : [] as any;
 }
 
 // 添加文章
 export const AddArticle = (aritcleData: string) => {
     // 组合
-    const obj = JSON.parse(aritcleData)
+    const obj: ArticleInterface = JSON.parse(aritcleData)
     // 查询是否存在分类
-    let arr = category.data.map(item => {
-        return item.categoryName
+    let arr = category.data.findIndex(item => {
+        return item.categoryName.toLocaleLowerCase() == obj.categoryName.toLocaleLowerCase()
     })
-    if (!arr.includes(obj.categoryName)) {
+    // 不存在则添加
+    if (arr == -1) {
         category.data.push({
             id: category.data.length + 1,
             categoryName: obj.categoryName,
@@ -290,9 +237,11 @@ export const AddArticle = (aritcleData: string) => {
         })
     }
     // 查询tags是否存在不存在则添加新的tags
-    obj.tags.forEach((item: any) => {
-        addOrEditTag(JSON.stringify({tagName: item}))
-    })
+    if (obj.tags?.length != 0) {
+        obj.tags!.forEach((item: any) => {
+            addOrEditTag(JSON.stringify({tagName: item}))
+        })
+    }
 
     // 添加
     allArticle.push({
@@ -315,7 +264,7 @@ export const AddArticle = (aritcleData: string) => {
         },
         "categoryName": obj.categoryName,
         "tags": tags.data.filter((item: { tagName: any; }) => {
-            if (obj.tags.includes(item.tagName)) {
+            if (obj.tags!.includes(item.tagName)) {
                 return item
             }
         }),
@@ -344,88 +293,6 @@ export const updateArticleInfo = (aritcleData: string) => {
     }
 }
 
-// 给文章添加标签
-export const addArticleTags = (obj: string) => {
-    const {id, tagName} = JSON.parse(obj)
-    // 校验是否存在 不存在则添加进列表
-    addOrEditTag(JSON.stringify({tagName: tagName}));
-    let result: any = null
-    allArticle.forEach((item, index) => {
-        if (item.id == id) {
-            // @ts-ignore
-            let arr = allArticle[index].tags.filter(item => {
-                return item.tagName?.toLocaleLowerCase() === tagName.toLocaleLowerCase()
-            })
-            // 文章是覅存在该标签
-            if (arr.length > 0) {
-                result = false
-            } else {
-                // 给文章添加标签
-                let key = tags.data.findIndex((item: { tagName: string; }) => {
-                    return item.tagName?.toLocaleLowerCase() === tagName.toLocaleLowerCase()
-                })
-                // @ts-ignore
-                allArticle[index].tags.push(tags.data[key])
-                result = allArticle[index].tags
-            }
-        }
-    })
-    return result
-}
-
-// 更新文章分类
-export const updateArticleCategory = (obj: string) => {
-    const {id, categoryName} = JSON.parse(obj)
-    // 校验是否存在 不存在则添加进列表
-    addOrEditCategory(JSON.stringify({categoryName: categoryName}));
-    let result: any = null
-    let key = allArticle.findIndex(value => value.id == id)
-    if (key != -1) {
-        // 给文章添加标签
-        let categoryKey = category.data.findIndex((item: { categoryName: string; }) => {
-            return item.categoryName?.toLocaleLowerCase() === categoryName.toLocaleLowerCase()
-        })
-        // @ts-ignore
-        allArticle[key].categoryName = category.data[categoryKey].categoryName
-        result = allArticle[key].categoryName
-    } else {
-        return false
-    }
-    return result
-}
-
-//删除文章
-export const deleteArticle = (obj: string) => {
-    const ids = <[number]>JSON.parse(obj)
-    let result = null;
-    try {
-        ids.forEach(item => {
-            let key = allArticle.findIndex(value => value.id == item)
-            if (key != -1) {
-                allArticle[key].status = 0
-                allArticle[key].isDelete = 1
-            }
-        })
-        result = true
-    } catch (e: any) {
-        throw new Error(e)
-    }
-    return result
-}
-
-// 撤回文章
-export const withdrawalArticle = (id: number) => {
-    let key = allArticle.findIndex(value => value.id == id)
-    if (key != -1) {
-        allArticle[key].status = 3
-        allArticle[key].isDelete = 0
-        return true
-    } else {
-        return '';
-    }
-
-}
-
 // 根据文章id获取文章上下文
 export const ArticleContentById = (id: string): string => {
     let arr: string = allArticle.filter((item: ArticleInterface): boolean => {
@@ -434,31 +301,6 @@ export const ArticleContentById = (id: string): string => {
     return arr
 }
 
-// 根据文章id更新文章上下文
-export const UpdateArticleContextById = (articleinfo: string) => {
-    const {id, articleContent} = JSON.parse(articleinfo)
-    for (let i = 0; i < allArticle.length; i++) {
-        if (allArticle[i].id == parseInt(id)) {
-            allArticle[i].articleContent = articleContent
-        }
-    }
-    return {code: 200, message: '成功'}
-}
-
-// 按id更新文章属性 修改文章对象传入名的属性 如status
-export const updateArticleAttributeById = (articleinfo: any) => {
-    const {id, value, attributeName} = JSON.parse(articleinfo)
-    let key = allArticle.findIndex(value => {
-        return value.id == id
-    })
-    if (key != -1) {
-        let arr: any = allArticle[key]
-        arr[attributeName] = value
-        arr.updateTime = parseInt(String(new Date().getTime() / 1000))
-        return arr;
-    }
-    return false
-}
 // 按Id删除文章标签
 export const deleteArticleTagById = (obj: any) => {
     const {articleid, tagid} = JSON.parse(obj)
@@ -475,18 +317,122 @@ export const deleteArticleTagById = (obj: any) => {
     }
     return false
 }
-// 按状态获取文章列表
-export const getArticleListByStatus = (statusName: string) => {
-    switch (statusName) {
-        case 'All':
-            return allArticle;
-        case 'Public':
-            return allArticle.filter(iten => iten.status == 1);
-        case 'Private':
-            return allArticle.filter(iten => iten.status == 2);
-        case 'Draft':
-            return allArticle.filter(iten => iten.status == 3);
-        case 'RecycleBin':
-            return allArticle.filter(iten => iten.isDelete == 1);
-    }
+
+// 获取所有置顶项，对其进行排序，返回时间最新项
+const getLatestItem = (type: boolean): ArticleInterface[] => {
+    // 获取长度
+    let arr = allArticle.filter(res => {
+        if (res.status !== 3 && res.isDelete !== 1) {
+            return type ? res.isTop == 1 : res.isFeatured == 1
+        }
+    }).sort((a: any, b: any) => {
+        return a.createTime - b.createTime
+    })
+    return arr
 }
+// 获取status！=3 带有统计的tags
+export const articleListTag: Tagsinterface[] = tags.data
+// 获取status！=3 带有统计的tags
+export const articleCategoryList: CategoryInterface[] = categoryCount()
+
+
+// // 给文章添加标签
+// export const addArticleTags = (obj: string) => {
+//     const {id, tagName} = JSON.parse(obj)
+//     // 校验是否存在 不存在则添加进列表
+//     addOrEditTag(JSON.stringify({tagName: tagName}));
+//     let result: any = null
+//     allArticle.forEach((item, index) => {
+//         if (item.id == id) {
+//             // @ts-ignore
+//             let arr = allArticle[index].tags.filter(item => {
+//                 return item.tagName?.toLocaleLowerCase() === tagName.toLocaleLowerCase()
+//             })
+//             // 文章是覅存在该标签
+//             if (arr.length > 0) {
+//                 result = false
+//             } else {
+//                 // 给文章添加标签
+//                 let key = tags.data.findIndex((item: { tagName: string; }) => {
+//                     return item.tagName?.toLocaleLowerCase() === tagName.toLocaleLowerCase()
+//                 })
+//                 // @ts-ignore
+//                 allArticle[index].tags.push(tags.data[key])
+//                 result = allArticle[index].tags
+//             }
+//         }
+//     })
+//     return result
+// }
+//
+// // 更新文章分类
+// export const updateArticleCategory = (obj: string) => {
+//     const {id, categoryName} = JSON.parse(obj)
+//     // 校验是否存在 不存在则添加进列表
+//     addOrEditCategory(JSON.stringify({categoryName: categoryName}));
+//     let result: any = null
+//     let key = allArticle.findIndex(value => value.id == id)
+//     if (key != -1) {
+//         // 给文章添加标签
+//         let categoryKey = category.data.findIndex((item: { categoryName: string; }) => {
+//             return item.categoryName?.toLocaleLowerCase() === categoryName.toLocaleLowerCase()
+//         })
+//         // @ts-ignore
+//         allArticle[key].categoryName = category.data[categoryKey].categoryName
+//         result = allArticle[key].categoryName
+//     } else {
+//         return false
+//     }
+//     return result
+// }
+//
+// //删除文章
+// export const deleteArticle = (obj: string) => {
+//     const ids = <[number]>JSON.parse(obj)
+//     let result = null;
+//     try {
+//         ids.forEach(item => {
+//             let key = allArticle.findIndex(value => value.id == item)
+//             if (key != -1) {
+//                 allArticle[key].status = 0
+//                 allArticle[key].isDelete = 1
+//             }
+//         })
+//         result = true
+//     } catch (e: any) {
+//         throw new Error(e)
+//     }
+//     return result
+// }
+//
+// // 撤回文章
+// export const withdrawalArticle = (id: number) => {
+//     let key = allArticle.findIndex(value => value.id == id)
+//     if (key != -1) {
+//         allArticle[key].status = 3
+//         allArticle[key].isDelete = 0
+//         return true
+//     } else {
+//         return '';
+//     }
+//
+// }
+//
+//
+//
+// // 根据文章id更新文章上下文
+// export const UpdateArticleContextById = (articleinfo: string) => {
+//     const {id, articleContent} = JSON.parse(articleinfo)
+//     for (let i = 0; i < allArticle.length; i++) {
+//         if (allArticle[i].id == parseInt(id)) {
+//             allArticle[i].articleContent = articleContent
+//         }
+//     }
+//     return {code: 200, message: '成功'}
+// }
+//
+// // 按id更新文章属性 修改文章对象传入名的属性 如status
+// export const updateArticleAttributeById = (articleinfo: any) => {
+//
+// }
+

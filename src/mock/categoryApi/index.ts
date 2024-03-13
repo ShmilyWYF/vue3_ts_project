@@ -1,16 +1,8 @@
-import {addOrEditCategory, category, deleteCategory} from "@/mock/categoryApi/tempalte";
+import {addOrEditCategory, category, deleteCategory, updateCategory} from "@/mock/categoryApi/tempalte";
 
 export default [
     {
-        url: '/article/category',
-        type: 'get',
-        template: category.data,
-        code: Number(200),
-        status: true,
-        condition: true
-    },
-    {
-        url: '/article/category',
+        url: '/category/add',
         type: 'post',
         template: addOrEditCategory,
         code: Number(200),
@@ -18,7 +10,23 @@ export default [
         condition: true
     },
     {
-        url: '/article/category',
+        url: '/category/all',
+        type: 'get',
+        template: category.data,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/category/update',
+        type: 'put',
+        template: updateCategory,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: '/category/remove',
         type: 'delete',
         template: deleteCategory,
         code: Number(200),

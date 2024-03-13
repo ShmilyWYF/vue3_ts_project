@@ -1,13 +1,15 @@
-import {WebSiteConfigInterface} from "@/interface";
+import {WebFromInterface, WebSiteConfigInterface} from "@/interface";
 import Mock from "mockjs";
+import {allArticle, articleCategoryList, articleListTag} from "@/mock/articleApi/tempalte";
+import {tagCount} from "@/mock/tagsApi/tempalte";
 
-// 网站配置
-export const websiteConfig:WebSiteConfigInterface = {
+// 初始化
+const webFromConfig:WebFromInterface = {
     webSiteLog: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-    siteName: '博客',
+    webSiteName: '博客',
     englishName: 'blog',
     multiLanguage: 0,
-    isCommentReview: 0,
+    commentReview: 0,
     websiteCreateTime: new Date(),
     notice: 'xx公告',
     beianNumber: '0000000000',
@@ -15,13 +17,13 @@ export const websiteConfig:WebSiteConfigInterface = {
 }
 
 // 用户配置
-export const userConfig:{data:{avatar:string,isEmailNotice:0}} = Mock.mock({
+const userConfig:{data:{avatar:string,isEmailNotice:0}} = Mock.mock({
     avatar: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
     isEmailNotice: 0,
 })
 
 // 主题配置
-export const themeConfig = {
+const themeConfig = {
         theme: '',
         profile_shape: '',
         feature: true,
@@ -40,9 +42,10 @@ export const themeConfig = {
         }
 }
 
-export default {
+// 网站配置
+export const webSiteConfig:WebSiteConfigInterface =  {
     themeConfig,
-    websiteConfig: websiteConfig,
+    websiteConfig: webFromConfig,
     userConfig: userConfig.data,
     // appLoading: false,
     // viewCount: 0,
@@ -55,14 +58,74 @@ export default {
     // aurora_bot_enable: false
 }
 
+const {commentsList} = Mock.mock({
+    'commentsList|16': [
+        {
+            avatar: 'https://static.linhaojun.top/aurora/avatar/52a81cd2772167b645569342e81ce312.jpg',
+            nickname: '@cname',
+            createTime: '@date',
+            commentContent: '@string("upper","10","35")',
+        }
+    ]
+});
 
-export const upDateWebsiteConfig = (website:string):WebSiteConfigInterface =>{
-     Object.assign(websiteConfig,JSON.parse(website))
-    return websiteConfig;
+export const aside = {
+    introduction: {
+        img: 'src/assets/default-cover.jpg',
+        nickname: '三个字',
+        description: '一个疯狂的字符串',
+        url: 'https://github.com',
+        childer: [
+            {
+                articleCount: allArticle.length,
+                title: '文章'
+            },
+            {
+                articleCount: '2',
+                title: '说说'
+            },
+            {
+                articleCount: articleCategoryList.length,
+                title: '分类'
+            },
+            {
+                articleCount: articleListTag.length,
+                title: '标签'
+            }
+        ]
+    },
+    commentsList,
+    // 时间戳
+    websiteInformation: [
+        {
+            title: '运行时间',
+            value: 1661999406,
+        },
+        {
+            title: '访问数量',
+            value: '19989'
+        },
+    ],
+    // 标签
+    tags: tagCount(),
+    notice: webFromConfig.notice,
 }
 
-export const upDateUserConfig = (website:string):WebSiteConfigInterface =>{
-    Object.assign(websiteConfig,JSON.parse(website))
-    return websiteConfig;
+export const MonthVisits = {
+
 }
 
+export const updateWebSiteConfig = (website:string) =>{
+    Object.assign(webFromConfig,JSON.parse(website))
+    return {code:200,message:'ok'};
+}
+
+export const updateUserConfig = (website:string):WebSiteConfigInterface =>{
+    Object.assign(userConfig,JSON.parse(website))
+    return webSiteConfig;
+}
+
+export const updatethemeConfig = (website:string):WebSiteConfigInterface =>{
+    Object.assign(userConfig,JSON.parse(website))
+    return webSiteConfig;
+}

@@ -73,6 +73,13 @@ export const addOrEditCategory = (obj: string) => {
     return category.data
 }
 
+export const updateCategory = (obj: string) => {
+    const {id, categoryName} = JSON.parse(obj)
+    let index = category.data.findIndex(value => value.id == id);
+    category.data[index].categoryName = categoryName
+    return {message: 'ok', code: 200}
+}
+
 export const deleteCategory = (obj: string) => {
     const {data} = JSON.parse(obj)
     data.forEach((itemid: number) => {

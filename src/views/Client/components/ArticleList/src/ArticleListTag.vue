@@ -110,12 +110,7 @@ const getCategoryList = () => {
  */
 const getArticleListByCategory = (pane: any = null) => {
   const label = pane?.paneName ? pane.paneName : (articleCategoryActive.value ? articleCategoryActive.value : 'ALL')
-  store.dispatch('articleStore/getArticleListByCategory', firstCharacterToUppercase(label)).then((res: ArticleInterface[] | undefined) => {
-        if (res == undefined) {
-          data.value = [];
-          total.value = [];
-          return;
-        }
+  store.dispatch('articleStore/getArticleListByCategory', firstCharacterToUppercase(label)).then((res: ArticleInterface[]) => {
         currentPage.value = 1;
         total.value = res
         data.value = total.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)

@@ -1,4 +1,5 @@
 import {UserAuthinterface, UserInfoInterface, userInfointerface} from "@/interface";
+import {getCookie} from "@/utils/cookie";
 
 const hasEmailBindCaptcha = {
     email: '',
@@ -17,7 +18,7 @@ const userAuth = <UserAuthinterface[]>[
         create_time: new Date(),
         update_time: null,
         last_login_time: new Date(),
-        login_type: 1,
+        type: 999,
     },
     {
         id: 2,
@@ -29,7 +30,7 @@ const userAuth = <UserAuthinterface[]>[
         create_time: new Date(),
         update_time: null,
         last_login_time: new Date(),
-        login_type: 0,
+        type: 1,
     },
     {
         id: 999,
@@ -41,7 +42,7 @@ const userAuth = <UserAuthinterface[]>[
         create_time: new Date(),
         update_time: null,
         last_login_time: new Date(),
-        login_type: 999,
+        type: 1,
     }
 ]
 
@@ -91,7 +92,7 @@ export const getAlluser = (obj: string) => {
     let arr: userInfointerface[] = []
     userAuth.forEach((item) => {
         let index = userinfo.findIndex(value => value.id === item.user_info_id);
-        if (index != -1 && userinfo[index].isDelete != 1&& userAuth[index].login_type != 999) {
+        if (index != -1 && userinfo[index].isDelete != 1&& userAuth[index].type != 999) {
             arr.unshift(<userInfointerface>{
                 avatar: userinfo[index].avatar,
                 createTime: userinfo[index].createTime,
@@ -103,7 +104,7 @@ export const getAlluser = (obj: string) => {
                 last_login_time: item.last_login_time,
                 nickname: userinfo[index].nickname,
                 password: item.password,
-                type: item.login_type,
+                type: item.type,
                 updateTime: userinfo[index].updateTime,
                 website: userinfo[index].website
             })
@@ -127,45 +128,45 @@ export const getAlluser = (obj: string) => {
     }
 }
 
-export const userToken = (user: any) => {
+export const userToken = (user: string) => {
     const {username, password} = JSON.parse(user)
-    console.log(username)
     // 服务器储存用户信息返回token给浏览器，服务器设置sesstion储存时间，如3天； 三天后浏览器token过期需要重新认证
     let index = userAuth.findIndex(value => value.username == username);
     if (index != -1) {
         if (userAuth[index].password != password) {
-            return {token: null};
+            return {code:401,message:'密码错误~'};
         }
         hasEmailBindCaptcha.email = username;
         hasEmailBindCaptcha.token = String(Math.floor(Math.random() * 1000000000) + '0' + String(Date.now()));
-        return {token: hasEmailBindCaptcha.token};
+        return {code:200,data: hasEmailBindCaptcha.token};
     } else {
-        return {token: null};
+        return {code:401,message:'账号不存在'}
     }
 }
 
-export const getUserinfo = (token: string) => {
+export const getUserinfo = () => {
+    const token = getCookie('token');
     if (token == hasEmailBindCaptcha.token){
         let auth = userAuth.find(value => value.username == hasEmailBindCaptcha.email);
         let info = userinfo.find(value => value.id == auth?.user_info_id);
-        return <userInfointerface>{
-            avatar: info?.avatar,
-            createTime: info?.createTime,
-            email: info?.email,
-            id: auth?.id,
-            intro: info?.intro,
-            isDisable: info?.isDisable,
-            isDelete: info?.isDelete,
-            isSubscribe: info?.isSubscribe,
-            nickname: info?.nickname,
-            password: auth?.password,
-            updateTime: null,
-            website: info?.website,
-            type: auth?.type,
-            last_login_time: auth?.last_login_time,
-        }
+        return {code:200,data:<userInfointerface>{
+                avatar: info?.avatar,
+                createTime: info?.createTime,
+                email: info?.email,
+                id: auth?.id,
+                intro: info?.intro,
+                isDisable: info?.isDisable,
+                isDelete: info?.isDelete,
+                isSubscribe: info?.isSubscribe,
+                nickname: info?.nickname,
+                password: auth?.password,
+                updateTime: null,
+                website: info?.website,
+                type: auth?.type,
+                last_login_time: auth?.last_login_time,
+            },message:'请求成功'}
     }else {
-        return null
+        return {code:401,message:'账号异常'}
     }
 }
 
@@ -231,7 +232,7 @@ export const registerUser = (registerinfo: string) => {
                 ip_address: "1.1.1.1",
                 ip_source: "中国",
                 last_login_time: null,
-                login_type: 0,
+                type: 0,
                 password: password,
                 update_time: null,
                 user_info_id: 0,
@@ -263,7 +264,7 @@ export const UpdateUserinfo = (user: string) => {
     if (index != -1) {
         userAuth[index].password = parse.password;
         userAuth[index].update_time = new Date();
-        userAuth[index].login_type = parse.type;
+        userAuth[index].type = parse.type;
     }
     let userinfoIndex = userinfo.findIndex(value => value.id == userAuth[index].user_info_id);
     if (userinfoIndex != -1) {

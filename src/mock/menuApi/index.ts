@@ -3,7 +3,7 @@ import {RolesMenu} from '@/mock/menuApi/tempalte/menuTemplate'
 
 const menuApi = [
     {
-        url: '/route//menu',
+        url: '/route/menu',
         type: 'get',
         template: RolesMenu,
         code: Number(200),

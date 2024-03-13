@@ -13,7 +13,7 @@ export default {
         method: 'put',
         url: 'useApp/userSiteConfig'
     },
-    // 更新app配置
+    // 更新Theme配置
     updateThemeSiteConfig: {
         method: 'put',
         url: 'useApp/themeSiteConfig'

@@ -1,7 +1,7 @@
 import MockResponse from '@/mock/MockResponse'
 import {mock} from 'mockjs'
 import {MockApiInterface} from "@/interface";
-import {RegUrl} from "@/utils/RegExpUtils";
+import qs from "qs";
 
 class MockHandler extends MockResponse {
 
@@ -42,10 +42,24 @@ class MockHandler extends MockResponse {
      * @private
      */
     private static createInstance(options: MockApiInterface[]): MockHandler[] {
-        let arr = options.map((res: MockApiInterface): MockHandler => {
-            return (new MockHandler(res.url, res.type, res.template, res.code, res.status, res.condition))
+        let arr: MockHandler[] = [];
+        options.forEach((res: MockApiInterface) => {
+            arr.push(new MockHandler(res.url, res.type, res.template, res.code, res.status, res.condition));
         })
         return arr
+    }
+
+    /**
+     * url转正则表达式
+     * @param url url地址
+     * @private
+     */
+    private urlToRegexp(url:string):RegExp {
+        let str:string = url.charAt(0) == '/'?url.substring(1):url
+        // 将URL中的通配符替换为正则表达式中的通配符
+        const pattern:string = str.replace(/\*/g, '.*').replace(/\?/g, '.');
+        // 添加开始和结束锚点与可选匹配
+        return new RegExp('^' + '\/(?:api\/)?' + pattern+'(?:\\?.*)?' + '$');
     }
 
     /**
@@ -54,7 +68,14 @@ class MockHandler extends MockResponse {
      * @private
      */
     private init(mock: any): void {
-        mock(RegUrl(this.getUrl), this.getType,this.response());
+        const regExp = this.urlToRegexp(this.getUrl);
+        mock(regExp, this.getType, (option: { body: string | undefined, url:string, type:string }) => {
+            if(option.url.includes('?')){
+                let body = option.url.split('?')[1];
+                option.body = qs.parse(body);
+            }
+            return this.response(option?.body)
+        });
     }
 
 }

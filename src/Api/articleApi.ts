@@ -15,7 +15,7 @@ export default {
         url: '/article/allByStatus',
     },
     //按标签id获得文章列表
-    getArticleListByTags:<any> {
+    getArticleListByTags: {
         method: 'get',
         url: '/article/allByTag'
     },
@@ -24,7 +24,7 @@ export default {
         method: 'get',
         url: '/article/allByCategory'
     },
-    //按标签id获得文章列表
+    // 按字段更新文章
     updateArticleByField: {
         method: 'put',
         url: '/article/updateField'
@@ -44,7 +44,7 @@ export default {
         method: 'put',
         url: '/article/update',
     },
-    // 根据id更新字段值
+    // 根据id获取文章上下文
     getArticleContentById: {
         method: 'get',
         url: '/article/articleContentById',

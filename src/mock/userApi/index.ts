@@ -19,7 +19,7 @@ const userApi: any = [
         condition: true
     },
     {
-        url: '/user/getInfo',
+        url: '/user/info',
         type: 'post',
         template: getUserinfo,
         code: Number(200),

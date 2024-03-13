@@ -17,6 +17,7 @@ export interface UserAuthinterface {
     create_time: Date,
     update_time: Date | null,
     last_login_time: Date | null,
+    type: number,
 }
 
 export interface UserInfoInterface {
@@ -26,7 +27,6 @@ export interface UserInfoInterface {
     avatar: string,
     intro: string,
     website: string,
-    type?: number,
     isSubscribe?: number,
     isDisable?: number,
     isDelete?: number,
@@ -127,7 +127,7 @@ export interface ArticleInterface {
     isFeatured: number,
     isDelete: number,
     author: UserInfoInterface,
-    categoryName: string | [],
+    categoryName: string,
     tags: Tagsinterface[] | null,
     status: number,
     createTime?: string,
