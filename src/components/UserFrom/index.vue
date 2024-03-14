@@ -61,13 +61,12 @@ import {inject, reactive, ref, toRefs} from "vue";
 import {ElMessage, FormRules} from "element-plus";
 import {nameRule, pwdRule, UrlRule} from "@/utils/validate";
 import api from "@/axios";
-import axios, {AxiosResponse} from "axios";
-import {userInfointerface} from "@/interface";
-import store from "@/store";
+import {AxiosResponse} from "axios";
+import {UserInfointerface} from "@/interface";
 
 const reloadV: any = inject('reload')
 
-const props = defineProps<{ fromData: userInfointerface ,isEdit:boolean}>()
+const props = defineProps<{ fromData: UserInfointerface ,isEdit:boolean}>()
 
 const emit = defineEmits(['updateCall','updateEditOrAdd'])
 let { fromData,isEdit } = toRefs(props);
@@ -81,7 +80,7 @@ const rules = reactive<FormRules>({
   website: {required: false, validator: UrlRule},
 })
 
-const userData = ref<userInfointerface>(fromData.value)
+const userData = ref<UserInfointerface>(fromData.value)
 
 const isEditBtn = ref(false)
 

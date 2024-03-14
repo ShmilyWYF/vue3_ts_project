@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import {inject, ref} from "vue";
+import {ComputedRef, inject, ref} from "vue";
 import {ElNotification} from "element-plus";
 import {useRoute} from "vue-router";
 import {UserInfoInterface} from "@/interface";
@@ -28,20 +28,20 @@ const commentType = inject<number>('commentType')
 // 评论审核
 const commentReview = inject<number>('commentReview')
 // 回复框 展示用户头像
-const userinfo: UserInfoInterface | undefined = inject<any>('userinfo')
+const userinfo = inject<ComputedRef<UserInfoInterface>>('userinfo')
 // 获取父组件save回调函数
 const saveCommentEvnt: any = inject('saveComment')
 
 // 评论上下文
 const commentContent = ref<string>('')
-const emit = defineEmits(['callObjectType'])
+const emit = defineEmits(['callObjectType','callListIndex'])
 // 当前路由获取的id
 const router = useRoute();
 const id = router.path.split('/')[2]
 
 // 保存评论事件
 const saveComment = async () => {
-  if (userinfo === undefined) {
+  if (userinfo?.value == undefined) {
     ElNotification({
       title: 'Warning',
       message: '请登陆后评论',
@@ -60,9 +60,11 @@ const saveComment = async () => {
   const params: any = {
     commentContent: commentContent.value,
     type: commentType,
-    userId: userinfo.id,
+    userId: userinfo.value.id,
     topicId: id
   }
+  // 重置引索
+  emit('callListIndex', undefined)
   //  提交保存
   await saveCommentEvnt(params).then(()=>{
     // 获取配置 是否开启审核

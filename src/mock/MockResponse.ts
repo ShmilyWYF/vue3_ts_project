@@ -54,55 +54,72 @@ export default class MockResponse {
         class InnerClass {
             private readonly _data: Function | Object | {
                 code: number,
-                data: object,
+                data?: object,
                 message: string,
-                status: boolean
+                status?: boolean
             };
             private readonly _parameters: {} | undefined;
+            private _fetchedData: any | undefined;
 
             constructor(data: Function | Object, parameters?: {}) {
+                if (typeof data !== "function" && typeof data !== "object") {
+                    throw new Error("Invalid data type. Must be a function or an object.");
+                }
                 this._data = data;
                 this._parameters = parameters;
             }
 
-            private getData():{
-                data: {},
-                code: number,
-                message: string,
-                status: boolean,
-            } {
-                if (typeof this._data === "object") {
-                    return this._data as any
-                } else if (typeof this._data === "function") {
-                    return this._data(this._parameters) as any
-                } else {
-                    return this._data
+            private getData(): templateInterface {
+                if (this._fetchedData) {
+                    return this._fetchedData;
                 }
+
+                let result: any;
+                if (typeof this._data === "object") {
+                    result = this._data;
+                } else if (typeof this._data === "function") {
+                    result = this._data(this._parameters);
+                } else {
+                    throw new Error("Invalid data type. Must be a function or an object.");
+                }
+
+                this._fetchedData = result;
+                return result;
             }
 
-            get data() {
-                return Object.prototype.hasOwnProperty.call(this.getData(), 'data') ? this.getData().data : this.getData()
+            get data():{} {
+                let template:templateInterface = this.getData()
+                return template?.hasOwnProperty('data') ? template.data : template;
             }
 
-            get message() {
-                return Object.prototype.hasOwnProperty.call(this.getData(), 'message') ? this.getData().message : undefined
+            get message():string|undefined {
+                const template:templateInterface = this.getData();
+                return template?.hasOwnProperty('message') ? template.message : undefined;
             }
 
-            get status() {
-                return Object.prototype.hasOwnProperty.call(this.getData(), 'status') ? this.getData().status : undefined
+            get status():boolean|undefined {
+                const template:templateInterface = this.getData();
+                return template?.hasOwnProperty('status') ? template.status : undefined;
             }
 
-            get code() {
-                return Object.prototype.hasOwnProperty.call(this.getData(),'code') ? this.getData().code : undefined;
+            get code():number|undefined {
+                const template:templateInterface = this.getData();
+                return template?.hasOwnProperty('code') ? template.code : undefined;
             }
 
-
-            getLength(): number {
-                return Object.keys(this.getData()).length
+            getLength():number|undefined {
+                const template:templateInterface = this.getData();
+                return template?.data?Object.keys(template.data).length:undefined;
             }
-
         }
 
         return new InnerClass(template, parameters);
     }
+}
+
+interface templateInterface{
+    data: {},
+    code: number,
+    message: string,
+    status: boolean,
 }

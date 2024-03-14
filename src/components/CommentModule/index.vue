@@ -2,7 +2,7 @@
   <Sidebar ref="sidebarCommentRef" h="auto" icon="moon" title="评论区" ul-li-class="sidebarClass">
     <template #defulet>
       <!--仅一层直接使用props即可-->
-      <comment-Form @call-object-type="commentsCall" :avatar="formAvatar"/>
+      <comment-Form @call-object-type="commentsCall" @call-list-index="indexCall" :avatar="formAvatar"/>
       <comment-List :commentData="commentData" :have-more="isHaveMore" @call-object-type="commentsCall"
                     @call-list-index="indexCall"/>
     </template>
@@ -27,7 +27,7 @@ const props = defineProps<{
   formAvatar?: string,
   save: Function
 }>()
-const {type, isCommentReview, userinfo,save} = toRefs(props);
+const {type, isCommentReview, userinfo, save} = toRefs(props);
 
 
 // 评论类型
@@ -35,9 +35,16 @@ provide('commentType', type.value)
 // 评论审核
 provide('commentReview', isCommentReview.value)
 // 获取用户信息
-provide('userinfo', userinfo.value)
+provide('userinfo', userinfo)
 // 保存评论事件
-provide('saveComment', async (params: { type: number, replyUserId?: number, parentId?: number, commentContent: string, userId: number, topicId?: number }) => {
+provide('saveComment', async (params: {
+  type: number,
+  replyUserId?: number,
+  parentId?: number,
+  commentContent: string,
+  userId: number,
+  topicId?: number
+}) => {
   return save.value(params)
 })
 

@@ -1,0 +1,29 @@
+//箭头动画
+@mixin arrows(){
+  @keyframes arrows {
+    0% {
+      top: 0;
+      opacity: 0.4;
+      -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+      filter: alpha(opacity=40);
+      transform: translateY(0);
+    }
+
+    50% {
+      top: -16px;
+      opacity: 1;
+      -ms-filter: none;
+      filter: none;
+      transform: translateY(-25%);
+    }
+    100% {
+      top: 0;
+      opacity: 0.4;
+      -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+      filter: alpha(opacity=40);
+      transform: translateY(0);
+    }
+  }
+}
+
+

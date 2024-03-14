@@ -415,11 +415,11 @@ export const getCommentAll = (obj: string) => {
 export const commentData = getCommentAll('null')
 
 // 按评论Id获取回复
-export const getRepliesByCommentId = (commentId: number) => {
-    let commentData = comments.data.find(value => value.id == commentId)
+export const getRepliesByCommentId = ({id}:{id:number}) => {
+    let commentData = comments.data.find(value => value.id == id)
     let data = getCommentAll(JSON.stringify({type: commentData?.type}))
-    let key = data.findIndex(value => value.id == commentId)
-    return data[key]
+    let key = data.findIndex(value => value.id == id)
+    return {data:data[key],code:200,message:'ok'}
 }
 
 export const getAllCommentData = (obj: string) => {

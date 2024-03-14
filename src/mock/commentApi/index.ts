@@ -10,7 +10,7 @@ import {
 
 export default [
     {
-        url: '/comment/save',
+        url: '/comment/add',
         type: 'post',
         template: saveComments,
         code: Number(200),
