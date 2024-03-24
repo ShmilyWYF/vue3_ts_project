@@ -1,7 +1,6 @@
 import {
-    commentData,
     deleteCommentById,
-    getAllCommentData,
+    getCommentAll, getCommentAllByWhere,
     getCommentListByType,
     getRepliesByCommentId,
     releaseCommentById,
@@ -35,16 +34,16 @@ export default [
     },
     {
         url: '/comment/all',
-        type: 'post',
-        template: getAllCommentData,
+        type: 'get',
+        template: getCommentAll,
         code: Number(200),
         status: true,
         condition: true
     },
     {
-        url: '/comment/all',
+        url: '/comment/status',
         type: 'get',
-        template: commentData,
+        template: getCommentAllByWhere,
         code: Number(200),
         status: true,
         condition: true

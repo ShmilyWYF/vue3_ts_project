@@ -2,7 +2,7 @@
   <div id="client">
     <el-row :gutter="0" justify="center">
       <el-col :lg="{span: 20}" :md="{span: 22}" :xs="{span: 24}">
-        <Feature v-slot:FeatureList="slotProp" :FeatureData="featureData">
+        <Feature v-slot:FeatureList="slotProp" :FeatureData="<FeatureDatainterface>featureData">
           <FeatureList :list="slotProp.list"/>
         </Feature>
         <ArticleMain :gutter="32">
@@ -22,12 +22,13 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, onMounted, reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {Feature, FeatureList} from '@/views/Client/components/Feature'
 import {ArticleListTag,ArticleAside} from "@/views/Client/components/ArticleList";
 import store from "@/store";
 import {ArticleMain, Sidebar} from "@/components";
 import {ArticleInterface, FeatureDatainterface} from "@/interface";
+import {Ref, UnwrapNestedRefs} from "@vue/reactivity";
 
 const name = 'Client'
 

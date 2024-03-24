@@ -49,7 +49,7 @@ const useApp = [
         condition: true
     },
     {
-        url: 'config/monthVisits',
+        url: '/useApp/monthVisits',
         type: 'get',
         template: MonthVisits,
         code: Number(200),

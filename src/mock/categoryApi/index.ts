@@ -1,4 +1,4 @@
-import {addOrEditCategory, category, deleteCategory, updateCategory} from "@/mock/categoryApi/tempalte";
+import {addOrEditCategory, category, deleteCategory, getCategory, updateCategory} from "@/mock/categoryApi/tempalte";
 
 export default [
     {
@@ -12,7 +12,7 @@ export default [
     {
         url: '/category/all',
         type: 'get',
-        template: category.data,
+        template: getCategory,
         code: Number(200),
         status: true,
         condition: true

@@ -22,7 +22,7 @@
       <el-button style="width: 5rem;" type="primary" @click="articleAddDialog">添加文章</el-button>
     </div>
     <ArticleManageList :loading="loading"
-                       :tableData="tableData"
+                       :tableData="<ArticleInterface[]>tableData"
                        @switch-call="CallEvnt"
                        @modify-array="articleIdsEvnt"
                        @edit-callback="articleEditDialog"
@@ -112,7 +112,7 @@ import store from "@/store";
 import {ElMessage, ElNotification, FormRules} from "element-plus";
 import {ArticleInterface} from "@/interface";
 import api from "@/axios";
-import axios, {AxiosResponse} from "axios";
+import {AxiosResponse} from "axios";
 
 //获取所有文章列表
 const tableData = ref<ArticleInterface[]>([])
@@ -121,7 +121,6 @@ const reloadV: any = inject('reload')
 
 onMounted(async () => {
   await getAllArticleList()
-  loading.value = false
 })
 
 const viewStatus = (statusValue: string) => {
@@ -166,19 +165,7 @@ const isDelete = ref<boolean>()
 // 控制是添加还是编辑 0添加 1编辑
 const isAddOrEdit = ref<number>(0)
 // 初始化
-const articleinfo: ArticleInterface = reactive({
-  id: 0,
-  articleCover: '',
-  articleTitle: '',
-  isTop: 0,
-  isFeatured: 0,
-  articleContent: '',
-  categoryName: [],
-  tags: [],
-  isDelete: 0,
-  status: 0,
-  author: store.getters.userinfo,
-})
+const articleinfo: ArticleInterface = reactive({} as any)
 // 校验
 const rules = reactive<FormRules>({
   articleCover: [{required: true, message: '请输入封面url或上传图片', trigger: 'blur'}],
@@ -190,9 +177,9 @@ const rules = reactive<FormRules>({
 // 获取所有文章列表
 const getAllArticleList = async () => {
   await api.articleApi.getAllArticle().then((res:AxiosResponse) => {
-    let {data,message}:{data:ArticleInterface[],message:string} = res.data;
-    if (!data){
-      ElMessage.info(message)
+    let {data,code,message}:{data:ArticleInterface[],code:number,message:string} = res.data;
+    if (code != 200){
+      ElNotification.info(message)
       return tableData.value = []
     }
     if (currStatus.value === 'All') {
@@ -202,6 +189,7 @@ const getAllArticleList = async () => {
     } else {
       viewStatus(currStatus.value)
     }
+    loading.value = false
   })
 }
 
@@ -217,7 +205,8 @@ const articleAddDialog = async () => {
     const {data} = res.data
     tagslist.value = data;
   })
-  articleinfo.status = 3
+  articleinfo.status = 1
+  articleinfo.author = store.getters.userinfo
   isEditOrAddDialog.value = true;
   await nextTick(() => {
     articleFormRef.value!.resetFields();
@@ -244,11 +233,11 @@ const articleEditDialog = async (row: ArticleInterface) => {
 
 // 添加or编辑文章事件
 const addArticle = async (articleinfo: ArticleInterface) => {
-  articleFormRef.value!.validate((res: boolean) => {
+  articleFormRef.value!.validate(async (res: boolean) => {
     if (res) {
       if (isAddOrEdit.value != 1) {
-        api.articleApi.addArticle(articleinfo).then((res:AxiosResponse)=>{
-          let {message,type,code} = res.data;
+        await api.articleApi.addArticle(articleinfo).then((res: AxiosResponse) => {
+          let {message, type, code} = res.data;
           ElNotification({
             title: '通知',
             message: message,
@@ -256,8 +245,8 @@ const addArticle = async (articleinfo: ArticleInterface) => {
           })
         })
       } else {
-        api.articleApi.updateArticleInfo(articleinfo).then((res:AxiosResponse)=>{
-          let {message,type} = res.data;
+        await api.articleApi.updateArticleInfo(articleinfo).then((res: AxiosResponse) => {
+          let {message, type} = res.data;
           ElNotification({
             title: '通知',
             message: message,
@@ -269,7 +258,7 @@ const addArticle = async (articleinfo: ArticleInterface) => {
       if (articleFormRef.value != undefined) {
         articleFormRef.value.resetFields();
       }
-      getAllArticleList();
+      await getAllArticleList();
     } else {
       ElNotification({
         title: '通知',
@@ -302,7 +291,7 @@ const SearchInputEvnt = () => {
   // 深拷贝
   if (currStatus.value === "All") {
     if (searchInput.value.length !== 0) {
-      tableData.value = tableData.value.filter((item: ArticleInterface) => {
+      tableData.value = tableData.value?.filter((item: ArticleInterface) => {
         return item.articleTitle.includes(searchInput.value)
       })
     } else {

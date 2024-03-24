@@ -22,9 +22,9 @@ const actions: any = {
     login({commit, state}: any, user: {}) {
         return new Promise((resolve, reject) => {
             userApi.login(user).then((res: AxiosResponse) => {
-                const {data,messages,code} = res.data
+                const {data,message,code} = res.data
                 if (code != 200) {
-                    reject(messages)
+                    reject(message)
                 }
                 commit('SET_USER_TOKEN', data)
                 setCookie(data)

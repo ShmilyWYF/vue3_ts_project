@@ -52,14 +52,14 @@
         </el-form-item>
       </el-form>
       <div class="btn">
-        <el-button v-if="isRegister === 1" type="primary" @click="login">登录</el-button>
-        <el-button v-if="isRegister === 2" type="success" @click="registerOrRestPwd">注册</el-button>
-        <el-button v-if="isRegister === 3" type="warning" @click="registerOrRestPwd">重置密码</el-button>
+        <el-button v-show="isRegister === 1" type="primary" @click="login">登录</el-button>
+        <el-button v-show="isRegister === 2" type="success" @click="registerOrRestPwd">注册</el-button>
+        <el-button v-show="isRegister === 3" type="warning" @click="registerOrRestPwd">重置密码</el-button>
       </div>
       <div style="display: flex" class="option-box">
-        <el-button v-if="isRegister === 1" link @click="clearForm(3)">找回密码!</el-button>
-        <el-button v-if="isRegister === 1" link @click="clearForm(2)">没有账号？去注册~</el-button>
-        <el-button v-else type="text" @click="clearForm(1)">已有账号，去登陆！</el-button>
+        <el-button v-show="isRegister === 1" link @click="clearForm(3)">找回密码!</el-button>
+        <el-button v-show="isRegister === 1" link @click="clearForm(2)">没有账号？去注册~</el-button>
+        <el-button v-show="isRegister !== 1" link @click="clearForm(1)">已有账号，去登陆！</el-button>
       </div>
     </template>
   </el-card>
@@ -136,7 +136,7 @@ const send = () => {
   }
   const email = {
     "toEmail": registerForm.username,
-    "subject": "注册密码"
+    "subject": isRegister.value == 2?'注册账号':'重置密码'
   }
   api.mailApi.getCaptchaByEmail(email).then((res: AxiosResponse) => {
     const {code, message} = res.data

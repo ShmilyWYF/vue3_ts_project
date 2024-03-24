@@ -1,11 +1,7 @@
 import {UserAuthinterface, UserInfoInterface, UserInfointerface} from "@/interface";
 import {getCookie} from "@/utils/cookie";
-
-const hasEmailBindCaptcha = {
-    email: '',
-    token: '',
-    chptcha: '',
-}
+import {hasEmailBindCaptcha} from "@/mock/mailApi/tempalte";
+import store from "@/store";
 
 const userAuth = <UserAuthinterface[]>[
     {
@@ -146,6 +142,11 @@ export const userToken = (user: string) => {
 
 export const getUserinfo = () => {
     const token = getCookie('token');
+    // 解决刷新导致对象token丢失问题
+    if (store.getters.token != ''&&hasEmailBindCaptcha.email == ''){
+        hasEmailBindCaptcha.email = store.getters.userinfo.email;
+        hasEmailBindCaptcha.token = store.getters.token
+    }
     if (token == hasEmailBindCaptcha.token){
         let auth = userAuth.find(value => value.username == hasEmailBindCaptcha.email);
         let info = userinfo.find(value => value.id == auth?.user_info_id);
@@ -185,30 +186,12 @@ export const userOut = (token: string) => {
     }
 }
 
-
-
-export const getCaptchaByEmail = (email: string) => {
-    hasEmailBindCaptcha.email = email;
-    hasEmailBindCaptcha.chptcha = String(Math.floor(Math.random() * 9999 + 1000))
-    console.log(hasEmailBindCaptcha.chptcha)
-    setTimeout(() => {
-        hasEmailBindCaptcha.email = ''
-        hasEmailBindCaptcha.chptcha = ''
-        console.log('验证码过期~', hasEmailBindCaptcha)
-    }, 60 * 1000)
-    return {code: 200, messages: '验证码已发送~'}
-}
-
-export const registerUser = (registerinfo: string) => {
-    const {username, captcha, password} = <{
-        username: string,
-        captcha: string,
-        password: string
-    }>JSON.parse(registerinfo)
+export const registerUser = (obj:string) => {
+    let {username,captcha,password} = <{username:string,captcha:string,password:string}>JSON.parse(obj)
     if (hasEmailBindCaptcha.chptcha == captcha && hasEmailBindCaptcha.email == username) {
-        let index = userAuth.findIndex(value => value.username === username);
+        let index = userAuth.findIndex(value => value.username == username);
         if (index != -1) {
-            return {code: 200, messages: '用户已存在~'}
+            return {code: 200, message: '用户已存在~'}
         } else {
             userinfo.unshift({
                 avatar: "https://static.linhaojun.top/aurora/avatar/52a81cd2772167b645569342e81ce312.jpg",
@@ -223,9 +206,11 @@ export const registerUser = (registerinfo: string) => {
                 website: "",
             })
             let index = userinfo.findIndex(value => {
-                console.log(value)
                 return value.email == username
             })
+            if (index == -1){
+                throw new Error('userinfo.unshift时出现异常，找不到用户信息')
+            }
             userAuth.unshift({
                 create_time: new Date(),
                 id: userAuth.length + 1,
@@ -235,13 +220,13 @@ export const registerUser = (registerinfo: string) => {
                 type: 0,
                 password: password,
                 update_time: null,
-                user_info_id: 0,
+                user_info_id: <number>userinfo[index].id,
                 username: userinfo[index].email
             })
-            return {code: 200, messages: '注册成功~'}
+            return {code: 200, message: '注册成功~'}
         }
     }
-    return {code: 500, messages: '出错,验证码已过期，请再试~'}
+    return {code: 500, message: '出错,验证码已过期，请再试~'}
 }
 
 export const restUser = (registerinfo: string) => {
@@ -253,9 +238,9 @@ export const restUser = (registerinfo: string) => {
     if (hasEmailBindCaptcha.chptcha == captcha && hasEmailBindCaptcha.email == username) {
         let index = userAuth.findIndex(value => value.username == username);
         userAuth[index].password = password
-        return {code: 200, messages: '密码重置成功~'}
+        return {code: 200, message: '密码重置成功~'}
     }
-    return {code: 500, messages: '验证码错误~'}
+    return {code: 500, message: '验证码错误~'}
 }
 
 export const UpdateUserinfo = (user: string) => {

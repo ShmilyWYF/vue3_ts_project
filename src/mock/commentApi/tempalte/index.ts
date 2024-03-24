@@ -1,8 +1,9 @@
 import Mock from "mockjs";
-import {CommentMockinterface} from "@/interface";
+import {CommentMockinterface, CommentVoInterface} from "@/interface";
 import {userinfo as allUserInfo} from "@/mock/userApi/tempalte/userTemplate";
 import {allArticle} from "@/mock/articleApi/tempalte";
 import store from "@/store";
+import {category} from "@/mock/categoryApi/tempalte";
 
 export const comments: { data: CommentMockinterface[] } = Mock.mock({
     data: [
@@ -326,7 +327,7 @@ export const getCommentAll = (obj: string) => {
             arr.forEach(item => {
                 let userinfo = allUserInfo.find(value => value.id === item.user_id);
                 let replyUserinfo = allUserInfo.find(value => value.id === item.reply_user_id);
-                let articleinfo = allArticle.find(value => value.id = item.topic_id)
+                let articleinfo = allArticle.data.find(value => value.id = item.topic_id)
                 let data = {
                     id: item.id,
                     avatar: userinfo?.avatar,
@@ -395,8 +396,8 @@ export const getCommentAll = (obj: string) => {
         arr.forEach(item => {
             let userinfo = allUserInfo.find(value => value.id === item.user_id);
             let replyUserinfo = allUserInfo.find(value => value.id === item.reply_user_id);
-            let articleinfo = allArticle.find(value => value.id == item.topic_id)
-            let data = {
+            let articleinfo = allArticle.data.find(value => value.id == item.topic_id)
+            let data = <CommentVoInterface>{
                 id: item.id,
                 avatar: userinfo?.avatar,
                 nickname: userinfo?.nickname,
@@ -412,7 +413,12 @@ export const getCommentAll = (obj: string) => {
     }
     return result
 }
-export const commentData = getCommentAll('null')
+
+// 根据条件查
+export const getCommentAllByWhere = ({type}:{type:number}) => {
+    return getCommentAll(String(type))
+}
+
 
 // 按评论Id获取回复
 export const getRepliesByCommentId = ({id}:{id:number}) => {
@@ -422,42 +428,36 @@ export const getRepliesByCommentId = ({id}:{id:number}) => {
     return {data:data[key],code:200,message:'ok'}
 }
 
-export const getAllCommentData = (obj: string) => {
-    return getCommentAll(obj);
-}
-
 // 删除
-export const deleteCommentById = (obj: string) => {
-    const {data} = JSON.parse(obj);
-    data.forEach((id: number | string) => {
+export const deleteCommentById = ({id}:{id:number[]|string}) => {
+    const func = (id:number) =>{
         let key = comments.data.findIndex(res => {
-            return res.id == id
-        })
-        let keys = commentData.findIndex(res => {
             return res.id == id
         })
         if (key != -1) {
             comments.data.splice(key, 1)
-            commentData.splice(keys, 1)
         }
-    })
-    return true;
+    }
+    if (typeof id == "string"){
+        func(parseInt(id))
+    }else {
+        id.forEach((item: number) => {
+            func(item)
+        })
+    }
+    return {message: '删除成功~', code: 200}
 }
 
 // 更新
 export const releaseCommentById = (obj: string) => {
-    const {data} = JSON.parse(obj);
-    data.forEach((id: number | string) => {
+    const {id} = <{id:number[]}>JSON.parse(obj);
+    id.forEach((id: number | string) => {
         let key = comments.data.findIndex(res => {
             return res.id == id
         })
-        let keys = commentData.findIndex(res => {
-            return res.id == id
-        })
         if (key != -1) {
-            comments.data[key].is_review = 1
-            commentData[keys].isReview = 1
+            comments.data[key].is_review = 0
         }
     })
-    return true;
+    return {code:200,message:"操作成功"};
 }

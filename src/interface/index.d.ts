@@ -66,6 +66,18 @@ export interface CommentMockinterface {
     update_time: null,
 }
 
+export interface CommentVoInterface {
+    id: number,
+    avatar?: string,
+    nickname?: string,
+    replyNickname?: string,
+    articleTitle?: string,
+    commentContent: string,
+    createTime: Date,
+    isReview: number,
+    type: number,
+}
+
 export interface CommentModuleInterface {
     commentData: CommentInterface,
     isHaveMore: boolean,
@@ -94,6 +106,7 @@ export interface Tagsinterface {
     "createTime": Date | string,
     "updateTime"?: Date | string | null,
     articleCount?: number,
+    [key:any]: any
 }
 
 interface initDataInterface {
@@ -128,10 +141,11 @@ export interface ArticleInterface {
     isDelete: number,
     author: UserInfoInterface,
     categoryName: string,
-    tags: Tagsinterface[] | null,
+    tags: Tagsinterface[],
     status: number,
     createTime?: string,
     updateTime?: string,
+    [key: string]: any
 }
 
 export interface IntroductionInterface {

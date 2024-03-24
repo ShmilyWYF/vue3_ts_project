@@ -7,7 +7,7 @@
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click="viewStatus('null')">全部</el-dropdown-item>
+            <el-dropdown-item @click="viewStatus()">全部</el-dropdown-item>
             <el-dropdown-item @click="viewStatus('0')">正常</el-dropdown-item>
             <el-dropdown-item @click="viewStatus('1')">审核中</el-dropdown-item>
           </el-dropdown-menu>
@@ -36,7 +36,7 @@
       <el-table-column align="center" label="评论人" prop="nickname" width="120"/>
       <!-- 回复人昵称 -->
       <el-table-column align="center" label="回复人" prop="replyNickname" width="120">
-        <template #default="scope">
+        <template #default="scope:{row:{replyNickname:string}}">
           <span v-if="scope.row.replyNickname">
             {{ scope.row.replyNickname }}
           </span>
@@ -45,7 +45,7 @@
       </el-table-column>
       <!-- 评论文章标题 -->
       <el-table-column align="center" label="文章标题" prop="articleTitle">
-        <template #default="scope">
+        <template #default="scope:{row:{articleTitle:string|undefined}}">
           <span v-if="scope.row.articleTitle">
             {{ scope.row.articleTitle }}
           </span>
@@ -60,7 +60,7 @@
       </el-table-column>
       <!-- 评论时间 -->
       <el-table-column align="center" label="评论时间" prop="createTime" width="150">
-        <template #default="scope">
+        <template #default="scope:{row:{createTime:Date}}">
           <i class="el-icon-time" style="margin-right: 5px"/>
           {{ scope.row.createTime }}
         </template>
@@ -121,7 +121,7 @@ import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {Pagination} from "@/components";
 import {ElNotification} from "element-plus";
-import {CommentInterface} from "@/interface";
+import {CommentVoInterface} from "@/interface";
 
 onMounted(async () => {
   await getCommentList()
@@ -129,13 +129,13 @@ onMounted(async () => {
 
 // 初始化数据
 const initData = reactive({
-  comments: [] as CommentInterface[],
+  comments: [] as CommentVoInterface[],
   count: 0,
   isReview: false,
   loading: true,
 })
 // 接收数据
-const data = ref<CommentInterface[]>()
+const data = ref<CommentVoInterface[]>([])
 // 批量选择id
 const commentIds = ref<any[]>([])
 // 搜索框双向绑定
@@ -148,12 +148,12 @@ const isDialogView = ref<boolean>(false)
 const deleteOrPass = ref<number>(0)
 
 // 获取comment列表
-const getCommentList = async () => {
-  await api.commentApi.getComments().then((res: AxiosResponse) => {
+const getCommentList = async (args?:{}) =>{
+  await api.commentApi[args == undefined?'getComments':'getCommentsByStatus'](args).then((res: AxiosResponse) => {
     const {data} = res.data
     initData.comments = data
+    initData.loading = false
   })
-  initData.loading = false
 }
 
 // 设置选择框可选择条件
@@ -169,40 +169,22 @@ const checkSelectable = (row: { isReview: number }) => {
   }
 }
 // 根据状态查看数据列表
-const viewStatus = (status: string) => {
-  if (status != 'null') {
-    switch (status) {
-      case '0' || 0:
-        currStatus.value = '正常';
-        break;
-      case '1' || 1:
-        currStatus.value = '审核中';
-        break;
-    }
-  } else {
+const viewStatus = (status?: string) => {
+  if (!status){
     currStatus.value = '全部'
-  }
-  searchInput.value = ''
-  if (status == null) {
-    listComments()
+    searchInput.value = ''
+    getCommentList()
     return
   }
-  listComments(status)
-}
-
-// 获取所有评论
-const listComments = (Parameters: any = null) => {
-  api.commentApi.getCommentsByStatus(Parameters).then((res: AxiosResponse) => {
-    const {data} = res.data
-    initData.comments = data
-  })
+  currStatus.value = Number(status) == 0? '正常':'审核中';
+  getCommentList({type:Number(status)})
 }
 
 // 输入事件
 const SearchInputEvnt = () => {
   initData.loading = true
   if (searchInput.value.length !== 0) {
-    let arr = initData.comments.filter((item: any) => {
+    data.value = initData.comments.filter((item: any) => {
       switch (searchInput.value) {
         case '文章':
           return item.type == 1;
@@ -218,7 +200,6 @@ const SearchInputEvnt = () => {
           return item.type == 6;
       }
     })
-    data.value = arr
   } else {
     data.value = initData.comments
   }

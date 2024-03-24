@@ -1,4 +1,4 @@
-import {addOrEditTag, deleteTags, tagCount, tags, updateTagById} from "@/mock/tagsApi/tempalte";
+import {addOrEditTag, deleteTags, getTags, tagCount, tags, updateTagById} from "@/mock/tagsApi/tempalte";
 
 export default [
     {
@@ -12,7 +12,7 @@ export default [
     {
         url: '/tag/all',
         type: 'get',
-        template: tags.data,
+        template: getTags,
         code: Number(200),
         status: true,
         condition: true
@@ -26,7 +26,7 @@ export default [
         condition: true
     },
     {
-        url: '/tag/delete',
+        url: '/tag/remove',
         type: 'delete',
         template: deleteTags,
         code: Number(200),

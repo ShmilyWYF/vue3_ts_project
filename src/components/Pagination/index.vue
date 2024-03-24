@@ -39,19 +39,21 @@ const emit = defineEmits(["paginationResults"])
 const {data,nextSvg,prevSvg,pageSize} = toRefs(props)
 
 watch(() => props.data, () => {
-      emit("paginationResults", total.value !== undefined ? total.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value) : []);
+      emit("paginationResults", result());
     }
 );
+
+onMounted(() => {
+  emit("paginationResults", result());
+})
 
 // 初始化数据
 const currentPage = ref<number>(1)
 const total = ref(data)
 const pageNum = ref(pageSize?.value);
-
-
-onMounted(() => {
-  emit("paginationResults", total.value !== undefined ? total.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value) : []);
-})
+// 手动分页改变内存标记
+const sizeChange = ref<number>(0)
+const result = () => total.value !== undefined ? total.value.slice((currentPage.value - 1) * (sizeChange.value != 0 ?pageNum.value:pageSize.value), currentPage.value * (sizeChange.value != 0 ?pageNum.value:pageSize.value)) : []
 
 /**
  * @author WangYaFeng
@@ -66,6 +68,7 @@ const getCurrentChange = (Pages: number) => {
 }
 
 const updatePageSize = (pageSize: number) => {
+  sizeChange.value = 1
   emit("paginationResults", total.value !== undefined ? total.value.slice((currentPage.value - 1) * pageSize, currentPage.value * pageSize) : []);
 }
 

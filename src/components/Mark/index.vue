@@ -15,6 +15,7 @@
       @fullScreen="fullScreenEvnt"
       @imgAdd="imgAdd"
       @save="cacheDrafts"
+      @navigationToggle="console.log('输出',$event)"
       >
     <template #left-toolbar-after v-if="isExitBtn&&editMode">
       <!--自定义退出按钮-->
@@ -46,7 +47,6 @@ const reactiveData = reactive({
 })
 
 watch(()=>modelValue.value,(value) => {
-  console.log(value,"执行")
   reactiveData.content = value
 })
 

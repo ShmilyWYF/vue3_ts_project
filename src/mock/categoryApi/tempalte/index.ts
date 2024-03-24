@@ -26,25 +26,28 @@ export const category: { data: CategoryInterface[] } = Mock.mock({
     ]
 })
 
+export const getCategory = () =>{
+    categoryCount()
+    return category;
+}
+
 export const categoryCount = (bl: boolean = true): CategoryInterface[] => {
     if (bl) {
-        let arr: CategoryInterface[] = category.data.map((item: CategoryInterface) => {
+        return category.data.map((item: CategoryInterface) => {
             return Object.assign(item, {
-                articleCount: allArticle.filter(res => {
+                articleCount: allArticle.data.filter(res => {
                     return res.status != 3 && res.categoryName === item.categoryName
                 }).length
             })
         })
-        return arr
     } else {
-        let arr: CategoryInterface[] = category.data.map((item: CategoryInterface) => {
+        return category.data.map((item: CategoryInterface) => {
             return Object.assign(item, {
-                articleCount: allArticle.filter(res => {
+                articleCount: allArticle.data.filter(res => {
                     return res.categoryName === item.categoryName
                 }).length
             })
         })
-        return arr
     }
 }
 
@@ -74,19 +77,31 @@ export const addOrEditCategory = (obj: string) => {
 }
 
 export const updateCategory = (obj: string) => {
-    const {id, categoryName} = JSON.parse(obj)
+    const {id, categoryName} = <{ id:number,categoryName:string }>JSON.parse(obj)
     let index = category.data.findIndex(value => value.id == id);
-    category.data[index].categoryName = categoryName
+    // 修改前刷新相关文章分类
+    allArticle.data.forEach(item=>{
+        if (item.categoryName == category.data[index].categoryName){
+            item.categoryName = categoryName
+        }
+    })
+    addOrEditCategory(JSON.stringify({categoryName, id}))
     return {message: 'ok', code: 200}
 }
 
-export const deleteCategory = (obj: string) => {
-    const {data} = JSON.parse(obj)
-    data.forEach((itemid: number) => {
-        let key = category.data.findIndex((value) => value.id === itemid)
+export const deleteCategory = ({id}:{id:number[]|string}) => {
+    const func = (id:number) =>{
+        let key = category.data.findIndex((value) => value.id == id)
         if (key != -1) {
             category.data.splice(key, 1)
         }
-    })
-    return true
+    }
+    if (typeof id == "string"){
+        func(parseInt(id))
+    }else {
+        id.forEach((item: number) => {
+            func(item)
+        })
+    }
+    return {message: '删除成功~', code: 200}
 }

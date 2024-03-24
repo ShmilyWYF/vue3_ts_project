@@ -47,9 +47,9 @@
         <span>简介：</span>
         <p>{{ userData.intro }}</p>
       </div>
-      <el-button v-once v-show="!isEditBtn" type="primary" @click="isEditBtn = true;emit('updateEditOrAdd',false)">编辑用户信息</el-button>
+      <el-button v-show="!isEditBtn" type="primary" @click="isEditBtn = true;emit('updateEditOrAdd',false)">编辑用户信息</el-button>
     </div>
-    <div class="btn-box" v-once v-show="isEditBtn">
+    <div class="btn-box" v-show="isEditBtn">
       <el-button type="success" @click="updateUserInfo">保存</el-button>
       <el-button type="warning" @click="isEditBtn = false;emit('updateEditOrAdd',true)">取消编辑</el-button>
     </div>
@@ -63,8 +63,6 @@ import {nameRule, pwdRule, UrlRule} from "@/utils/validate";
 import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {UserInfointerface} from "@/interface";
-
-const reloadV: any = inject('reload')
 
 const props = defineProps<{ fromData: UserInfointerface ,isEdit:boolean}>()
 
@@ -107,8 +105,6 @@ const updateUserInfo = () =>{
         })
       } catch (e: any) {
         ElMessage.error(e)
-      } finally {
-        reloadV()
       }
     } else {
       ElMessage.warning("请输入~")

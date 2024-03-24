@@ -1,6 +1,5 @@
 import {
     deleteUser, disableUserById, getAlluser,
-    getCaptchaByEmail,
     getUserinfo,
     registerUser,
     restUser, UpdateUserinfo,
@@ -46,14 +45,6 @@ const userApi: any = [
         url: 'user/restUser',
         type: 'post',
         template: restUser,
-        code: Number(200),
-        status: true,
-        condition: true
-    },
-    {
-        url: 'user/emailCaptcha',
-        type: 'get',
-        template: getCaptchaByEmail,
         code: Number(200),
         status: true,
         condition: true

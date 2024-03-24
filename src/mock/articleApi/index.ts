@@ -16,7 +16,7 @@ const articleApi = [
     {
         url: '/article/all',
         type: 'get',
-        template: allArticle,
+        template: allArticle.data,
         code: Number(200),
         status: true,
         condition: true

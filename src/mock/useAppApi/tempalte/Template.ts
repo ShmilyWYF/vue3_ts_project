@@ -1,7 +1,8 @@
 import {WebFromInterface, WebSiteConfigInterface} from "@/interface";
 import Mock from "mockjs";
-import {allArticle, articleCategoryList, articleListTag} from "@/mock/articleApi/tempalte";
-import {tagCount} from "@/mock/tagsApi/tempalte";
+import {allArticle} from "@/mock/articleApi/tempalte";
+import {tagCount, tags} from "@/mock/tagsApi/tempalte";
+import {categoryCount} from "@/mock/categoryApi/tempalte";
 
 // 初始化
 const webFromConfig:WebFromInterface = {
@@ -77,7 +78,7 @@ export const aside = {
         url: 'https://github.com',
         childer: [
             {
-                articleCount: allArticle.length,
+                articleCount: allArticle.data.length,
                 title: '文章'
             },
             {
@@ -85,11 +86,11 @@ export const aside = {
                 title: '说说'
             },
             {
-                articleCount: articleCategoryList.length,
+                articleCount: categoryCount().length,
                 title: '分类'
             },
             {
-                articleCount: articleListTag.length,
+                articleCount: tags.data.length,
                 title: '标签'
             }
         ]
@@ -111,8 +112,14 @@ export const aside = {
     notice: webFromConfig.notice,
 }
 
-export const MonthVisits = {
-
+export const MonthVisits = () => {
+    let date:Date = new Date();
+    let d = new Date(date.getFullYear(),date.getMonth() + 1,0);
+    let arr:number[] = []
+    for (let i = 0; i < d.getDate();i++) {
+        arr.unshift(Math.floor(Math.random()*10))
+    }
+    return {code:200,message:'ok',data:arr};
 }
 
 export const updateWebSiteConfig = (website:string) =>{

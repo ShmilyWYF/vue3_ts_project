@@ -67,8 +67,7 @@
               </el-tooltip>
             </el-tag>
           </template>
-          <SearchCategory :model-value="slotProp.row.inputCategory" @update:modelValue="slotProp.row.inputCategory = ''"
-                          @v-change="(value:any)=>{slotProp.row.inputCategory = value}">
+          <SearchCategory :model-value="slotProp.row.inputCategory" @update:modelValue="(value:any)=>{slotProp.row.inputCategory = value}">
             <template #default="slotCategory">
               <el-button size='small' type="success"
                          @click="updateProperty(slotProp.row.id,slotProp.row.inputCategory,'categoryName',slotProp.$index)">确定
@@ -224,7 +223,7 @@ import {ArticleInterface, UserInfoInterface} from "@/interface";
 import {Pagination, SearchCategory, SvgIcon} from "@/components";
 import {getKebabCase} from "@/utils/util";
 
-const props = defineProps<{ tableData: ArticleInterface[] | undefined, loading: boolean}>()
+const props = defineProps<{ tableData: ArticleInterface[], loading: boolean}>()
 const emit = defineEmits(['switchCall', 'modifyArray', 'editCallback','overLoad'])
 const {tableData} = toRefs(props)
 const dataList = ref()
@@ -255,6 +254,8 @@ const statusVoid = (status: number) => {
       return '私有'
     case 2:
       return '公开'
+    case 3:
+      return '删除'
   }
 }
 

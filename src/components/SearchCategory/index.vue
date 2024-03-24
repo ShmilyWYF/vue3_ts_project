@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-select
-        v-model="modelValue"
+        v-model="reactiveDate.value"
         :loading="categoryloading"
         :multiple="false"
         :remote-method="searchCategories"
@@ -20,7 +20,7 @@
             :closable="true"
             :style="tagClass"
             type="success"
-            @close="emit('update:modelValue','')">
+            @close="change('')">
           {{ modelValue }}
         </el-tag>
       </template>
@@ -33,7 +33,7 @@
 <script lang="ts" setup>
 import api from "@/axios";
 import {AxiosResponse} from "axios";
-import {PropType, ref, toRefs} from "vue";
+import {PropType, reactive, ref, toRefs} from "vue";
 
 const props = defineProps({
   modelValue: {
@@ -48,6 +48,11 @@ const props = defineProps({
   }
 })
 const {modelValue} = toRefs(props)
+
+const reactiveDate = reactive({
+  value: modelValue?.value
+})
+
 const emit = defineEmits(['update:modelValue','vChange'])
 // category选择器加载
 const categoryloading = ref<boolean>(false)
@@ -70,8 +75,7 @@ const searchCategories = (query: any) => {
   }
 }
 const change = (value:string)=>{
-  modelValue.value = value
-  emit('vChange',value)
+  emit('update:modelValue',value)
 }
 </script>
 

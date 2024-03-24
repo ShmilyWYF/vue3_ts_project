@@ -21,8 +21,8 @@ export default {
     },
     // 按状态获取评论
     getCommentsByStatus: <any>{
-        method: 'post',
-        url: '/comment/all',
+        method: 'get',
+        url: '/comment/status',
     },
     // 删除评论
     deleteComments: <any>{
