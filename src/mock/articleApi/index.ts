@@ -10,9 +10,10 @@ import {
     getFeatureArticle,
     updateArticleByField,
     updateArticleInfo,
-} from "@/mock/articleApi/tempalte";
+} from "@/mock/articleApi/template";
+import {MockTemplate} from "@/interface";
 
-const articleApi = [
+const articleApi:MockTemplate[] = [
     {
         url: '/article/all',
         type: 'get',

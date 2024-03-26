@@ -1,7 +1,7 @@
 import Mock from "mockjs";
 import {Tagsinterface} from "@/interface";
-import {allArticle} from "@/mock/articleApi/tempalte";
-import {category} from "@/mock/categoryApi/tempalte";
+import {allArticle} from "@/mock/articleApi/template";
+import {category} from "@/mock/categoryApi/template";
 
 export const tags: { data: Tagsinterface[] } = Mock.mock({
     data: [

@@ -1,18 +1,13 @@
 export default {
-    // 添加
-    addAbout: {
+    // 添加或更新
+    addOrUpdateAbout: {
         method: 'post',
-        url: '/about/add',
+        url: '/about/addOrUpdate',
     },
     // 查询
     getAbout: {
         method: 'get',
         url: '/about/all',
-    },
-    // 更新
-    updateAbout: {
-        method: 'put',
-        url: '/about/update',
     },
     // 删除
     deleteAbout: {

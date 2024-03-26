@@ -1,4 +1,4 @@
-import {RolesMenu} from '@/mock/menuApi/tempalte/menuTemplate'
+import {RolesMenu} from '@/mock/menuApi/template/menuTemplate'
 
 
 const menuApi = [

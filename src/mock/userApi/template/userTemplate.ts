@@ -1,6 +1,6 @@
 import {UserAuthinterface, UserInfoInterface, UserInfointerface} from "@/interface";
 import {getCookie} from "@/utils/cookie";
-import {hasEmailBindCaptcha} from "@/mock/mailApi/tempalte";
+import {hasEmailBindCaptcha} from "@/mock/mailApi/template";
 import store from "@/store";
 
 const userAuth = <UserAuthinterface[]>[
@@ -84,7 +84,7 @@ export const userinfo = <UserInfoInterface[]>[
     }
 ]
 
-export const getAlluser = (obj: string) => {
+export const getAlluser = (obj?: string) => {
     let arr: UserInfointerface[] = []
     userAuth.forEach((item) => {
         let index = userinfo.findIndex(value => value.id === item.user_info_id);
@@ -104,10 +104,10 @@ export const getAlluser = (obj: string) => {
                 updateTime: userinfo[index].updateTime,
                 website: userinfo[index].website
             })
-            return arr
+            return {data:arr}
         }
     })
-    if (obj == 'null') {
+    if (obj == null||undefined) {
         return arr
     }
     if (obj == '1') {
@@ -121,6 +121,8 @@ export const getAlluser = (obj: string) => {
     }
     if (obj == '3') {
         return arr.filter(value => value.type == 0)
+    }else {
+        throw new Error('参数错误')
     }
 }
 
@@ -143,7 +145,7 @@ export const userToken = (user: string) => {
 export const getUserinfo = () => {
     const token = getCookie('token');
     // 解决刷新导致对象token丢失问题
-    if (store.getters.token != ''&&hasEmailBindCaptcha.email == ''){
+    if (store.getters.token != ''&&hasEmailBindCaptcha.email == ''&&store.getters.userinfo?.email != undefined||''){
         hasEmailBindCaptcha.email = store.getters.userinfo.email;
         hasEmailBindCaptcha.token = store.getters.token
     }

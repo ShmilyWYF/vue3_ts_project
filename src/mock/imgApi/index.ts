@@ -1,6 +1,6 @@
 import {
     uploadImg,
-} from "@/mock/imgApi/tempalte";
+} from "@/mock/imgApi/template";
 
 const imgApi = [
     {

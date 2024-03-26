@@ -4,7 +4,7 @@ import {
     updateUserConfig,
     updateWebSiteConfig,
     webSiteConfig,
-} from '@/mock/useAppApi/tempalte/Template'
+} from '@/mock/useAppApi/template/Template'
 
 
 const useApp = [

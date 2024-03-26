@@ -49,6 +49,7 @@ import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {ElNotification} from "element-plus";
 import {Sidebar} from "@/components";
+import {Ref} from "@vue/reactivity";
 
 // 上下文
 const content = ref<string>('')
@@ -76,9 +77,9 @@ const sendGroupMail = () => {
   }
   // 接口参数为ms
   checkbox.value ? param.ttl = ttl.value * (3600 * 1000) : ttl.value = 0
-  api.mailApi.sendGroupMessageByMails(param).then(({data: {message}}: AxiosResponse) => {
+  api.mailApi.sendGroupMessage(param).then(({data: {message}}: AxiosResponse) => {
     ElNotification.success(message)
-    getAllTtlEmail();
+    if(ttl.value != 0) getAllTtlEmail();
   }, (e: Error) => {
     ElNotification.error(e.message)
   })

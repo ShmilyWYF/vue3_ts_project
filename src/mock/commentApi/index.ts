@@ -5,7 +5,7 @@ import {
     getRepliesByCommentId,
     releaseCommentById,
     saveComments
-} from "@/mock/commentApi/tempalte";
+} from "@/mock/commentApi/template";
 
 export default [
     {

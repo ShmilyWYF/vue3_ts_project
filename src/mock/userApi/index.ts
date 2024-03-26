@@ -5,7 +5,7 @@ import {
     restUser, UpdateUserinfo,
     userOut,
     userToken
-} from "@/mock/userApi/tempalte/userTemplate";
+} from "@/mock/userApi/template/userTemplate";
 
 
 const userApi: any = [
@@ -18,17 +18,17 @@ const userApi: any = [
         condition: true
     },
     {
-        url: '/user/info',
+        url: '/user/logout',
         type: 'post',
-        template: getUserinfo,
+        template: userOut,
         code: Number(200),
         status: true,
         condition: true
     },
     {
-        url: '/user/logout',
+        url: '/user/info',
         type: 'post',
-        template: userOut,
+        template: getUserinfo,
         code: Number(200),
         status: true,
         condition: true
@@ -58,7 +58,7 @@ const userApi: any = [
         condition: true
     },
     {
-        url: 'user/alluser',
+        url: 'user/info',
         type: 'get',
         template: getAlluser,
         code: Number(200),
@@ -66,21 +66,38 @@ const userApi: any = [
         condition: true
     },
     {
-        url: 'user/deleteUser',
+        url: 'user/undisable',
+        type: 'get',
+        template: disableUserById,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: 'user/disable',
+        type: 'get',
+        template: disableUserById,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: 'user/recovery',
+        type: 'get',
+        template: disableUserById,
+        code: Number(200),
+        status: true,
+        condition: true
+    },
+    {
+        url: 'user/remove',
         type: 'delete',
         template: deleteUser,
         code: Number(200),
         status: true,
         condition: true
     },
-    {
-        url: 'user/disableUserById',
-        type: 'get',
-        template: disableUserById,
-        code: Number(200),
-        status: true,
-        condition: true
-    }
+
 ]
 
 

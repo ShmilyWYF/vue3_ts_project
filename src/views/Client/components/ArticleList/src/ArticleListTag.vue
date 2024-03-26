@@ -66,6 +66,7 @@ import store from "@/store";
 import {svg} from "@/icons";
 import {ArticleInterface, CategoryCountInterface} from "@/interface";
 import {firstCharacterToUppercase} from "@/utils/util";
+import {Ref} from "@vue/reactivity";
 
 const tabRef = ref<{ $el: HTMLDivElement } | any>()
 const articleCategoryList = ref<CategoryCountInterface[]>([])
@@ -78,7 +79,7 @@ const articleCategoryActive = ref(store.getters.categoryActive ? store.getters.c
 const currentPage = ref<number>(1)
 const pageSize = ref<number>(12)
 // 初始化数据
-const data = ref<ArticleInterface[]>([])
+const data:Ref<ArticleInterface[]> = ref<ArticleInterface[]>([])
 const total = ref<ArticleInterface[]>([])
 
 onMounted(() => {

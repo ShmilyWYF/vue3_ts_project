@@ -28,7 +28,8 @@ class MockHandler extends MockResponse {
     private static createMockTemplate(option: Object): MockApiInterface[] {
         let arr: MockApiInterface[] = []
         Object.keys(option).reduce((prev: any, curr: string) => {
-            prev[curr].default.forEach((res: MockApiInterface) => {
+            let bl:boolean = Object.prototype.hasOwnProperty.call(prev[curr],'default');
+            prev[curr][bl?'default':Object.keys(prev[curr])[0]].forEach((res: MockApiInterface) => {
                 arr.push(res)
             })
             return prev

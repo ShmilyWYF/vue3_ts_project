@@ -1,6 +1,6 @@
 import Mock from "mockjs";
 import {CategoryInterface} from "@/interface";
-import {allArticle} from "@/mock/articleApi/tempalte";
+import {allArticle} from "@/mock/articleApi/template";
 
 
 export const category: { data: CategoryInterface[] } = Mock.mock({

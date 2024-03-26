@@ -1,4 +1,4 @@
-import {addOrEditTag, deleteTags, getTags, tagCount, tags, updateTagById} from "@/mock/tagsApi/tempalte";
+import {addOrEditTag, deleteTags, getTags, tagCount, tags, updateTagById} from "@/mock/tagsApi/template";
 
 export default [
     {

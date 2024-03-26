@@ -50,7 +50,7 @@ const constantRoute: Array<RouteRecordRaw> = [
             },
             {
                 path: '/about',
-                name: 'about',
+                name: 'About',
                 component: () => import('@/views/Client/components/About/index.vue'),
                 props: true,
                 meta: {

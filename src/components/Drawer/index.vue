@@ -5,7 +5,7 @@
       <template #default>
         <ul>
           <li>
-            <lang-drop-down/>
+            <lang-drop-down :multilingual="multiLang.multiLanguage != 0"/>
           </li>
           <li>
             <el-switch v-model="themeAction" :active-value="'light'" :inactive-value="'dark'"
@@ -58,8 +58,8 @@ const bgPlate = ref<any>(JSON.parse(String(localStorage.getItem('bgPlate'))) || 
 const isBgLoading = ref<boolean>(false)
 // 路由实例
 const router = useRouter()
-
-
+// 获取语言启用状态
+const multiLang = computed(()=>store.getters.useState.websiteConfig)
 /**
  * @author WangYaFeng
  * @date 2023/10/28 2:17

@@ -1,4 +1,4 @@
-import {addOrEditCategory, category, deleteCategory, getCategory, updateCategory} from "@/mock/categoryApi/tempalte";
+import {addOrEditCategory, category, deleteCategory, getCategory, updateCategory} from "@/mock/categoryApi/template";
 
 export default [
     {

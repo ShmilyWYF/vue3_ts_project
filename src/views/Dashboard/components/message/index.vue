@@ -1,6 +1,6 @@
 <template>
   <div class="message-box">
-    <Mark v-model="messageContent" @save-cache="addMessage" :edit-mode="true" :is-exit-btn="false"/>
+    <Mark v-model="messageContent" @save-cache="addOrUpdateMessage" :edit-mode="true" :is-exit-btn="false"/>
   </div>
 </template>
 
@@ -24,11 +24,11 @@ const getMessage = () => {
   })
 }
 
-const addMessage = (content:string) => {
+const addOrUpdateMessage = (content:string) => {
   let param = {
     content
   }
-  api.messageApi.addMessage(param).then(({data}:AxiosResponse) => {
+  api.messageApi.addOrUpdateMessage(param).then(({data}:AxiosResponse) => {
     ElNotification({
       type: data.type,
       message: data.message,

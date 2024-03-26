@@ -1,9 +1,9 @@
 import Mock from "mockjs";
 import {CommentMockinterface, CommentVoInterface} from "@/interface";
-import {userinfo as allUserInfo} from "@/mock/userApi/tempalte/userTemplate";
-import {allArticle} from "@/mock/articleApi/tempalte";
+import {userinfo as allUserInfo} from "@/mock/userApi/template/userTemplate";
+import {allArticle} from "@/mock/articleApi/template";
 import store from "@/store";
-import {category} from "@/mock/categoryApi/tempalte";
+import {category} from "@/mock/categoryApi/template";
 
 export const comments: { data: CommentMockinterface[] } = Mock.mock({
     data: [

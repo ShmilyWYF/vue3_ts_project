@@ -49,7 +49,7 @@
           <template #content="slotProps:{item:Tagsinterface}">
             <el-tag effect="dark" type="info">
               <template #default>
-                <router-link class="tag-a" :to="'/tags?tagName=' + slotProps.item.tagName">{{
+                <router-link class="tag-a" :to="{path:`/tags?tagName=${slotProps.item.tagName}`,query:{id:slotProps.item.id,tagName:slotProps.item.tagName}}">{{
                     slotProps.item.tagName
                   }}
                 </router-link>

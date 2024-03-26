@@ -1,7 +1,8 @@
 import Mock from "mockjs";
 import {ArticleInterface, Tagsinterface} from "@/interface";
-import {addOrEditTag, tags} from "@/mock/tagsApi/tempalte";
-import {addOrEditCategory, category} from "@/mock/categoryApi/tempalte";
+import {addOrEditTag, tags} from "@/mock/tagsApi/template";
+import {addOrEditCategory, category} from "@/mock/categoryApi/template";
+import store from "@/store";
 
 // 定义随机占位符
 Mock.Random.extend({
@@ -120,6 +121,9 @@ export const updateArticleByField = (obj:string) => {
                 let index = allArticle.data.findIndex(value => value.id == id);
                 allArticle.data[index][key] = typeof allArticle.data[index][key] == 'object'? value:typeof allArticle.data[index][key] == 'string'?String(value):Number(value)
         }
+        if(key == 'isFeatured'||'isTop'){
+            store.commit('articleStore/SET_FEATURE_ARTICLE_DATA',getFeatureArticle())
+        }
     return {code:200,message:'ok'}
 }
 
@@ -234,7 +238,7 @@ const getLatestItem = (type: boolean): ArticleInterface[] => {
     // 获取长度
     let arr = allArticle.data.filter(res => {
         if (res.status !== 3 && res.isDelete !== 1) {
-            return type ? res.isTop == 1 : res.isFeatured == 1
+            return type ? res.isTop == 1 && res.isFeatured == 1 : res.isFeatured == 1
         }
     }).sort((a: any, b: any) => {
         return a.createTime - b.createTime

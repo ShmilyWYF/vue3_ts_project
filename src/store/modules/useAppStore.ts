@@ -19,6 +19,7 @@ const useAPPState = {
             beianNumber: '000000',
             qqLogin: 0,
         },
+        userConfig: {}
     },
     asideList: {
         commentsList: [],
@@ -31,6 +32,12 @@ const useAPPState = {
 const mutations = {
     SET_USE_APP_STATE: (useAppStore: any, option: any) => {
         useAppStore.useState = option
+    },
+    SET_USE_APP_WEBCONFIG: (useAppStore: any, option: any) => {
+        useAppStore.useState.websiteConfig = option
+    },
+    SET_USE_APP_USERCONFIG: (useAppStore: any, option: any) => {
+        useAppStore.useState.userConfig = option
     },
     SET_USE_STATE_TREE: (useAppStore: any, data: any) => {
         const keyArr = Object.keys(data);
@@ -93,8 +100,8 @@ const actions: any = {
     // 获取aside列表数据
     getAside({commit, state}: any) {
         return new Promise((resolve, reject) => {
-            if (state.acticleAsideList) {
-                resolve(state.acticleAsideList)
+            if (state.asideList) {
+                resolve(state.asideList)
             } else {
                 useAppApi.getAsideConfig().then((res: AxiosResponse) => {
                     const {data} = res.data

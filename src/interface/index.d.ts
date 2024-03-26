@@ -1,3 +1,5 @@
+import {allArticle} from "@/mock/articleApi/template";
+
 export interface MockApiInterface {
     url: string
     type: string
@@ -101,9 +103,9 @@ export interface CommentInterface {
 }
 
 export interface Tagsinterface {
-    "id": number | string,
+    "id": number ,
     "tagName": string,
-    "createTime": Date | string,
+    "createTime?": Date | string,
     "updateTime"?: Date | string | null,
     articleCount?: number,
     [key:any]: any
@@ -195,4 +197,13 @@ export interface WebSiteConfigInterface {
     websiteConfig: WebFromInterface,
     userConfig: UserFromInterface
     themeConfig: {}
+}
+
+export interface MockTemplate {
+    url: string,
+    type: string,
+    template: any,
+    code: number,
+    status: boolean,
+    condition: boolean
 }

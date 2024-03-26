@@ -112,7 +112,7 @@ const save = async (params: any) => {
   return new Promise<any>(resolve => {
     api.commentApi.saveComments(params).then(() => {
       // 当前被回复评论的引索 为当前回复评论添加内容
-      if (reactiveData.index&&reactiveData.commentData[reactiveData.index]){
+      if (reactiveData.index != -1&&reactiveData.commentData[reactiveData.index]){
         fetchReplies(reactiveData.index);
       }
       resolve('')

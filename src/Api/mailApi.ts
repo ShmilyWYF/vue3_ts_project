@@ -3,9 +3,9 @@ export default {
         method: 'post',
         url: '/mail/getCodeByEmail'
     },
-    sendGroupMessageByMails:<any> {
+    sendGroupMessage:<any> {
         method: 'post',
-        url: '/mail/sendGroupMessageByMails'
+        url: '/mail/sendGroupMessage'
     },
     getAllTtlMessage:<any> {
         method: 'get',

@@ -2,7 +2,7 @@
   <div id="client">
     <el-row :gutter="0" justify="center">
       <el-col :lg="{span: 20}" :md="{span: 22}" :xs="{span: 24}">
-        <Feature v-slot:FeatureList="slotProp" :FeatureData="<FeatureDatainterface>featureData">
+        <Feature v-slot:FeatureList="slotProp" :FeatureData="featureData">
           <FeatureList :list="slotProp.list"/>
         </Feature>
         <ArticleMain :gutter="32">
@@ -32,7 +32,7 @@ import {Ref, UnwrapNestedRefs} from "@vue/reactivity";
 
 const name = 'Client'
 
-const featureData = reactive<FeatureDatainterface>({
+const featureData:FeatureDatainterface = reactive<FeatureDatainterface>({
   Top: {} as ArticleInterface,
   Featured: [{},{}] as ArticleInterface[]
 })

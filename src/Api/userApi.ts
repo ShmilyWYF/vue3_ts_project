@@ -40,7 +40,7 @@ export default {
         url: '/user/recovery'
     },
     remove:{
-        method: 'get',
+        method: 'delete',
         url: '/user/remove'
     },
 }

@@ -1,5 +1,5 @@
 <template>
-  <el-dropdown :hide-on-click="true" :show-timeout="sleep" @command="switchLang" v-if="isMultiLanguage !== 1">
+  <el-dropdown :hide-on-click="true" :show-timeout="sleep" @command="switchLang" v-if="multilingual">
     <span class="el-dropdown-link"><svg-icon name="lang"/>{{ $t('message.lang') }}</span>
     <template #dropdown>
       <el-dropdown-menu>
@@ -12,12 +12,11 @@
 
 <script lang="ts" setup>
 import SvgIcon from "@/components/SvgIcon/index.vue";
-import {computed, ref} from "vue";
+import {ref} from "vue";
 import {useI18n} from "vue-i18n";
-import store from "@/store";
 
+const props = defineProps<{multilingual:boolean}>()
 const {locale} = useI18n();
-const isMultiLanguage = computed(()=>store.getters.useState.websiteConfig.multiLanguage)
 const sleep = ref(500)
 
 const switchLang = (command: string) => {

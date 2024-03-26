@@ -41,14 +41,15 @@
 <script setup lang="ts">
 import api from "@/axios";
 import {AxiosResponse} from "axios";
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref, toRefs, watch} from "vue";
 import {useRouter} from "vue-router";
 import {ArticleCard, Comment} from "@/components";
 import {close, start} from "@/utils/nporgress";
 import {ElMessage} from "element-plus";
-import {ArticleInterface} from "@/interface";
+import {ArticleInterface, Tagsinterface} from "@/interface";
+import store from "@/store";
 
-const tagList = ref<[{ id: number, tagName: string, articleCount: number, }]>([] as any)
+const tagList = ref<Tagsinterface[]>([] as any)
 const currId = ref<number>(parseInt(String(localStorage.getItem('currTagId'))));
 const isShowTagList = ref<boolean>(false)
 const articleList = ref<ArticleInterface[]>()
@@ -76,13 +77,13 @@ const setCurrentTagId = (value: number) => {
 
 // 无参数 获取标签列表 有参数 按参数标签名获取文章列表
 const getData = async () => {
-  const query = router.currentRoute.value.query;
-  if (isNaN(currId.value)||!query.hasOwnProperty('tagName')) {
+  let query:{id?:number,tagName:string} = <any>router.currentRoute.value.query;
+  if (query.id) setCurrentTagId(Number(query.id))
+  if (isNaN(currId.value)||!Object.hasOwnProperty.call(query,'tagName')) {
     // 有tagName参数但没有tagId 返回标签列表
     await router.replace({path: '/tags'})
     title.value = 'Tags'
-    await api.tagsApi.getTags().then((res: AxiosResponse) => {
-      const {data} = res.data
+    await store.dispatch('tagStore/getArticleTagList').then((data:Tagsinterface[]) => {
       tagList.value = data;
       isCommentLoading.value = true;
     })
