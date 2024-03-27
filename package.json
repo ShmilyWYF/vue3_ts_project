@@ -6,7 +6,7 @@
     "dev": "vite  --mode development",
     "production": "vite  --mode production",
     "test": "vite  --mode test",
-    "build": "vite  build",
+    "build": "vite  build --mode production",
     "lint": "vite  lint"
   },
   "dependencies": {

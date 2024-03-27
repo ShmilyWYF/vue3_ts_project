@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue';
 import {createHtmlPlugin} from 'vite-plugin-html';
 import * as path from 'path'
 import {createSvgIconsPlugin} from "vite-plugin-svg-icons";
+import {InternalModuleFormat} from "rollup";
 
 export default defineConfig(({command, mode}) => {
     // 根据当前工作目录中的 `mode` 加载 .env 文件
@@ -16,7 +17,7 @@ export default defineConfig(({command, mode}) => {
         //项目根目录
         root: process.cwd(),
         //项目部署的基础路径
-        base: env.APP_NODE_ENV === "production" ? "/dist" : "/",
+        base: env.APP_NODE_ENV === "production" ? "./docs" : "./",
         //环境配置 'development'|'production'
         mode: env.APP_NODE_ENV,
         //全局常量替换 Record<string, string>
@@ -118,83 +119,99 @@ export default defineConfig(({command, mode}) => {
         },
         //构建
         build: {
-            //浏览器兼容性  "esnext"|"modules"
-            target: "modules",
-            //否自动注入 module preload 的 polyfill
-            modulePreload: {
-                polyfill: true
-            },
-            //输出路径
-            outDir: "dist",
-            //生成静态资源的存放路径
-            assetsDir: "assets",
-            //小于此阈值的导入或引用资源将内联为 base64 编码，以避免额外的 http 请求。设置为 0 可以完全禁用此项
-            assetsInlineLimit: 4096,
-            //启用/禁用 CSS 代码拆分
-            cssCodeSplit: true,
-            //不同的浏览器target设置CSS的压缩
-            cssTarget: "",
-            //构建后是否生成 source map 文件
-            //boolean | 'inline' | 'hidden'
-            sourcemap: false,
-            //自定义底层的 Rollup 打包配置
+            target: ['edge90', 'chrome90', 'firefox90', 'safari15'],
+            chunkSizeWarningLimit: 1500,
+            outDir: "docs",
             rollupOptions: {
-                //要打包的文件路径
-                input: "src/main.js",
-                //文件输出位置
                 output: {
-                    //打包生产文件路径
-                    file: "dist/index.js",
-                    //打包输出格式
-                    // "amd", "cjs", "system", "es", "iife" or "umd
-                    format: "cjs",
-                    //包的全部变量名称
-                    name: "bundleName",
-                    //声明全局变量
-                    globals: {
-                        jquery: "$",
-                    },
-                },
-                //插件
-                plugins: [],
-                //不需打包的文件
-                external: ["lodash"],
-            },
-            //@rollup/plugin-commonjs 插件的选项
-            commonjsOptions: {},
-            //@rollup/plugin-dynamic-import-vars 选项
-            dynamicImportVarsOptions: {},
-            //构建的库
-            lib: {
-                entry: path.resolve(__dirname, "lib/main.js"),
-                //暴露的全局变量
-                name: "mylib",
-                //'es' | 'cjs' | 'umd' | 'iife'
-                formats: "es",
-                //输出的包文件名
-                fileName: "my-lib",
-            },
-            //当设置为 true，构建后将会生成 manifest.json 文件
-            manifest: false,
-            //当设置为 true，构建后将会生成SSR的manifest.json 文件
-            ssrManifest: false,
-            //生成面向 SSR 的构建
-            ssr: "undefined",
-            //设置为 false 可以禁用最小化混淆，
-            //boolean | 'terser' | 'esbuild'
-            minify: "terser",
-            //传递给 Terser 的更多 minify 选项。
-            terserOptions: {},
-            //设置为 false 来禁用将构建后的文件写入磁盘
-            write: true,
-            //默认情况下，若 outDir 在 root 目录下，则 Vite 会在构建时清空该目录。
-            emptyOutDir: true,
-            //启用/禁用 gzip 压缩大小报告
-            reportCompressedSize: true,
-            //触发警告的 chunk 大小（以 kbs 为单位）
-            chunkSizeWarningLimit: 500,
-            //设置为 {} 则会启用 rollup 的监听器
-            watch: null,
-        },
+                    dir: "docs",
+                    format: 'esm',
+                    manualChunks(id) { // 分包
+                        if (id.includes('node_modules')) {
+                            return id.toString().split('node_modules/')[1].split('/')[0].toString();
+                        }
+                    }
+                }
+            }
+        }
+        //     //浏览器兼容性  "esnext"|"modules"
+        //     target: "modules",
+        //     //否自动注入 module preload 的 polyfill
+        //     modulePreload: {
+        //         polyfill: true
+        //     },
+        //     //输出路径
+        //     outDir: "docs",
+        //     //生成静态资源的存放路径
+        //     assetsDir: "assets",
+        //     //小于此阈值的导入或引用资源将内联为 base64 编码，以避免额外的 http 请求。设置为 0 可以完全禁用此项
+        //     assetsInlineLimit: 4096,
+        //     //启用/禁用 CSS 代码拆分
+        //     cssCodeSplit: true,
+        //     //不同的浏览器target设置CSS的压缩
+        //     cssTarget: "",
+        //     //构建后是否生成 source map 文件
+        //     //boolean | 'inline' | 'hidden'
+        //     sourcemap: false,
+        //     //自定义底层的 Rollup 打包配置
+        //     rollupOptions: {
+        //         //要打包的文件路径
+        //         input: "src/main.js",
+        //         //文件输出位置
+        //         output: {
+        //             //打包生产文件路径
+        //             file: "docs/index.js",
+        //             //打包输出格式
+        //             // "amd", "cjs", "system", "es", "iife" or "umd
+        //             format: "cjs",
+        //             //包的全部变量名称
+        //             name: "bundleName",
+        //             //声明全局变量
+        //             globals: {
+        //                 jquery: "$",
+        //             },
+        //         },
+        //         //插件
+        //         plugins: [],
+        //         //不需打包的文件
+        //         external: ["lodash"],
+        //     },
+        //     //@rollup/plugin-commonjs 插件的选项
+        //     commonjsOptions: {},
+        //     //@rollup/plugin-dynamic-import-vars 选项
+        //     dynamicImportVarsOptions: {},
+        //     //构建的库
+        //     lib: {
+        //         entry: path.resolve(__dirname, "lib/main.js"),
+        //         //暴露的全局变量
+        //         name: "mylib",
+        //         //'es' | 'cjs' | 'umd' | 'iife'
+        //         formats: "es",
+        //         //输出的包文件名
+        //         fileName: "my-lib",
+        //     },
+        //     //当设置为 true，构建后将会生成 manifest.json 文件
+        //     manifest: false,
+        //     //当设置为 true，构建后将会生成SSR的manifest.json 文件
+        //     ssrManifest: false,
+        //     //生成面向 SSR 的构建
+        //     ssr: "undefined",
+        //     //设置为 false 可以禁用最小化混淆，
+        //     //boolean | 'terser' | 'esbuild'
+        //     minify: "terser",
+        //     //传递给 Terser 的更多 minify 选项。
+        //     terserOptions: {},
+        //     //设置为 false 来禁用将构建后的文件写入磁盘
+        //     write: true,
+        //     //默认情况下，若 outDir 在 root 目录下，则 Vite 会在构建时清空该目录。
+        //     emptyOutDir: true,
+        //     //启用/禁用 gzip 压缩大小报告
+        //     reportCompressedSize: true,
+        //     //触发警告的 chunk 大小（以 kbs 为单位）
+        //     chunkSizeWarningLimit: 500,
+        //     //设置为 {} 则会启用 rollup 的监听器
+        //     watch: null,
+        // },
     };
-});
+})
+;
