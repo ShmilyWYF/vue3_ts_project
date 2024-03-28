@@ -1,4 +1,4 @@
-import {createRouter, createWebHashHistory, Router, RouteRecordRaw} from 'vue-router'
+import {createMemoryHistory, createRouter, createWebHashHistory, Router, RouteRecordRaw} from 'vue-router'
 import protector from "@/router/protector";
 
 import Layout from '@/layout/index.vue'
@@ -205,9 +205,8 @@ export const asyncRouterMap: any[] = [
 ]
 
 const router: Router = createRouter({
-    // history: createWebHashHistory(),
-    // history: createMemoryHistory(),
-    history: createWebHashHistory(),
+    history: createMemoryHistory(import.meta.env.APP_BASE_API),
+    // history: createWebHashHistory(import.meta.env.APP_BASE_API),
     routes: constantRoute,
 })
 

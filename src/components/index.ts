@@ -1,5 +1,4 @@
 export {default as SvgIcon} from './SvgIcon/index.vue'
-export {default as Echarts} from './Echarts/index.vue'
 export {default as Loading} from './Loading/index.vue'
 export {default as ArticleCard} from './ArticleCard/index.vue'
 export {default as Breadcrumb} from './Breadcrumb/index.vue'
