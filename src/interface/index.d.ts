@@ -1,4 +1,4 @@
-import {allArticle} from "@/mock/articleApi/template";
+import {DefineComponent} from "vue";
 
 export interface MockApiInterface {
     url: string
@@ -7,6 +7,28 @@ export interface MockApiInterface {
     code: number
     status: boolean
     condition: boolean
+}
+
+export interface RouteInterface{
+    path: string,
+    name: string,
+    component?: ()=>Promise<DefineComponent>,
+    redirect?: string,
+    props?: {},
+    meta: {},
+    children?: Eshiro[]
+}
+
+export interface ShiroInterface {
+    id: number,
+    pid: number,
+    name: string,
+    path: string,
+    props?: {isVertical: true},
+    redirect?: string,
+    component: string,
+    meta:{},
+    children?: any[]
 }
 
 export interface UserAuthinterface {
@@ -32,8 +54,8 @@ export interface UserInfoInterface {
     isSubscribe?: number,
     isDisable?: number,
     isDelete?: number,
-    createTime?: Date|null,
-    updateTime?: Date|null,
+    createTime?: Date | null,
+    updateTime?: Date | null,
 }
 
 interface UserInfointerface {
@@ -85,7 +107,7 @@ export interface CommentModuleInterface {
     isHaveMore: boolean,
     type: number,
     isCommentReview: number,
-    userinfo: UserInfoInterface|undefined,
+    userinfo: UserInfoInterface | undefined,
     commentsCall: Function,
     indexCall: Function,
 }
@@ -103,12 +125,13 @@ export interface CommentInterface {
 }
 
 export interface Tagsinterface {
-    "id": number ,
+    "id": number,
     "tagName": string,
     "createTime?": Date | string,
     "updateTime"?: Date | string | null,
     articleCount?: number,
-    [key:any]: any
+
+    [key: any]: any
 }
 
 interface initDataInterface {
@@ -147,6 +170,7 @@ export interface ArticleInterface {
     status: number,
     createTime?: string,
     updateTime?: string,
+
     [key: string]: any
 }
 
@@ -193,6 +217,7 @@ export interface UserFromInterface {
     avatar: string,
     isEmailNotice: number,
 }
+
 export interface WebSiteConfigInterface {
     websiteConfig: WebFromInterface,
     userConfig: UserFromInterface

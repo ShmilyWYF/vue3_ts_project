@@ -20,9 +20,9 @@ const constantRoute: Array<RouteRecordRaw> = [
                 name: 'home',
                 component: () => import('@/views/Client/index.vue'),
                 meta: {
-                    require: true,
-                    title: 'blog',
-                    noRedirect: false,
+                    require: true, // 是否展示
+                    title: 'blog', // 标题
+                    noRedirect: false, // 是否禁止跳转
                 },
             },
             {

@@ -85,7 +85,7 @@
       </el-tab-pane>
 
       <el-tab-pane label="权限管理" name="routers">
-        <shiro/>
+        <shiroGroup/>
       </el-tab-pane>
     </el-tabs>
   </el-card>
@@ -97,7 +97,7 @@ import api from "@/axios";
 import {ElNotification, FormRules} from "element-plus";
 import {AxiosResponse} from "axios";
 import {UserFromInterface, WebFromInterface, WebSiteConfigInterface} from "@/interface";
-import {shiro} from "@/views/Dashboard/components";
+import {shiroGroup} from "@/views/Dashboard/components";
 
 const websiteActive = ref<string>('info')
 const websiteRef = ref<HTMLElement | any>()

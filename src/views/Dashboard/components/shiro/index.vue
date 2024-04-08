@@ -1,40 +1,39 @@
 <template>
-  <div class="el-tree">
+  <div class="shiro">
+    <slot name="header"/>
     <el-tree
         ref="treeRef"
         :data="data"
-        :default-checked-keys="[13]"
-        :default-expanded-keys="[1]"
         :props="mappingProps"
         node-key="id"
-        show-checkbox/>
-
-    <div class="buttons">
-      <el-button @click="getCheckedNodes">设置导航</el-button>
-      <el-button @click="setCheckedKeys">set by key</el-button>
-      <el-button @click="resetChecked">reset</el-button>
-    </div>
+        show-checkbox
+        @change="getCheckedNodes"
+        :default-expand-all="true"
+        style="width: 100%;"
+    />
+      <el-button v-if="isHiddRestBtn" :disabled="model?.length == 0" @click="resetChecked" style="float: right">reset</el-button>
+      <slot name="append"/>
   </div>
 </template>
 
 <script lang="ts" setup>
 import {asyncRouterMap} from "@/router";
 import {ref, toRaw} from 'vue'
-import store from "@/store";
+import {ElTree} from 'element-plus'
+const props = defineProps<{isHiddRestBtn?:boolean}>()
+const model = defineModel({required:true})
+const emit = defineEmits(['currSelected'])
+const data = ref<Tree[]>([])
+const treeRef = ref<InstanceType<typeof ElTree>>()
 
-const data = ref<[]>([])
-const treeRef = ref()
-
-// 限定接口
+// 约束类型
 interface Tree {
   path: string
   title: string,
   id: number,
-  children: [{
-    title: string,
-    path: string,
-    id: number,
-  }]
+  component?: string,
+  meta?: {}
+  children?: Tree[]
 }
 
 // 映射props属性
@@ -44,69 +43,73 @@ const mappingProps = {
 };
 
 // 获取异步树节点方法
-const asyncTree = (tree: any[]): [] => {
-  const treeData: any = []
-  let i = 0;
-  tree.forEach((res: any) => {
-    i++;
-    const tem: Tree = {
-      path: res.path,
-      title: res.meta?.title,
-      id: i,
-      children: [] as any
+const asyncTree = (asyncRoutes: any[], k?: number) => {
+  let T: Tree[] = []
+  let i = 1000
+  asyncRoutes.forEach((e,index) => {
+    i++
+    const node: Tree = {
+      path: e.path,
+      title: e.meta.title,
+      id: k != undefined ? parseInt(k + '' + index) : i,
+      meta: e.meta
     };
-    if (res.children) {
-      let j = 0;
-      res.children.forEach((key: { meta: { title: string; }; path: string; }) => {
-        j++;
-        tem.children.push({
-          title: key.meta.title,
-          path: key.path,
-          id: parseInt(i + '' + j),
-        })
-      })
+
+    if (e.component) {
+      let split = String(e.component).split(/\s*=>\s*/).toString();
+      const regex = /import\("(\/[^?]+)?/;
+      const match = split.match(regex);
+      if (!match) {
+        throw new Error('正则处理字符串时出现异常，请检查路由对象组件地址')
+      }
+      node.component = match[1]
     }
-    treeData.push(tem)
+
+    if (Object.prototype.hasOwnProperty.call(e, 'children')) {
+      node.children = asyncTree(e.children, node.id)
+    }
+    T.push(node)
   })
-  return treeData
+  return T;
 }
+
 // 赋值
 data.value = asyncTree(asyncRouterMap)
 console.log('构建tree树：', data)
 
-// 获取当前选中+半选中的值
-const getCheckedNodes = () => {
-  const data = treeRef.value!.getHalfCheckedNodes().map((res: any) => {
-    let tempTerr: any = [];
-    // 获得入栈对象
-    Object.assign(tempTerr, res)
-    // 获得选中节点id
-    let listID = toRaw(tempTerr.children).map((res: { id: number }) => {
-      return res.id
-    })
-    // 获得子id
-    let tempChildren = [] as any[]
-    treeRef.value!.getCheckedNodes(false, false).forEach((res: any) => {
-      let raw = toRaw(res);
-      if (listID.includes(raw.id)) {
-        tempChildren.push(raw)
-      }
-    })
-    // 合并对象属性
-    tempTerr.children = tempChildren
-    return tempTerr
-  })
-  store.commit('routerStore/SET_MENU_TREE', data)
-  // store.commit('routerStore/SET_MENU_LIST',data)  改为JDBC
-  console.log(data, 'get节点对象组')
+interface InterfaceShiro {
+  id: number,
+  path: string,
+  title: string,
 }
 
-const setCheckedKeys = () => {
-  treeRef.value!.setCheckedKeys([13, 14, 15], false)
+
+// 获取当前选中
+const getCheckedNodes = () => {
+  const Tarray:any[] = JSON.parse(JSON.stringify(treeRef.value!.getCheckedNodes(undefined,true)))
+  let T:any[] = [];
+  Tarray.map((e)=>{
+    if ('children' in e) delete e.children
+    T.push(toRaw(e))
+  })
+  model.value = T
+  emit('currSelected',T)
+  // store.commit('routerStore/SET_MENU_TREE', data)
+  // store.commit('routerStore/SET_MENU_LIST',data)  改为JDBC
+}
+const setCheckedKeys = (arr:[]) => {
+  let nevers = arr.filter((i:{id:number})=>i.id !== 1001&&i.id != 10011).map((i:{id:number})=>i.id);
+  treeRef.value!.setCheckedKeys(nevers, true)
+  getCheckedNodes()
 }
 const resetChecked = () => {
   treeRef.value!.setCheckedKeys([], false)
+  model.value = []
 }
+defineExpose({
+  setCheckedKeys,
+  resetChecked
+})
 </script>
 
 <style scoped>

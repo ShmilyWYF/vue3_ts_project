@@ -156,6 +156,22 @@
           </el-form-item>
         </template>
       </UserFrom>
+      <shiro v-model="menuRoleFrom.menuTree" ref="shiroRef">
+        <template #header>
+          <el-select
+              v-model="menuRoleFrom.treeName"
+              placeholder="权限组"
+              value-key="id"
+              remote-show-suffix
+          >
+            <el-option v-for="value in userShiroGroupList" :key="value.id" :label="value.shiroGroupName"
+                       :value="value.shiroGroupName" @click="shiroRef.setCheckedKeys(value.groupTree);"/>
+          </el-select>
+        </template>
+        <template #append>
+          <el-button @click="setUserShiro(userForm.id,menuRoleFrom.menuTree)">修改权限</el-button>
+        </template>
+      </shiro>
     </el-dialog>
   </div>
 </template>
@@ -168,6 +184,7 @@ import {AxiosResponse} from "axios";
 import {UserInfointerface} from "@/interface";
 import {Pagination, UserFrom} from "@/components";
 import store from "@/store";
+import {shiro} from "@/views/Dashboard/components";
 
 const isDelete = ref<boolean>(false)
 const isDisable = ref<boolean>(false)
@@ -209,10 +226,39 @@ const state = (): UserInfointerface => ({
   website: ""
 })
 const userForm = reactive<UserInfointerface>(state())
+// 权限表组件Ref
+const shiroRef = ref()
+// 用户权限 接收
+const menuRoleFrom = reactive<{treeName:string,menuTree:[]}>({
+  treeName: '',
+  menuTree: [],
+})
+// 用户权限组远程搜索结果接收
+const userShiroGroupList = ref<{ id: number, shiroGroupName: string, groupTree: [] }[]>()
+// 加载状态控制
 
 onBeforeMount(() => {
   listUser()
 })
+
+// 获取用户路由
+const getUserShiro = async (id:number) => {
+  await api.menuApi.getUserRoles({id:id}).then((res:AxiosResponse)=>{
+    const roles = <{data:[]}>res.data
+    menuRoleFrom.menuTree = <[]>roles.data
+    shiroRef.value.setCheckedKeys(menuRoleFrom.menuTree)
+  })
+}
+
+// 设置用户权限
+const setUserShiro = async (id: number, shiro: []) => {
+  let shiroId = shiro.map((i: { id: number }) => i.id);
+  const param = {id: id, shiroGroupId: shiroId}
+  // updateUserRoles
+  await api.menuApi.updateUserRoles(param).then(({data: {message}}: AxiosResponse) => {
+    ElNotification.info(message)
+  })
+}
 
 // 设置选择框可选择条件
 const checkSelectable = (row: any) => {
@@ -344,8 +390,12 @@ const SearchInputEvnt = () => {
 }
 
 // 编辑
-const openModel = (user?: UserInfointerface) => {
+const openModel = async (user?: UserInfointerface) => {
   isEditView.value = true
+  await api.menuApi.getGroupMenu().then(({data: {data}}: AxiosResponse) => {
+    userShiroGroupList.value = data
+  })
+  await getUserShiro(<number>user?.id)
   if (user) {
     isEditorAdd.value = true
     Object.assign(userForm, user)
@@ -390,7 +440,35 @@ const selectionChange = (users: []) => {
   :deep(.dialog-box) {
     border-radius: .375rem;
     @include background_color('background-color');
-  }
 
+    .el-dialog__header {
+      display: none;
+    }
+
+    .el-dialog__body {
+      display: flex;
+      flex-direction: row;
+
+      .shiro, .userFrom {
+        flex: 1;
+      }
+    }
+  }
+}
+
+.circular {
+  display: inline;
+  height: 30px;
+  width: 30px;
+  animation: loading-rotate 2s linear infinite;
+}
+
+.path {
+  animation: loading-dash 1.5s ease-in-out infinite;
+  stroke-dasharray: 90, 150;
+  stroke-dashoffset: 0;
+  stroke-width: 2;
+  stroke: var(--el-color-primary);
+  stroke-linecap: round;
 }
 </style>

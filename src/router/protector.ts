@@ -42,10 +42,8 @@ export default (router: Router) => {
                     } else {
                         // 没有路由缓存，获取路由
                         if (!to.redirectedFrom) {
-                            await store.dispatch('routerStore/getMenuRoles').then((res: []): void => {
-                                res.forEach(res => {
-                                    router.addRoute(res)
-                                })
+                            await store.dispatch('routerStore/getMenuRoles').then((res): void => {
+                                router.addRoute(res[0])
                             })
                             close()
                             next({...to, replace: true})

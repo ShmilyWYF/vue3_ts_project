@@ -35,3 +35,4 @@ yarn lint
 ### Customize configuration
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
+    <!-- 路由权限组：预设 -》 （起一个名字 放入路由权限组  用户选择对应权限组或者设置哪些权限 ） -->

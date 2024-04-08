@@ -1,0 +1,150 @@
+[
+  {
+    "path": "/Dashboard",
+    "title": "后台管理",
+    "id": 1001,
+    "pid": null,
+    "redirect": "/Dashboard/home",
+    "props": {"isVertical": true},
+    "meta": {
+      "require": false,
+      "title": "后台管理"
+    },
+    "component": "/src/layout/index.vue"
+  },
+  {
+    "path": "/Dashboard/home",
+    "title": "首页",
+    "id": 10010,
+    "pid": 1001,
+    "meta": {
+      "require": true,
+      "title": "首页"
+    },
+    "component": "/src/views/Dashboard/index.vue"
+  },
+  {
+    "path": "/Dashboard/mark",
+    "title": "文章管理",
+    "id": 10011,
+    "pid": 1001,
+    "redirect": "/Dashboard/mark/articleList",
+    "meta": {
+      "require": false,
+      "title": "文章管理",
+      "noRedirect": true
+    }
+  },
+  {
+    "path": "/Dashboard/mark/edit",
+    "title": "文章编辑",
+    "id": 100110,
+    "pid": 10011,
+    "props": true,
+    "meta": {
+      "hide": true,
+      "require": false,
+      "title": "文章编辑"
+    },
+    "component": "/src/views/Dashboard/components/markEdit/index.vue"
+  },
+  {
+    "path": "/Dashboard/mark/articleList",
+    "title": "文章列表",
+    "id": 100111,
+    "pid": 10011,
+    "meta": {
+      "require": false,
+      "title": "文章列表"
+    },
+    "component": "/src/views/Dashboard/components/articleList/index.vue"
+  },
+  {
+    "path": "/Dashboard/mark/tag",
+    "title": "标签管理",
+    "id": 100112,
+    "pid": 10011,
+    "meta": {
+      "require": false,
+      "title": "标签管理"
+    },
+    "component": "/src/views/Dashboard/components/tag/index.vue"
+  },
+  {
+    "path": "/Dashboard/mark/category",
+    "title": "分类管理",
+    "id": 100113,
+    "pid": 10011,
+    "meta": {
+      "require": false,
+      "title": "分类管理"
+    },
+    "component": "/src/views/Dashboard/components/category/index.vue"
+  },
+  {
+    "path": "/Dashboard/comment",
+    "title": "评论管理",
+    "id": 10012,
+    "pid": 1001,
+    "meta": {
+      "require": true,
+      "title": "评论管理"
+    },
+    "component": "/src/views/Dashboard/components/comment/index.vue"
+  },
+  {
+    "path": "/Dashboard/user",
+    "title": "用户管理",
+    "id": 10013,
+    "pid": 1001,
+    "meta": {
+      "require": true,
+      "title": "用户管理"
+    },
+    "component": "/src/views/Dashboard/components/user/index.vue"
+  },
+  {
+    "path": "/Dashboard/message",
+    "title": "留言",
+    "id": 10014,
+    "pid": 1001,
+    "meta": {
+      "require": true,
+      "title": "留言"
+    },
+    "component": "/src/views/Dashboard/components/message/index.vue"
+  },
+  {
+    "path": "/Dashboard/about",
+    "title": "关于",
+    "id": 10015,
+    "pid": 1001,
+    "meta": {
+      "require": true,
+      "title": "关于"
+    },
+    "component": "/src/views/Dashboard/components/about/index.vue"
+  },
+  {
+    "path": "/Dashboard/mail",
+    "title": "邮件系统",
+    "id": 10016,
+    "pid": 1001,
+    "meta": {
+      "require": true,
+      "title": "邮件系统"
+    },
+    "component": "/src/views/Dashboard/components/mail/index.vue"
+  },
+  {
+    "path": "/Dashboard/website",
+    "title": "网站设置",
+    "id": 10017,
+    "pid": 1001,
+    "meta": {
+      "require": true,
+      "title": "网站设置"
+    },
+    "component": "/src/views/Dashboard/components/website/index.vue"
+  }
+]

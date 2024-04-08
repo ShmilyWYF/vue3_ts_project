@@ -51,7 +51,7 @@ export default defineConfig(({command, mode}) => {
             }
         },
         plugins: [
-            vue(),
+            vue({script:{defineModel:true}}),
             // html入口配置
             createHtmlPlugin({
                 minify: true,

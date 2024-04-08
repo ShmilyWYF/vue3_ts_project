@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card class="userFrom">
     <el-form v-if="!isEdit" :model="userData" ref="fromRef" :rules="rules">
       <el-form-item label="头像" prop="avatar">
         <label for="upload" class="ui-upload">
