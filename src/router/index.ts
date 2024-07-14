@@ -70,6 +70,17 @@ const constantRoute: Array<RouteRecordRaw> = [
                     noRedirect: false,
                 },
             },
+            {
+                path: '/test',
+                name: 'test',
+                component: () => import('@/views/Client/components/TimeZhou/index.vue'),
+                props: true,
+                meta: {
+                    require: true,
+                    title: 'Time',
+                    noRedirect: false,
+                },
+            },
         ]
     },
 ]
@@ -205,8 +216,8 @@ export const asyncRouterMap: any[] = [
 ]
 
 const router: Router = createRouter({
-    history: createMemoryHistory(import.meta.env.APP_BASE_API),
-    // history: createWebHashHistory(import.meta.env.APP_BASE_API),
+    // history: createMemoryHistory(import.meta.env.APP_BASE_API),
+    history: createWebHashHistory(import.meta.env.APP_BASE_API),
     routes: constantRoute,
 })
 

@@ -1,6 +1,7 @@
 <template>
   <el-card class="userFrom">
-    <el-form v-if="!isEdit" :model="userData" ref="fromRef" :rules="rules">
+    <!--编辑-->
+    <el-form v-if="isEditOrPreview === 0" :model="userData" ref="fromRef" :rules="rules">
       <el-form-item label="头像" prop="avatar">
         <label for="upload" class="ui-upload">
           <el-image style="width: 100px; height: 100px" :src="userData.avatar" fit="fill"/>
@@ -30,9 +31,14 @@
         </el-radio-group>
       </el-form-item>
       <slot name="content" :row="userData"/>
-      <el-button v-once v-show="isEdit == isEditBtn" type="success" @click="updateUserInfo">添加用户</el-button>
+      <el-button v-if="addOrEdit == 0" type="success" @click="updateUserInfo">添加用户</el-button>
+      <div class="btn-box" v-else>
+        <el-button type="success" @click="updateUserInfo">保存</el-button>
+        <el-button type="warning" @click="emit('updateEditOrAdd',1)">取消编辑</el-button>
+      </div>
     </el-form>
-    <div v-else class="card-View-box">
+    <!-- 预览-->
+    <div v-if="isEditOrPreview === 1" class="card-View-box">
       <div class="header-box">
         <span>
               <el-avatar :size="50" :src="userData.avatar"/>
@@ -47,11 +53,7 @@
         <span>简介：</span>
         <p>{{ userData.intro }}</p>
       </div>
-      <el-button v-show="!isEditBtn" type="primary" @click="isEditBtn = true;emit('updateEditOrAdd',false)">编辑用户信息</el-button>
-    </div>
-    <div class="btn-box" v-show="isEditBtn">
-      <el-button type="success" @click="updateUserInfo">保存</el-button>
-      <el-button type="warning" @click="isEditBtn = false;emit('updateEditOrAdd',true)">取消编辑</el-button>
+      <el-button type="primary" @click="emit('updateEditOrAdd',0)">编辑用户信息</el-button>
     </div>
   </el-card>
 </template>
@@ -64,10 +66,10 @@ import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {UserInfointerface} from "@/interface";
 
-const props = defineProps<{ fromData: UserInfointerface ,isEdit:boolean}>()
+const props = defineProps<{ fromData: UserInfointerface ,isEditOrPreview:number,addOrEditType: number}>()
 
 const emit = defineEmits(['updateCall','updateEditOrAdd'])
-let { fromData,isEdit } = toRefs(props);
+let { fromData,isEditOrPreview } = toRefs(props);
 const fromRef = ref<HTMLElement | any>()
 const rules = reactive<FormRules>({
   avatar: {required: true, message: '必填项', trigger: 'change'},

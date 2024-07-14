@@ -143,20 +143,21 @@
       </template>
     </el-dialog>
     <!-- 编辑对话框 -->
-    <el-dialog v-model="isEditView" width="30%" class="dialog-box" @close="Object.assign(userForm, state())">
-      <UserFrom :from-data="userForm" :is-edit="isEditorAdd" @update-call="listUser"
-                @update-edit-or-add="(args)=>isEditorAdd = args">
-        <template #content="slotProp">
-          <el-form-item v-if="store.getters.userinfo.type === 999"
-                        label="是否为管理员" prop="isSubscribe">
-            <el-radio-group v-model="slotProp.row.type">
-              <el-radio :label="0">否</el-radio>
-              <el-radio :label="1">是</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </template>
-      </UserFrom>
-      <shiro v-model="menuRoleFrom.menuTree" ref="shiroRef">
+    <el-dialog v-model="isEditView" width="" class="dialog-box" @close="Object.assign(userForm, state())">
+        <UserFrom :from-data="userForm" :is-edit-or-preview="currViewStatus" @update-call="listUser"
+                  @update-edit-or-add="(args)=>currViewStatus = args" :add-or-edit-type="addOrEdit">
+          <template #content="slotProp">
+            <!--超级管理员显示管理员设置-->
+            <el-form-item v-if="store.getters.userinfo.type === 999"
+                          label="是否为管理员" prop="isSubscribe">
+              <el-radio-group v-model="slotProp.row.type">
+                <el-radio :label="1">否</el-radio>
+                <el-radio :label="2">是</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </template>
+        </UserFrom>
+      <shiro v-show="shiroShow" v-model="menuRoleFrom.menuTree" ref="shiroRef">
         <template #header>
           <el-select
               v-model="menuRoleFrom.treeName"
@@ -182,7 +183,7 @@ import {ElNotification} from "element-plus";
 import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {UserInfointerface} from "@/interface";
-import {Pagination, UserFrom} from "@/components";
+import {Pagination, SvgIcon, UserFrom} from "@/components";
 import store from "@/store";
 import {shiro} from "@/views/Dashboard/components";
 
@@ -192,8 +193,10 @@ const isDisable = ref<boolean>(false)
 const loading = ref<boolean>(true)
 // 编辑框
 const isEditView = ref<boolean>(false)
+// 当前视图状态 添加还是编辑
+const currViewStatus = ref<number>(0)
 // 编辑or新增
-const isEditorAdd = ref<boolean>(false)
+const addOrEdit = ref<number>(0)
 // 搜索输入框双向绑定
 const searchInput = ref<string>('')
 // 当前查看状态
@@ -221,7 +224,7 @@ const state = (): UserInfointerface => ({
   last_login_time: new Date(),
   nickname: "",
   password: "",
-  type: 0,
+  type: 1,
   updateTime: new Date(),
   website: ""
 })
@@ -236,7 +239,7 @@ const menuRoleFrom = reactive<{treeName:string,menuTree:[]}>({
 // 用户权限组远程搜索结果接收
 const userShiroGroupList = ref<{ id: number, shiroGroupName: string, groupTree: [] }[]>()
 // 加载状态控制
-
+const shiroShow = ref(false)
 onBeforeMount(() => {
   listUser()
 })
@@ -391,17 +394,32 @@ const SearchInputEvnt = () => {
 
 // 编辑
 const openModel = async (user?: UserInfointerface) => {
+  // 展开视图
   isEditView.value = true
-  await api.menuApi.getGroupMenu().then(({data: {data}}: AxiosResponse) => {
-    userShiroGroupList.value = data
-  })
-  await getUserShiro(<number>user?.id)
-  if (user) {
-    isEditorAdd.value = true
+  // 判断是编辑还是添加
+  if(user != undefined){
+    // 编辑状态
+    currViewStatus.value = 1;
+    addOrEdit.value = 1;
     Object.assign(userForm, user)
-  } else {
+    if (user.type != 1){
+      // 获取权限树
+      await api.menuApi.getGroupMenu().then(({data: {data}}: AxiosResponse) => {
+        userShiroGroupList.value = data
+      })
+      // 当前用户是否为管理员，显示权限视图树
+      shiroShow.value = true
+      // 设置权限视图
+      await getUserShiro(<number>user?.id)
+    }else {
+      shiroShow.value = false
+    }
+  }else {
+    // 添加
+    currViewStatus.value = 0;
+    addOrEdit.value = 0;
+    shiroShow.value = false
     Object.assign(userForm, state())
-    isEditorAdd.value = false
   }
 }
 
@@ -438,6 +456,7 @@ const selectionChange = (users: []) => {
   }
 
   :deep(.dialog-box) {
+    width: fit-content;
     border-radius: .375rem;
     @include background_color('background-color');
 
@@ -449,8 +468,8 @@ const selectionChange = (users: []) => {
       display: flex;
       flex-direction: row;
 
-      .shiro, .userFrom {
-        flex: 1;
+      .shiro,.userFrom {
+        width: 300px;
       }
     }
   }

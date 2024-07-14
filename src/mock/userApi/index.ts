@@ -51,7 +51,7 @@ const userApi: any = [
     },
     {
         url: 'user/userinfo',
-        type: 'update',
+        type: 'put',
         template: UpdateUserinfo,
         code: Number(200),
         status: true,

@@ -2,6 +2,8 @@ import api from "@/axios";
 import {AxiosResponse} from "axios";
 import {RouteInterface, ShiroInterface} from "@/interface";
 import {DefineComponent} from "vue";
+import router from "@/router";
+import store from "@/store";
 
 const menuApi = api.menuApi
 
@@ -136,6 +138,13 @@ const actions: any = {
             })
         })
     },
+    clearRouter({commit, state}: any){
+        console.log(router.hasRoute('Dashboard'))
+        // if (router.hasRoute('Dashboard')) {
+            router.removeRoute('Dashboard')
+            commit('SET_ACCESSED_ROUTERS','')
+        // }
+    }
 }
 
 

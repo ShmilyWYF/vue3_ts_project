@@ -1,7 +1,7 @@
 import api from "@/axios";
 import {removeCookie, setCookie} from "@/utils/cookie";
-import router from "@/router";
 import {AxiosResponse} from "axios";
+import store from "@/store";
 
 const userApi = api.userApi
 const userState = {
@@ -59,9 +59,7 @@ const actions: any = {
                 // 删除cookie
                 removeCookie()
                 // 删除路由
-                if (router.hasRoute('Dashboard')) {
-                    router.removeRoute('Dashboard')
-                }
+                store.dispatch('routerStore/clearRouter', '').then()
                 resolve(message)
             }, (error: Error) => {
                 reject(error.message)

@@ -235,7 +235,6 @@ export const getGroupRoles = () => {
 
 
 // 个人路由部分
-
 const superUserShiro = [1001,10010,10011,100110,100111,100112,100113,10012,10013,10014,10015,10016,10017]
 const superUser: { userId: number; shiroGroupId: number; }[] = []
 superUserShiro.forEach(i=>{superUser.push({userId:1,shiroGroupId:i})})
@@ -260,19 +259,22 @@ export const removeRolesMenuByUser = ({id}: { id: number }) => {
 
 export const updateRolesMenuByUser = (obj: string) => {
     const {id, shiroGroupId} = <{ id: number, shiroGroupId: number[] }>JSON.parse(obj)
-
     const shiroGroupIdSet = new Set(shiroGroupId);
-    const filteredUserRoles = userRoles.filter(role => role.userId === id && shiroGroupIdSet.has(role.shiroGroupId));
+    // 找到当前用户所有路由
+    const filteredUserRoles = userRoles.filter(role => role.userId === id);
+    // 最新路由是否存在用户当前路由组，不存在则添加
     shiroGroupIdSet.forEach(v => {
         if (!filteredUserRoles.some(role => role.shiroGroupId === v)) {
             addRolesMenuByUser(JSON.stringify({id:id, shiroGroupId:[v]}))
         }
     });
-    userRoles.forEach((v, index) => {
-        if (!shiroGroupIdSet.has(v.shiroGroupId)) {
-            userRoles.splice(index, 1)
+    // 删除多余项
+    filteredUserRoles.filter(i=>!shiroGroupIdSet.has(i.shiroGroupId)).forEach((v)=>{
+        let key = userRoles.findIndex(i=> i.userId === id && i.shiroGroupId === v.shiroGroupId)
+        if(key != -1){
+            userRoles.splice(key,1)
         }
-    });
+    })
     return {message: 'ok'}
 }
 
@@ -289,7 +291,7 @@ export const getRolesMenuByUser = (args:{id:number}|undefined):{} => {
     }
     let cookie = getCookie('token');
     if (cookie) {
-        if (store.getters.userinfo.type == 999 || store.getters.userinfo.type == 1) {
+        if (store.getters.userinfo.type !== 1) {
             return getRolesMenuByUser({id:store.getters.userinfo.id})
         }
     }

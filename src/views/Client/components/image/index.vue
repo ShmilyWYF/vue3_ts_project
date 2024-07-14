@@ -1,6 +1,6 @@
 <template>
   <div class="imageContainer" ref="imageContainer">
-    <canvas ref="canvas" width="500" height="500" class="canvas"
+    <canvas ref="canvas" id="canvas" width="500" height="500" class="canvas"
             @wheel="wheelEvnt"
             @mousemove="onMousemove"
             @mousedown="onMousedown"
@@ -9,7 +9,8 @@
     <div>
       <span>
         <el-tooltip placement="top" trigger="hover" content="图片区域内拖动，滑轮放大缩小">
-          <el-button type="primary" @click="R = 1;drawLineReactiv.isArrow = 0" :color="R === 1?'#212121':'#fff'">操作背景图</el-button>
+          <el-button type="primary" @click="R = 1;drawLineReactiv.isArrow = 0"
+                     :color="R === 1?'#212121':'#fff'">操作背景图</el-button>
         </el-tooltip>
         <el-tooltip placement="top" trigger="hover"
                     content="拖动两端即可改变尺寸,其他地方拖动位置，滑轮控制放大/缩放比例,拖动时还原比例">
@@ -18,15 +19,18 @@
         </el-tooltip>
         <el-tooltip placement="top" trigger="hover"
                     content="限制仅向右绘制,异常绘制修复,拖动右下角(10x10范围内)改变尺寸,区域内拖动(最上层权重大)，滑轮控制比例">
-        <el-button type="primary" @click="R = 3;drawLineReactiv.isArrow = 0" :color="R === 3?'#212121':'#fff'">绘制矩形</el-button>
+        <el-button type="primary" @click="R = 3;drawLineReactiv.isArrow = 0"
+                   :color="R === 3?'#212121':'#fff'">绘制矩形</el-button>
         </el-tooltip>
         <el-tooltip placement="top" trigger="hover"
                     content="拖动两端即可改变尺寸,其他地方拖动位置，滑轮控制放大/缩放比例,拖动时还原比例">
         <el-button type="primary" @click="R = 2;drawLineReactiv.isArrow = 1"
                    :color="drawLineReactiv.isArrow == 1?'#212121':'#fff'">绘制箭头</el-button>
         </el-tooltip>
-        <el-button type="primary" @click="R = 4;drawLineReactiv.isArrow = 0" :color="R === 4?'#212121':'#fff'">截图</el-button>
+        <el-button type="primary" @click="R = 4;drawLineReactiv.isArrow = 0"
+                   :color="R === 4?'#212121':'#fff'">截图</el-button>
         <el-button type="primary" @click="saveImg">保存本地</el-button>
+        <el-button type="primary" @click="add">添加矩形</el-button>
       </span>
       <img :src="clipReactiv.clip" alt="截图"/>
     </div>
@@ -118,13 +122,13 @@ const init = () => {
 // 绘制图片
 const drawImage = () => {
   // 清除画布区域
-  // initData.ctx.clearRect(0, 0, initData.w, initData.h);
+  initData.ctx.clearRect(0, 0, initData.w, initData.h);
   // 绘制图片
   initData.ctx.drawImage(
       imgData.img,
-      0, 0,
-      imgData.img.width,
-      imgData.img.height,
+      // 0, 0,
+      // imgData.img.width,
+      // imgData.img.height,
       imgData.offsetX,
       imgData.offsetY,
       imgData.img.width * imgData.scale,
@@ -276,12 +280,12 @@ const drawLine = (drawDate?: LineLayers) => {
 // 绘制矩形
 const drawRect = (points?: { x: number, y: number, h: number, w: number, scale: number }) => {
   // if (drawRectReactiv.isScale == 1) initData.ctx.clearRect(0, 0, initData.w, initData.h);
-  const drawRectFn = (x: number, y: number, h: number, w: number, scale: number,i?:number) => {
+  const drawRectFn = (x: number, y: number, h: number, w: number, scale: number, i?: number) => {
     initData.ctx.beginPath();
     // 如果拖动就还原
     initData.ctx.save();
     // 矩形中心点
-    initData.ctx.translate(x + w /2,y + h /2)
+    initData.ctx.translate(x + w / 2, y + h / 2)
     // 设置比例
     initData.ctx.scale(scale, scale);
     // 还原状态
@@ -294,8 +298,8 @@ const drawRect = (points?: { x: number, y: number, h: number, w: number, scale: 
   if (points) {
     drawRectFn(points.x, points.y, points.h, points.w, points.scale)
   } else {
-    drawRectReactiv.layers.forEach((i: { x: number, y: number, h: number, w: number, scale: number },index) => {
-      drawRectFn(i.x, i.y, i.h, i.w, i.scale,index)
+    drawRectReactiv.layers.forEach((i: { x: number, y: number, h: number, w: number, scale: number }, index) => {
+      drawRectFn(i.x, i.y, i.h, i.w, i.scale, index)
     })
   }
 }
@@ -304,7 +308,7 @@ const drawRect = (points?: { x: number, y: number, h: number, w: number, scale: 
 const drawClipRect = () => {
   // 创建一条新路径
   initData.ctx.beginPath()
-  initData.ctx.strokeRect(clipReactiv.startP.x,clipReactiv.startP.y, clipReactiv.w + 2, clipReactiv.h + 2)
+  initData.ctx.strokeRect(clipReactiv.startP.x, clipReactiv.startP.y, clipReactiv.w + 2, clipReactiv.h + 2)
 }
 
 // 统一绘制
@@ -315,30 +319,70 @@ const draw = () => {
   drawRect(drawRectReactiv.rect)
   drawRect()
   drawLine()
-  if (R.value == 4){
+  if (R.value == 4) {
     drawClipRect()
   }
 }
 
 // 滚轮事件
-const wheelEvnt = (e: WheelEvent) => {
-  const {clientX, clientY} = e;
+const wheelEvnt = (e: WheelEvent & { wheelDelta: number }) => {
+  const {clientX, clientY,wheelDelta} = e;
   // 限制范围为图片区间
   if (moveToImgUp(clientX, clientY) && R.value === 1) {
     // 保存当前状态
-    initData.ctx.save();
+    // initData.ctx.save();
+    // 计算缩放比例
+    // const delta = e.deltaY < 0 ? 1.1 : 0.9;
+    // imgData.scale *= delta
+    // // 限制比例范围
+    // imgData.scale = Math.min(Math.max(imgData.scale, 0.1), 5);
+    // initData.ctx.translate(0, 0)
+    // // 设置图片比例
+    // initData.ctx.scale(imgData.scale, imgData.scale);
+    // // 还原状态
+    // initData.ctx.restore();
+    // 计算图片的位置， 更具当前缩放比例，计算新的位置
+
+    const pos = windowToCanvas(clientX, clientY)
+    const newPos = {
+      x: Number(((pos.x-imgData.offsetX)/imgData.scale).toFixed(2)) ,
+      y: Number(((pos.y-imgData.offsetY)/imgData.scale).toFixed(2))
+    };
+    // 判断是放大还是缩小
+    // if(wheelDelta > 0) {
+    //   imgData.scale += 0.05
+    //   if(imgData.scale >= 5) {
+    //     imgData.scale = 5
+    //   }
+    // } else { // 缩小
+    //   imgData.scale -= 0.05
+    //   if(imgData.scale <= 0.5) {
+    //     imgData.scale= 0.5
+    //   }
+    // }
+
     // 计算缩放比例
     const delta = e.deltaY < 0 ? 1.1 : 0.9;
     imgData.scale *= delta
     // 限制比例范围
     imgData.scale = Math.min(Math.max(imgData.scale, 0.1), 5);
-    initData.ctx.translate(0, 0)
-    // 设置图片比例
-    initData.ctx.scale(imgData.scale, imgData.scale);
-    // 还原状态
-    initData.ctx.restore();
-  } else
-    if (drawLineReactiv.isclick != 1 && R.value === 2) {
+
+    imgData.offsetX = (1-imgData.scale)*newPos.x+(pos.x-newPos.x);
+    imgData.offsetY = (1-imgData.scale)*newPos.y+(pos.y-newPos.y);
+    initData.ctx.clearRect(0, 0, initData.w, initData.h);
+    // 绘制图片
+    initData.ctx.drawImage(
+        imgData.img,
+        // 0, 0,
+        // imgData.img.width,
+        // imgData.img.height,
+        imgData.offsetX,
+        imgData.offsetY,
+        imgData.img.width * imgData.scale,
+        imgData.img.height * imgData.scale
+    )
+    return
+  } else if (drawLineReactiv.isclick != 1 && R.value === 2) {
     drawLineReactiv.isScale = 1
     // 记录鼠标起始坐标
     let p = windowToCanvas(clientX, clientY)
@@ -358,8 +402,7 @@ const wheelEvnt = (e: WheelEvent) => {
     const delta = e.deltaY < 0 ? 1.1 : 0.9;
     drawLineReactiv.layers[drawLineReactiv.currentR].scale *= delta
     drawLineReactiv.layers[drawLineReactiv.currentR].scale = Math.min(Math.max(drawLineReactiv.layers[drawLineReactiv.currentR].scale, 0.1), 5);
-  }else
-      if (drawRectReactiv.isclick != 1 && R.value === 3){
+  } else if (drawRectReactiv.isclick != 1 && R.value === 3) {
     drawRectReactiv.isScale = 1
     // 记录鼠标起始坐标
     let p = windowToCanvas(clientX, clientY)
@@ -367,7 +410,7 @@ const wheelEvnt = (e: WheelEvent) => {
     drawRectReactiv.currentR = 0
     for (let i = 0; i < drawRectReactiv.layers.length; i++) {
       const rect = drawRectReactiv.layers[i];
-      const distance = isPointInRectangle(p,rect)
+      const distance = isPointInRectangle(p, rect)
       if (distance) {
         drawRectReactiv.currentR = i
         break;
@@ -380,7 +423,7 @@ const wheelEvnt = (e: WheelEvent) => {
     drawRectReactiv.layers[drawRectReactiv.currentR].scale *= delta
     drawRectReactiv.layers[drawRectReactiv.currentR].scale = Math.min(Math.max(drawRectReactiv.layers[drawRectReactiv.currentR].scale, 0.1), 5);
   }
-  draw()
+  // draw()
 }
 
 // 鼠标移入事件
@@ -449,7 +492,7 @@ const onMousemove = (e: MouseEvent) => {
     drawRectReactiv.w = drawRectReactiv.movePos.x - drawRectReactiv.startP.x
     drawRectReactiv.h = drawRectReactiv.movePos.y - drawRectReactiv.startP.y
 
-    if (drawRectReactiv.w < 0 || drawRectReactiv.h < 0){
+    if (drawRectReactiv.w < 0 || drawRectReactiv.h < 0) {
       drawRectReactiv.w = drawRectReactiv.w > 0 ? drawRectReactiv.w : 20
       drawRectReactiv.h = drawRectReactiv.h > 0 ? drawRectReactiv.h : 20
     }
@@ -506,14 +549,14 @@ const onMousemove = (e: MouseEvent) => {
       // }
       // drawRect(points)
     }
-  }else if (R.value == 4){
+  } else if (R.value == 4) {
     clipReactiv.movePos = windowToCanvas(pageX, pageY)
     let width = clipReactiv.movePos.x - clipReactiv.startP.x
     let height = clipReactiv.movePos.y - clipReactiv.startP.y
     clipReactiv.w = width
     clipReactiv.h = height
 
-    let croppedImageData = initData.ctx.getImageData(clipReactiv.startP.x,clipReactiv.startP.y, width, height);
+    let croppedImageData = initData.ctx.getImageData(clipReactiv.startP.x, clipReactiv.startP.y, width, height);
     // 创建一个新的Canvas用于绘制裁剪后的图像
     let croppedCanvas = document.createElement('canvas');
     croppedCanvas.width = width;
@@ -575,7 +618,7 @@ const onMousedown = (e: MouseEvent) => {
         drawRectReactiv.isclick = 1
         drawRectReactiv.currentR = i
         break;
-      }else {
+      } else {
         drawRectReactiv.currentR = -1
       }
     }
@@ -589,7 +632,7 @@ const onMousedown = (e: MouseEvent) => {
         drawRectReactiv.restSize = 0
       }
     }
-  } else if(R.value == 4){
+  } else if (R.value == 4) {
     clipReactiv.startP = windowToCanvas(pageX, pageY)
   }
 }
@@ -666,7 +709,12 @@ const pointToLineDistance = (x: number, y: number, line: { x1: number, y1: numbe
 }
 
 // 检查点击位置是否在某个矩形内
-const isPointInRectangle = (point: { x: number, y: number }, rect: { x: number, y: number, w: number, h: number },scale:number = 1) => {
+const isPointInRectangle = (point: { x: number, y: number }, rect: {
+  x: number,
+  y: number,
+  w: number,
+  h: number
+}, scale: number = 1) => {
   return (
       point.x >= rect.x &&
       point.x <= rect.x + rect.w * scale &&
@@ -681,23 +729,51 @@ const saveImg = () => {
   link.download = 'cropped_image.png';
   link.click();
 }
+
+const add = () => {
+  let el:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('canvas');
+  let ctx:CanvasRenderingContext2D = <CanvasRenderingContext2D>el.getContext('2d')
+  let ractArr = [
+    {x:150,y:50},
+    {x:100,y:100},
+    {x:100,y:150},
+    {x:150,y:200},
+    {x:200,y:200},
+    {x:250,y:150},
+    {x:250,y:100},
+    {x:200,y:50},
+    {x:150,y:50}
+  ]
+  ctx.clearRect(0,0,el.width,el.height)
+  ctx.beginPath()
+  ctx.moveTo(ractArr[0].x,ractArr[0].y)
+  ractArr.forEach((i:{x:number,y:number})=>{
+    ctx.lineTo(i.x,i.y)
+  })
+  ctx.stroke()
+}
+
 </script>
 
 <style lang="scss" scoped>
 .imageContainer {
   display: flex;
   gap: 1rem;
+
   .canvas {
     border: 1px solid #ccc;
   }
-  div{
+
+  div {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+
     span {
       display: flex;
       flex-direction: row;
     }
+
     img {
       object-fit: cover;
       max-width: 450px;

@@ -9,7 +9,7 @@
         <el-dropdown-menu>
           <el-dropdown-item @click="UserDialogFormVisible = true">个人中心</el-dropdown-item>
           <el-dropdown-item @click="userExit">退出</el-dropdown-item>
-          <el-dropdown-item v-if="userinfo?.type === 1||userinfo?.type === 999" @click="switchPageEvnt">
+          <el-dropdown-item v-if="userinfo.type != 1" @click="switchPageEvnt">
             {{ status ? '后台管理' : 'blog' }}
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -19,7 +19,7 @@
       <Login @dialogCall="dialogcall"/>
     </el-dialog>
     <el-dialog v-model="UserDialogFormVisible" :lock-scroll="false" title="个人中心" class="personal-center-box">
-      <UserFrom :from-data="userinfo" :is-edit="isEditorAdd" @update-edit-or-add="(args)=>isEditorAdd = args"/>
+      <UserFrom :from-data="userinfo" :is-edit-or-preview="isEditorAdd" @update-edit-or-add="(args)=>isEditorAdd = args" add-or-edit-type="1"/>
     </el-dialog>
   </div>
 </template>
@@ -48,7 +48,7 @@ const isLoginState = ref<any>(getCookie())
 // 储存用户信息 为0就是管理员
 const userinfo = computed(() => store.getters.userinfo)
 // 个人中心控制
-const isEditorAdd = ref<boolean>(true)
+const isEditorAdd = ref<number>(1)
 /**
  * @author WangYaFeng
  * @date 2023/10/31 3:05

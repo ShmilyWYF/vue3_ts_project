@@ -3,6 +3,8 @@ import {getCookie} from "@/utils/cookie";
 import {hasEmailBindCaptcha} from "@/mock/mailApi/template";
 import store from "@/store";
 
+// 1普通 2管理员
+
 const userAuth = <UserAuthinterface[]>[
     {
         id: 1,
@@ -38,7 +40,7 @@ const userAuth = <UserAuthinterface[]>[
         create_time: new Date(),
         update_time: null,
         last_login_time: new Date(),
-        type: 1,
+        type: 2,
     }
 ]
 
